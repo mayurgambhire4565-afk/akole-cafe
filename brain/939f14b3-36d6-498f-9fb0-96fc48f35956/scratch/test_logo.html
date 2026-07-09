@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      background: #F8F4EA;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+    }
+    .container {
+      display: flex;
+      gap: 30px;
+      margin-top: 20px;
+    }
+    .logo-box {
+      background: white;
+      padding: 30px;
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    .logo-title {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #3C2415;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h2>Logo SVG Iterations</h2>
+  <div class="container">
+    <!-- Option 1: Hand-crafted stylized bezier curve -->
+    <div class="logo-box">
+      <svg width="180" height="180" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background Circle -->
+        <circle cx="50" cy="50" r="44" fill="#3D2015" />
+        <!-- Gold Border -->
+        <circle cx="50" cy="50" r="44" stroke="#D4AF37" stroke-width="1.5" />
+        
+        <!-- White/Cream Icon -->
+        <path d="
+          M 48 78
+          C 44 73, 31 63, 31 50
+          C 31 40, 39 34, 48 37
+          C 50 38, 51.5 41, 49.5 44
+          C 47.5 47, 45 44, 46 41
+          C 46.5 39, 49.5 35, 51.5 38
+          C 54 41, 51 45, 49 48
+        " stroke="#EFEAD8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        
+        <path d="
+          M 48 78
+          C 51 78, 52 74, 53 71
+          C 59 64, 69 58, 69 50
+          C 69 40, 61 34, 52 37
+          C 49.5 38, 48 41, 48 44
+          C 48 49, 45 32, 49 20
+          C 51 14, 47.5 9, 45 7
+        " stroke="#EFEAD8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <div class="logo-title">Option 1: Two Paths Split</div>
+    </div>
+
+    <!-- Option 2: Continuous-loop calligraphy style -->
+    <div class="logo-box">
+      <svg width="180" height="180" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background Circle -->
+        <circle cx="50" cy="50" r="44" fill="#3D2015" />
+        <!-- Gold Border -->
+        <circle cx="50" cy="50" r="44" stroke="#D4AF37" stroke-width="1.5" />
+        
+        <!-- Left curve: Starts at cleft loop, curves down to bottom hook -->
+        <!-- Loop in center-left, then left lobe, down to bottom, curves to left -->
+        <path d="
+          M 49 46
+          C 46.5 46, 45 49, 47.5 51.5
+          C 49 53, 51.5 52, 51.5 49.5
+          C 51.5 45.5, 49 41.5, 48.5 41.5
+          C 41 38, 33.5 43.5, 33.5 50.5
+          C 33.5 60.5, 44 67, 50.5 73.5
+          C 52.5 75.5, 50 78.5, 46 78
+        " stroke="#EFEAD8" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+        
+        <!-- Right curve: Starts at bottom point, curves up right lobe, curves to cleft, goes up to steam -->
+        <path d="
+          M 50.5 73.5
+          C 57.5 67, 66.5 60.5, 66.5 50.5
+          C 66.5 43.5, 59 38, 51.5 41.5
+          C 50.5 42, 49.5 44, 49.5 46.5
+          C 49.5 50, 46.5 35, 50 24
+          C 51 21, 50.5 16, 48.5 13
+        " stroke="#EFEAD8" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <div class="logo-title">Option 2: Bold Calligraphy</div>
+    </div>
+    
+    <!-- Option 3: Refined organic flow -->
+    <div class="logo-box">
+      <svg width="180" height="180" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background Circle -->
+        <circle cx="50" cy="50" r="44" fill="#3D2015" />
+        <!-- Gold Border -->
+        <circle cx="50" cy="50" r="44" stroke="#E6B93D" stroke-width="1.8" />
+        
+        <!-- Left lobe and droplet loop -->
+        <path d="
+          M 50 47.5
+          C 51.5 49, 52 51.5, 49.5 51.5
+          C 47.5 51.5, 47 49, 49.5 47.5
+          C 49.5 47.5, 41 41, 34 49
+          C 29 55, 34.5 65.5, 50 74
+          C 52.5 75.5, 49 79.5, 45 77.5
+        " stroke="#F4EFE6" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+        
+        <!-- Right lobe and steam -->
+        <path d="
+          M 50 74
+          C 65.5 65.5, 71 55, 66 49
+          C 59 41, 50.5 47.5, 50.5 47.5
+          C 50.5 47.5, 48 38, 51.5 25
+          C 53.5 17.5, 49.5 11, 48 8
+        " stroke="#F4EFE6" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <div class="logo-title">Option 3: Smooth Organic</div>
+    </div>
+  </div>
+</body>
+</html>

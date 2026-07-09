@@ -1,0 +1,365 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ================================
+   CSS CUSTOM PROPERTIES
+   ================================ */
+:root {
+  /* Colors */
+  --color-bg: #FAFAFA; /* Warm White */
+  --color-surface: #F5F5DC; /* Cream/Beige */
+  --color-border: #e4e4e7;
+  --color-text: #2C2C2C; /* Dark Charcoal */
+  --color-text-muted: #6c4f46;
+  --color-primary: #2E7D32; /* Forest Green */
+  --color-primary-dark: #204223;
+  --color-accent: #D4A017; /* Gold/Amber */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+
+  /* Transitions */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --color-bg: #18181b;
+  --color-surface: #27272a;
+  --color-border: #3f3f46;
+  --color-text: #FAFAFA;
+  --color-text-muted: #a1a1aa;
+  --color-primary: #2E7D32;
+  --color-primary-dark: #5c9261;
+  --color-accent: #D4A017;
+}
+
+/* ================================
+   BASE STYLES
+   ================================ */
+@layer base {
+  * {
+    @apply box-border;
+    scrollbar-width: thin;
+    scrollbar-color: #c8a46e transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    background: #c8a46e;
+    border-radius: 3px;
+  }
+
+  html {
+    @apply scroll-smooth;
+    font-size: 16px;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition: background-color 0.3s, color 0.3s;
+    overflow-x: hidden;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  input, button, select, textarea, label, .label {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-semibold tracking-tight;
+    font-family: 'Playfair Display', Georgia, serif !important;
+    color: var(--color-text);
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  img {
+    @apply max-w-full;
+  }
+
+  ::selection {
+    background: rgba(200, 164, 110, 0.3);
+    color: #1a0f0a;
+  }
+}
+
+/* ================================
+   COMPONENT STYLES
+   ================================ */
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-medium
+           rounded-[10px] px-5 py-2.5 text-sm transition-all duration-300
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           disabled:opacity-60 disabled:cursor-not-allowed select-none;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-20deg);
+  }
+
+  .btn:hover::after {
+    left: 150%;
+    transition: left 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn:hover {
+    letter-spacing: 0.05em !important;
+    transform: translateY(-2px) scale(1.02) !important;
+  }
+
+  /* Global override to ensure all buttons and link-buttons are rounded by 10px */
+  button,
+  .btn,
+  [class*="btn-"],
+  a.rounded-full[class*="bg-"],
+  a.rounded-full[class*="border"],
+  a.rounded-xl[class*="bg-"],
+  a.rounded-xl[class*="border"],
+  button.rounded-full,
+  button.rounded-xl,
+  button.rounded-lg {
+    border-radius: 10px !important;
+  }
+
+  .btn-primary {
+    @apply btn bg-gold-500 hover:bg-gold-600 text-espresso-900 
+           focus-visible:ring-gold-500 shadow-coffee hover:shadow-coffee-lg
+           hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .btn-outline {
+    @apply btn border-2 border-gold-500 text-gold-500 hover:bg-gold-500 
+           hover:text-espresso-900 focus-visible:ring-gold-500;
+  }
+
+  .btn-ghost {
+    @apply btn hover:bg-coffee-950/10 dark:hover:bg-coffee-50/10;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 hover:bg-red-700 text-white focus-visible:ring-red-500;
+  }
+
+  .btn-sm { @apply px-3 py-1.5 text-xs; }
+  .btn-lg { @apply px-8 py-3.5 text-base; }
+  .btn-icon { @apply p-2.5; }
+
+  /* Cards */
+  .card {
+    @apply rounded-2xl overflow-hidden transition-all duration-300;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card-hover {
+    @apply card hover:shadow-card-hover hover:-translate-y-1;
+  }
+
+  /* Input */
+  .input {
+    @apply w-full px-4 py-2.5 rounded-xl text-sm border outline-none
+           transition-all duration-300
+           bg-white/40 dark:bg-black/20 backdrop-blur-md
+           text-espresso-900 dark:text-cream-50
+           placeholder:text-espresso-400/80 dark:placeholder:text-espresso-500/80
+           border-[#3C2415]/10 dark:border-white/10;
+  }
+  .input:hover {
+    @apply border-[#3C2415]/20 dark:border-white/20 bg-white/60 dark:bg-black/30;
+  }
+  .input:focus {
+    @apply border-gold-500 ring-4 ring-gold-500/10 bg-white/80 dark:bg-black/40;
+  }
+  .input.error {
+    @apply border-red-400 ring-4 ring-red-400/10;
+  }
+
+  /* Label */
+  .label {
+    @apply block text-sm font-medium mb-1.5;
+    color: var(--color-text);
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-gold { @apply badge bg-gold-500/15 text-gold-600 dark:bg-gold-500/20 dark:text-gold-400; }
+  .badge-green { @apply badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400; }
+  .badge-red { @apply badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400; }
+  .badge-blue { @apply badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400; }
+  .badge-gray { @apply badge bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400; }
+
+  /* Section */
+  .section { @apply py-16 md:py-24; }
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-display font-semibold mb-4;
+    color: var(--color-text);
+  }
+  .section-subtitle {
+    @apply text-base md:text-lg max-w-2xl;
+    color: var(--color-text-muted);
+  }
+
+  /* Container */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Divider */
+  .divider {
+    @apply border-t my-8;
+    border-color: var(--color-border);
+  }
+
+  /* Skeleton */
+  .skeleton {
+    @apply animate-pulse rounded-lg;
+    background: linear-gradient(90deg, 
+      rgba(200, 164, 110, 0.1) 25%,
+      rgba(200, 164, 110, 0.2) 50%, 
+      rgba(200, 164, 110, 0.1) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+
+  /* Glass effect */
+  .glass {
+    @apply backdrop-blur-md;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-md;
+    background: rgba(26, 15, 10, 0.8);
+    border: 1px solid rgba(200, 164, 110, 0.15);
+  }
+
+  /* Page transition */
+  .page-enter {
+    @apply animate-fade-in;
+  }
+}
+
+/* ================================
+   UTILITIES
+   ================================ */
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #c8a46e, #e5bf7e, #c8a46e);
+  }
+
+  .bg-coffee-gradient {
+    background: linear-gradient(135deg, #1a0f0a 0%, #2a1a10 50%, #342218 100%);
+  }
+
+  .clip-path-wave {
+    clip-path: ellipse(100% 55% at 50% 44%);
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+}
+
+/* ================================
+   REACT HOT TOAST OVERRIDES (PREMIUM DESIGN)
+   ================================ */
+.custom-toast {
+  position: relative !important;
+  overflow: hidden !important;
+  font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif !important;
+  background: rgba(26, 15, 10, 0.96) !important; /* Premium dark cocoa glass */
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  color: #FDFBF7 !important; /* Soft silk cream */
+  border: 1px solid rgba(212, 175, 55, 0.3) !important; /* Gold border */
+  border-radius: 16px !important; /* More rounded premium look */
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.75), 0 0 15px rgba(212, 175, 55, 0.05) !important;
+  padding: 14px 20px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.custom-toast:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.85), 0 0 25px rgba(212, 175, 55, 0.1) !important;
+  border-color: rgba(212, 175, 55, 0.5) !important;
+}
+
+.custom-toast::before {
+  display: none !important; /* Remove blocky admin strip */
+}
+
+/* Success toast overrides */
+.custom-toast-success {
+  border: 1px solid rgba(212, 175, 55, 0.45) !important;
+  background: linear-gradient(135deg, rgba(26, 15, 10, 0.97), rgba(38, 24, 16, 0.97)) !important;
+}
+
+.custom-toast-success:hover {
+  border-color: rgba(212, 175, 55, 0.6) !important;
+}
+
+/* Error toast overrides */
+.custom-toast-error {
+  border: 1px solid rgba(224, 122, 95, 0.4) !important;
+  background: linear-gradient(135deg, rgba(26, 15, 10, 0.97), rgba(38, 20, 16, 0.97)) !important;
+}
+
+.custom-toast-error:hover {
+  border-color: rgba(224, 122, 95, 0.6) !important;
+}
