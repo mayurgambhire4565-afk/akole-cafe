@@ -34,7 +34,6 @@ async function createUser() {
   });
   console.log('User created successfully:', user);
 }
-
 createUser()
   .catch(console.error)
   .finally(() => prisma.$disconnect());
