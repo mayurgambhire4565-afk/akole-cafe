@@ -337,7 +337,7 @@ export default function LoginPage() {
               onClick={handleSendOTP}
               className="btn btn-outline py-2.5 px-4 text-xs font-bold uppercase tracking-wider h-[46px] border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10 disabled:opacity-50 disabled:hover:bg-transparent cursor-pointer min-w-[110px] flex items-center justify-center shrink-0"
             >
-              {sendOtpLoading ? 'Sending...' : countdown > 0 ? `${countdown}s` : 'Send OTP'}
+              {sendOtpLoading ? 'Sending...' : countdown > 0 ? `${countdown}s` : otpSent ? 'Resend OTP' : 'Send OTP'}
             </button>
           )}
         </div>
@@ -385,6 +385,23 @@ export default function LoginPage() {
               maxLength={6}
               {...register('otp')}
             />
+            {otpSent && (
+              <p className="text-xs text-[#3C2415]/60 dark:text-cream-200/60 mt-2 flex items-center justify-between">
+                <span>Didn't receive the OTP?</span>
+                {countdown > 0 ? (
+                  <span className="font-semibold text-[#D4AF37]">Resend in {countdown}s</span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSendOTP}
+                    disabled={sendOtpLoading}
+                    className="font-bold text-[#D4AF37] hover:text-[#c5a028] transition-colors cursor-pointer border-none bg-transparent p-0"
+                  >
+                    Resend OTP
+                  </button>
+                )}
+              </p>
+            )}
           </div>
         )}
 
