@@ -1,18 +1,8 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Logo from '@/components/ui/Logo';
 
 export default function AuthLayout() {
-  const navigate = useNavigate();
-
-  const handleBack = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate('/');
-    }
-  };
 
   return (
     <div className="min-h-screen flex bg-[#F8F4EA] dark:bg-[#0F1E15] transition-colors duration-300">
@@ -76,11 +66,7 @@ export default function AuthLayout() {
 
       {/* Right Panel - Auth Form */}
       <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-16 relative bg-[#F8F4EA] dark:bg-[#0F1E15] transition-colors duration-300">
-        <div className="absolute top-8 right-8 text-sm">
-          <button onClick={handleBack} className="text-[#3C2415]/65 dark:text-cream-200/60 hover:text-[#2E7D32] dark:hover:text-[#D4AF37] transition-colors font-medium flex items-center gap-1 cursor-pointer border-none bg-transparent">
-            <span>←</span> Back
-          </button>
-        </div>
+
 
         {/* Mobile Header Logo */}
         <div className="lg:hidden flex items-center justify-center mb-10">
