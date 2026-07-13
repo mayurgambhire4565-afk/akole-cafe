@@ -125,7 +125,7 @@ function App() {
         <Suspense fallback={<PageLoader />}>
           <Routes location={location} key={location.pathname}>
             {/* Main Layout Routes */}
-            <Route element={<MainLayout />}>
+            <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/products" element={<ProductsPage />} />
@@ -140,8 +140,8 @@ function App() {
               <Route path="/gallery" element={<GalleryPage />} />
               <Route path="/terms-of-service" element={<TermsPage />} />
               <Route path="/privacy-policy" element={<PrivacyPage />} />
-              <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
-              <Route path="/order-success/:id" element={<ProtectedRoute><OrderSuccessPage /></ProtectedRoute>} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/order-success/:id" element={<OrderSuccessPage />} />
             </Route>
 
             {/* Auth Layout Routes */}
