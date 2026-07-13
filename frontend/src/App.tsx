@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useThemeStore } from '@/store/themeStore';
@@ -12,59 +12,55 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 import AdminLayout from '@/layouts/AdminLayout';
 
 // Public Pages
-import HomePage from '@/pages/HomePage';
-import AboutPage from '@/pages/AboutPage';
-import ProductsPage from '@/pages/ProductsPage';
-import ProductDetailPage from '@/pages/ProductDetailPage';
-import BlogsPage from '@/pages/BlogsPage';
-import BlogDetailPage from '@/pages/BlogDetailPage';
-import CartPage from '@/pages/CartPage';
-import ReserveTablePage from '@/pages/ReserveTablePage';
-import EventsPage from '@/pages/EventsPage';
-import FranchisePage from '@/pages/FranchisePage';
-import ContactPage from '@/pages/ContactPage';
-import GalleryPage from '@/pages/GalleryPage';
-import TermsPage from '@/pages/TermsPage';
-import PrivacyPage from '@/pages/PrivacyPage';
+const HomePage = React.lazy(() => import('@/pages/HomePage'));
+const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
+const ProductsPage = React.lazy(() => import('@/pages/ProductsPage'));
+const ProductDetailPage = React.lazy(() => import('@/pages/ProductDetailPage'));
+const BlogsPage = React.lazy(() => import('@/pages/BlogsPage'));
+const BlogDetailPage = React.lazy(() => import('@/pages/BlogDetailPage'));
+const CartPage = React.lazy(() => import('@/pages/CartPage'));
+const ReserveTablePage = React.lazy(() => import('@/pages/ReserveTablePage'));
+const EventsPage = React.lazy(() => import('@/pages/EventsPage'));
+const FranchisePage = React.lazy(() => import('@/pages/FranchisePage'));
+const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
+const GalleryPage = React.lazy(() => import('@/pages/GalleryPage'));
+const TermsPage = React.lazy(() => import('@/pages/TermsPage'));
+const PrivacyPage = React.lazy(() => import('@/pages/PrivacyPage'));
 
 // Auth Pages
-import LoginPage from '@/pages/auth/LoginPage';
-import RegisterPage from '@/pages/auth/RegisterPage';
-import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
-import OTPPage from '@/pages/auth/OTPPage';
-import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
+const LoginPage = React.lazy(() => import('@/pages/auth/LoginPage'));
+const RegisterPage = React.lazy(() => import('@/pages/auth/RegisterPage'));
+const ForgotPasswordPage = React.lazy(() => import('@/pages/auth/ForgotPasswordPage'));
+const OTPPage = React.lazy(() => import('@/pages/auth/OTPPage'));
+const ResetPasswordPage = React.lazy(() => import('@/pages/auth/ResetPasswordPage'));
 
 // User Dashboard Pages
-
-
-
-
-import DashboardHome from '@/pages/dashboard/DashboardHome';
-import ProfilePage from '@/pages/dashboard/ProfilePage';
-import OrdersPage from '@/pages/dashboard/OrdersPage';
-import OrderDetailPage from '@/pages/dashboard/OrderDetailPage';
-import WishlistPage from '@/pages/dashboard/WishlistPage';
-import AddressesPage from '@/pages/dashboard/AddressesPage';
-import SubscriptionsPage from '@/pages/dashboard/SubscriptionsPage';
-import RewardsPage from '@/pages/dashboard/RewardsPage';
-import CouponsPage from '@/pages/dashboard/CouponsPage';
-import NotificationsPage from '@/pages/dashboard/NotificationsPage';
+const DashboardHome = React.lazy(() => import('@/pages/dashboard/DashboardHome'));
+const ProfilePage = React.lazy(() => import('@/pages/dashboard/ProfilePage'));
+const OrdersPage = React.lazy(() => import('@/pages/dashboard/OrdersPage'));
+const OrderDetailPage = React.lazy(() => import('@/pages/dashboard/OrderDetailPage'));
+const WishlistPage = React.lazy(() => import('@/pages/dashboard/WishlistPage'));
+const AddressesPage = React.lazy(() => import('@/pages/dashboard/AddressesPage'));
+const SubscriptionsPage = React.lazy(() => import('@/pages/dashboard/SubscriptionsPage'));
+const RewardsPage = React.lazy(() => import('@/pages/dashboard/RewardsPage'));
+const CouponsPage = React.lazy(() => import('@/pages/dashboard/CouponsPage'));
+const NotificationsPage = React.lazy(() => import('@/pages/dashboard/NotificationsPage'));
 
 // Checkout
-import CheckoutPage from '@/pages/CheckoutPage';
-import OrderSuccessPage from '@/pages/OrderSuccessPage';
+const CheckoutPage = React.lazy(() => import('@/pages/CheckoutPage'));
+const OrderSuccessPage = React.lazy(() => import('@/pages/OrderSuccessPage'));
 
 // Admin Pages
-import AdminDashboard from '@/pages/admin/AdminDashboard';
-import AdminProducts from '@/pages/admin/AdminProducts';
-import AdminCategories from '@/pages/admin/AdminCategories';
-import AdminOrders from '@/pages/admin/AdminOrders';
-import AdminUsers from '@/pages/admin/AdminUsers';
-import AdminBlogs from '@/pages/admin/AdminBlogs';
-import AdminCoupons from '@/pages/admin/AdminCoupons';
-import AdminReviews from '@/pages/admin/AdminReviews';
-import AdminSubscriptions from '@/pages/admin/AdminSubscriptions';
-import AdminRewards from '@/pages/admin/AdminRewards';
+const AdminDashboard = React.lazy(() => import('@/pages/admin/AdminDashboard'));
+const AdminProducts = React.lazy(() => import('@/pages/admin/AdminProducts'));
+const AdminCategories = React.lazy(() => import('@/pages/admin/AdminCategories'));
+const AdminOrders = React.lazy(() => import('@/pages/admin/AdminOrders'));
+const AdminUsers = React.lazy(() => import('@/pages/admin/AdminUsers'));
+const AdminBlogs = React.lazy(() => import('@/pages/admin/AdminBlogs'));
+const AdminCoupons = React.lazy(() => import('@/pages/admin/AdminCoupons'));
+const AdminReviews = React.lazy(() => import('@/pages/admin/AdminReviews'));
+const AdminSubscriptions = React.lazy(() => import('@/pages/admin/AdminSubscriptions'));
+const AdminRewards = React.lazy(() => import('@/pages/admin/AdminRewards'));
 
 // Guard components
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -126,68 +122,70 @@ function App() {
       </AnimatePresence>
 
       <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        {/* Main Layout Routes */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={isAuthenticated ? <HomePage /> : <Navigate to="/login" replace />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/products/:slug" element={<ProductDetailPage />} />
-          <Route path="/blogs" element={<BlogsPage />} />
-          <Route path="/blogs/:slug" element={<BlogDetailPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/reserve" element={<ReserveTablePage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/franchise" element={<FranchisePage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/terms-of-service" element={<TermsPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPage />} />
-          <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
-          <Route path="/order-success/:id" element={<ProtectedRoute><OrderSuccessPage /></ProtectedRoute>} />
-        </Route>
+        <Suspense fallback={<PageLoader />}>
+          <Routes location={location} key={location.pathname}>
+            {/* Main Layout Routes */}
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/products" element={<ProductsPage />} />
+              <Route path="/products/:slug" element={<ProductDetailPage />} />
+              <Route path="/blogs" element={<BlogsPage />} />
+              <Route path="/blogs/:slug" element={<BlogDetailPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/reserve" element={<ReserveTablePage />} />
+              <Route path="/events" element={<EventsPage />} />
+              <Route path="/franchise" element={<FranchisePage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/gallery" element={<GalleryPage />} />
+              <Route path="/terms-of-service" element={<TermsPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPage />} />
+              <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+              <Route path="/order-success/:id" element={<ProtectedRoute><OrderSuccessPage /></ProtectedRoute>} />
+            </Route>
 
-        {/* Auth Layout Routes */}
-        <Route element={<GuestRoute><AuthLayout /></GuestRoute>}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/verify-otp" element={<OTPPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-        </Route>
+            {/* Auth Layout Routes */}
+            <Route element={<GuestRoute><AuthLayout /></GuestRoute>}>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/verify-otp" element={<OTPPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+            </Route>
 
-        {/* User Dashboard Routes */}
-        <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-          <Route index element={<DashboardHome />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="orders" element={<OrdersPage />} />
-          <Route path="orders/:id" element={<OrderDetailPage />} />
-          <Route path="wishlist" element={<WishlistPage />} />
-          <Route path="addresses" element={<AddressesPage />} />
-          <Route path="subscriptions" element={<SubscriptionsPage />} />
-          <Route path="rewards" element={<RewardsPage />} />
-          <Route path="coupons" element={<CouponsPage />} />
-          <Route path="notifications" element={<NotificationsPage />} />
-        </Route>
+            {/* User Dashboard Routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+              <Route index element={<DashboardHome />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="orders" element={<OrdersPage />} />
+              <Route path="orders/:id" element={<OrderDetailPage />} />
+              <Route path="wishlist" element={<WishlistPage />} />
+              <Route path="addresses" element={<AddressesPage />} />
+              <Route path="subscriptions" element={<SubscriptionsPage />} />
+              <Route path="rewards" element={<RewardsPage />} />
+              <Route path="coupons" element={<CouponsPage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+            </Route>
 
-        {/* Admin Dashboard Routes */}
-        <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="categories" element={<AdminCategories />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route path="blogs" element={<AdminBlogs />} />
-          <Route path="coupons" element={<AdminCoupons />} />
-          <Route path="reviews" element={<AdminReviews />} />
-          <Route path="subscriptions" element={<AdminSubscriptions />} />
-          <Route path="rewards" element={<AdminRewards />} />
-        </Route>
+            {/* Admin Dashboard Routes */}
+            <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="blogs" element={<AdminBlogs />} />
+              <Route path="coupons" element={<AdminCoupons />} />
+              <Route path="reviews" element={<AdminReviews />} />
+              <Route path="subscriptions" element={<AdminSubscriptions />} />
+              <Route path="rewards" element={<AdminRewards />} />
+            </Route>
 
-        {/* 404 Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </AnimatePresence>
+            {/* 404 Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </AnimatePresence>
     </>
   );
 }

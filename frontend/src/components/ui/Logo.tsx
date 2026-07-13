@@ -22,10 +22,9 @@ export default function Logo({
         style={{ width: `${size}px`, height: `${size}px` }}
       >
         <img
-          src="/logo.jpg"
+          src="/gold-logo.png"
           alt="Akole Café Logo"
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 object-cover max-w-none transition-transform duration-300 hover:scale-105"
-          style={{ width: '136%', height: '136%' }}
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
         />
       </div>
       {showText && (
