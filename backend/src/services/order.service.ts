@@ -9,6 +9,8 @@ export const createOrder = async (userId: string, data: {
   couponCode?: string;
   notes?: string;
   paymentMethod?: string;
+  paymentProvider?: string;
+  transactionId?: string;
 }) => {
   // Get cart with items
   const cart = await prisma.cart.findUnique({
@@ -84,6 +86,9 @@ export const createOrder = async (userId: string, data: {
 
   // Create order and update stock atomically
   const order = await prisma.$transaction(async (tx) => {
+    const paymentStatus = (data.paymentMethod === 'cod' || !data.paymentMethod) ? 'PENDING' : 'COMPLETED';
+    const paymentProvider = data.paymentProvider || (data.paymentMethod === 'cod' ? 'COD' : 'ONLINE');
+
     const newOrder = await tx.order.create({
       data: {
         orderNumber,
@@ -98,8 +103,17 @@ export const createOrder = async (userId: string, data: {
         notes: data.notes,
         items: { create: orderItemsData },
         tracking: { create: { status: 'PENDING', message: 'Order placed successfully' } },
+        payment: {
+          create: {
+            amount: total,
+            provider: paymentProvider.toUpperCase(),
+            status: paymentStatus,
+            transactionId: data.transactionId || null,
+            paidAt: paymentStatus === 'COMPLETED' ? new Date() : null,
+          }
+        }
       },
-      include: { items: true, address: true },
+      include: { items: true, address: true, payment: true },
     });
 
     // Update stock

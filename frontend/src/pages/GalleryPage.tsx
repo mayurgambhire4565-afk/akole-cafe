@@ -76,16 +76,16 @@ export default function GalleryPage() {
     : GALLERY_IMAGES.filter(img => img.category === activeCategory);
 
   return (
-    <div className="bg-[#F5F3E9] min-h-screen pt-24 pb-20">
+    <div className="bg-[#F5F3E9] dark:bg-[#0B150F] min-h-screen pt-24 pb-20 transition-colors duration-300">
       <div className="container-custom max-w-7xl">
 
         {/* Header */}
         <div className="text-center mb-12">
           <p className="text-[#D4AF37] font-semibold tracking-widest uppercase text-xs mb-4">Our Aesthetic</p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-[#1A3324] leading-tight mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-[#1A3324] dark:text-[#FDFBF7] leading-tight mb-6">
             The <span className="text-[#D4AF37] italic font-light">Gallery</span>
           </h1>
-          <p className="text-[#3C2415]/70 text-lg font-light max-w-2xl mx-auto leading-relaxed">
+          <p className="text-[#3C2415]/70 dark:text-cream-200/70 text-lg font-light max-w-2xl mx-auto leading-relaxed">
             Take a visual journey through Akole Cafe — beautifully crafted beverages, culinary delights, and luxury interior design.
           </p>
         </div>
@@ -98,8 +98,8 @@ export default function GalleryPage() {
               onClick={() => setActiveCategory(cat)}
               className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                 activeCategory === cat
-                  ? 'bg-[#1A3324] text-[#D4AF37] shadow-md'
-                  : 'bg-white text-[#3C2415]/70 hover:bg-[#1A3324]/5 border border-[#3C2415]/10'
+                  ? 'bg-[#1A3324] text-[#D4AF37] dark:bg-[#D4AF37] dark:text-[#1A3324] shadow-md'
+                  : 'bg-white dark:bg-[#112017] text-[#3C2415]/70 dark:text-cream-200/70 hover:bg-[#1A3324]/5 dark:hover:bg-white/5 border border-[#3C2415]/10 dark:border-white/10'
               }`}
             >
               {cat}
@@ -144,7 +144,7 @@ export default function GalleryPage() {
         </motion.div>
 
         {/* Count */}
-        <p className="text-center text-[#3C2415]/50 text-xs mt-8 uppercase tracking-wider">
+        <p className="text-center text-[#3C2415]/50 dark:text-cream-200/50 text-xs mt-8 uppercase tracking-wider">
           Showing {filtered.length} of {GALLERY_IMAGES.length} photos
         </p>
       </div>

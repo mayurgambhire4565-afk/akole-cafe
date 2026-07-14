@@ -5,6 +5,9 @@ import { sendSuccess, sendError } from '../utils/response';
 import * as authService from '../services/auth.service';
 import { env } from '../config/env';
 import { OAuth2Client } from 'google-auth-library';
+import bcrypt from 'bcrypt';
+import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
+import prisma from '../database/prisma';
 
 const googleClient = new OAuth2Client(env.GOOGLE_CLIENT_ID);
 

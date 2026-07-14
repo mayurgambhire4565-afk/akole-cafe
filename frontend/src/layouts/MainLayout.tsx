@@ -4,6 +4,8 @@ import { useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartSidebar from '@/components/cart/CartSidebar';
+import React, { Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -27,7 +29,13 @@ export default function MainLayout() {
           transition={{ duration: 0.3, ease: 'easeInOut' }}
           className="flex-1"
         >
-          <Outlet />
+          <Suspense fallback={
+            <div className="min-h-[60vh] flex flex-col items-center justify-center bg-cream-50 dark:bg-espresso-950">
+              <Loader2 className="animate-spin w-10 h-10 text-gold-500" />
+            </div>
+          }>
+            <Outlet />
+          </Suspense>
         </motion.main>
       </AnimatePresence>
       <Footer />

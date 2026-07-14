@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Mail, Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import api from '@/api/axios';
 import { useAuthStore } from '@/store/authStore';
@@ -15,10 +15,29 @@ import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string().min(1, 'Email is required').email('Invalid email address'),
   password: z.string().optional(),
   otp: z.string().optional(),
   rememberMe: z.boolean().optional(),
+  loginMode: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.loginMode === 'password') {
+    if (!data.password || data.password.length < 8) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Password must be at least 8 characters',
+        path: ['password'],
+      });
+    }
+  } else if (data.loginMode === 'otp') {
+    if (!data.otp || !/^\d{6}$/.test(data.otp)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'OTP must be exactly 6 digits',
+        path: ['otp'],
+      });
+    }
+  }
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -46,7 +65,7 @@ export default function LoginPage() {
   const location = useLocation();
 
   const {
-    register, handleSubmit, watch,
+    register, handleSubmit, watch, setValue,
     formState: { errors },
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -54,10 +73,17 @@ export default function LoginPage() {
       email: (location.state as any)?.email || '',
       password: '',
       otp: '',
+      loginMode: 'password',
     }
   });
 
   const emailValue = watch('email');
+
+  useEffect(() => {
+    if (!(location.state as any)?.allowLogin) {
+      navigate('/register', { replace: true });
+    }
+  }, [location.state, navigate]);
 
   useEffect(() => {
     return () => {
@@ -148,19 +174,11 @@ export default function LoginPage() {
 
   const onSubmit = (data: LoginForm) => {
     if (loginMode === 'password') {
-      if (!data.password || data.password.length < 6) {
-        toast.error('Password must be at least 6 characters');
-        return;
-      }
       mutation.mutate(data);
     } else {
-      if (!data.otp || data.otp.length !== 6 || !/^\d+$/.test(data.otp)) {
-        toast.error('Please enter a valid 6-digit OTP');
-        return;
-      }
       otpMutation.mutate({
         email: data.email,
-        otp: data.otp,
+        otp: data.otp!,
         rememberMe: !!data.rememberMe,
       });
     }
@@ -295,7 +313,7 @@ export default function LoginPage() {
       <div className="flex border-b border-[#3C2415]/10 dark:border-white/10 mb-6">
         <button
           type="button"
-          onClick={() => setLoginMode('password')}
+          onClick={() => { setLoginMode('password'); setValue('loginMode', 'password'); }}
           className={`flex-1 pb-3 text-xs font-semibold tracking-wider uppercase border-b-2 transition-colors ${
             loginMode === 'password'
               ? 'border-[#D4AF37] text-[#1A3324] dark:text-[#F8F4EA]'
@@ -306,7 +324,7 @@ export default function LoginPage() {
         </button>
         <button
           type="button"
-          onClick={() => setLoginMode('otp')}
+          onClick={() => { setLoginMode('otp'); setValue('loginMode', 'otp'); }}
           className={`flex-1 pb-3 text-xs font-semibold tracking-wider uppercase border-b-2 transition-colors ${
             loginMode === 'otp'
               ? 'border-[#D4AF37] text-[#1A3324] dark:text-[#F8F4EA]'
@@ -318,6 +336,7 @@ export default function LoginPage() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <input type="hidden" {...register('loginMode')} />
         <div className="flex gap-2 items-end">
           <div className="flex-1">
             <Input
@@ -344,16 +363,10 @@ export default function LoginPage() {
 
         {loginMode === 'password' ? (
           <div>
-            <div className="flex justify-between items-center mb-1.5">
-              <label htmlFor="password" className="block text-sm font-medium text-[#3C2415] dark:text-cream-200 mb-0">
+            <div className="mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-[#3C2415] dark:text-cream-200">
                 Password
               </label>
-              <Link
-                to="/forgot-password"
-                className="text-xs text-[#D4AF37] hover:text-[#c4a02c] font-medium transition-colors"
-              >
-                Forgot password?
-              </Link>
             </div>
             <div className="relative">
               <Input
@@ -371,6 +384,14 @@ export default function LoginPage() {
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
+            </div>
+            <div className="flex justify-end mt-2">
+              <Link
+                to="/forgot-password"
+                className="text-xs text-[#D4AF37] hover:text-[#c4a02c] font-medium transition-colors no-underline"
+              >
+                Forgot password?
+              </Link>
             </div>
           </div>
         ) : (
@@ -420,8 +441,9 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={mutation.isPending || otpMutation.isPending}
-          className="w-full btn btn-primary py-3.5 font-bold hover:scale-[1.01] transition-transform text-xs uppercase tracking-wider cursor-pointer"
+          className="w-full btn btn-primary py-3.5 font-bold hover:scale-[1.01] transition-transform text-xs uppercase tracking-wider cursor-pointer flex items-center justify-center gap-2"
         >
+          {(mutation.isPending || otpMutation.isPending) && <Loader2 className="w-4 h-4 animate-spin" />}
           {mutation.isPending || otpMutation.isPending ? 'Signing In...' : 'Sign In'}
         </button>
       </form>
@@ -431,7 +453,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-[#3C2415]/10 dark:border-white/10"></div>
         </div>
-        <span className="relative bg-[#FAFAFA] dark:bg-[#18181b] px-4 text-xs font-semibold uppercase tracking-wider text-[#3C2415]/50 dark:text-cream-200/50">
+        <span className="relative bg-[#F8F4EA] dark:bg-[#0F1E15] px-4 text-xs font-semibold uppercase tracking-wider text-[#3C2415]/50 dark:text-cream-200/50">
           Or continue with
         </span>
       </div>
@@ -441,7 +463,7 @@ export default function LoginPage() {
         <button
           type="button"
           onClick={() => googleLogin()}
-          className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg py-2.5 px-4 font-sans font-medium text-sm flex items-center justify-center gap-3 transition-colors duration-200 shadow-sm cursor-pointer"
+          className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-xl py-2.5 px-4 font-sans font-medium text-sm flex items-center justify-center gap-3 transition-colors duration-200 shadow-sm cursor-pointer select-none"
         >
           <svg className="w-[18px] h-[18px] flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -456,8 +478,8 @@ export default function LoginPage() {
       <div className="mt-8 pt-6 border-t border-[#3C2415]/10 dark:border-white/10 text-center">
         <p className="text-[#3C2415]/60 dark:text-cream-200/60 text-sm font-medium">
           Don't have an account?{' '}
-          <Link to="/register" className="text-[#D4AF37] hover:text-[#c4a02c] font-bold transition-colors">
-            Create one
+          <Link to="/register" className="text-[#D4AF37] hover:text-[#c4a02c] font-bold transition-colors no-underline">
+            Sign Up
           </Link>
         </p>
       </div>

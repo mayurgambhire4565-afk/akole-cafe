@@ -15,7 +15,7 @@ import HeartLogo from '@/components/ui/HeartLogo';
 // ================================
 function HeroSection() {
   return (
-    <section className="relative bg-[#F5F3E9] pt-28 pb-16 min-h-[90vh] flex items-center">
+    <section className="relative bg-[#F5F3E9] pt-20 pb-10 min-h-[75vh] flex items-center">
       <div className="container-custom relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
@@ -39,12 +39,12 @@ function HeroSection() {
               crafted just for you. Every cup tells a story.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/products" className="w-full sm:w-auto border border-[#1A3324] text-[#1A3324] hover:bg-[#1A3324] hover:text-white rounded-full px-8 py-3.5 flex items-center justify-center gap-2 text-xs font-bold tracking-widest uppercase transition-colors group">
+              <Link to="/products" className="w-full sm:w-auto bg-[#1A3324] text-white hover:bg-[#112218] rounded-full px-8 py-4 flex items-center justify-center gap-2 text-xs font-bold tracking-widest uppercase shadow-[0_10px_20px_rgba(26,51,36,0.15)] hover:shadow-[0_12px_24px_rgba(26,51,36,0.25)] hover:-translate-y-0.5 transition-all duration-300 group">
                 Explore Menu
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-white" />
               </Link>
-              <Link to="/reserve" className="w-full sm:w-auto border border-[#1A3324]/30 hover:border-[#1A3324] text-[#1A3324]/80 hover:text-[#1A3324] hover:bg-[#1A3324]/5 rounded-full px-8 py-3.5 flex items-center justify-center gap-2.5 text-xs font-bold tracking-widest uppercase transition-colors">
-                <Calendar className="w-4 h-4 text-[#1A3324]/75" />
+              <Link to="/reserve" className="w-full sm:w-auto border-2 border-[#1A3324]/20 hover:border-[#1A3324] text-[#1A3324] hover:bg-[#1A3324]/5 rounded-full px-8 py-4 flex items-center justify-center gap-2.5 text-xs font-bold tracking-widest uppercase hover:-translate-y-0.5 transition-all duration-300">
+                <Calendar className="w-4 h-4 text-[#1A3324]" />
                 Reserve A Table
               </Link>
             </div>
@@ -86,7 +86,7 @@ function HeroSection() {
 // ================================
 function BotanicalStrip() {
   return (
-    <div className="h-40 w-full relative border-t border-[#3C2415]/10 overflow-hidden bg-[#FDFBF7]">
+    <div className="h-20 w-full relative border-t border-[#3C2415]/10 overflow-hidden bg-[#FDFBF7]">
       <img 
         src={botanicalStrip} 
         alt="Coffee pattern" 
@@ -104,7 +104,7 @@ function BrandStatement() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="bg-[#3C2415] py-24 relative text-center">
+    <section ref={ref} className="bg-[#3C2415] py-14 relative text-center">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -118,7 +118,7 @@ function BrandStatement() {
         <p className="text-[#F5F3E9]/60 italic mb-10 max-w-xl font-light">
           Experience the perfect blend in every sip, crafted with love and dedication.
         </p>
-        <Link to="/products" className="border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#3C2415] px-8 py-3 rounded-xl uppercase tracking-widest text-xs font-semibold transition-colors duration-300">
+        <Link to="/products" className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#3C2415] rounded-full px-8 py-3.5 uppercase tracking-widest text-xs font-bold transition-all duration-300 transform hover:-translate-y-0.5">
           Explore Our Menu
         </Link>
       </motion.div>
@@ -174,7 +174,7 @@ function BestsellersSection() {
   };
 
   return (
-    <section ref={ref} className="section bg-[#F5F3E9] py-24">
+    <section ref={ref} className="bg-[#F5F3E9] py-12 md:py-16">
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -250,7 +250,7 @@ function StorySection() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section id="about" ref={ref} className="bg-[#1A3324] py-24 overflow-hidden relative">
+    <section id="about" ref={ref} className="bg-[#1A3324] py-12 md:py-16 overflow-hidden relative">
       <div className="container-custom">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
@@ -314,7 +314,7 @@ function TestimonialsSection() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="section bg-[#FDFBF7] py-24">
+    <section ref={ref} className="bg-[#FDFBF7] py-12 md:py-16">
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -380,9 +380,9 @@ function LoyaltySection() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="bg-[#F5F3E9] pb-24 relative overflow-hidden">
+    <section ref={ref} className="bg-[#F5F3E9] pb-16 relative overflow-hidden">
       <div className="container-custom">
-        <div className="bg-[#F8F6F0] rounded-[40px] shadow-sm py-16 px-6 md:px-12 relative overflow-hidden">
+        <div className="bg-[#F8F6F0] rounded-[40px] shadow-sm py-10 px-6 md:px-12 relative overflow-hidden">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -444,7 +444,7 @@ const IG_IMAGES = [
 
 function InstagramFeed() {
   return (
-    <section className="bg-[#F5F3E9] pt-8 pb-16">
+    <section className="bg-[#F5F3E9] pt-4 pb-10">
       <div className="container-custom">
         <div className="text-center mb-10">
           <p className="text-[#D4AF37] font-semibold tracking-widest uppercase text-xs mb-2">Follow Us</p>

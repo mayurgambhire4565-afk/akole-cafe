@@ -5,9 +5,16 @@ import { sendSuccess, sendError } from '../utils/response';
 import * as orderService from '../services/order.service';
 
 export const createOrder = asyncHandler(async (req: AuthRequest, res: Response) => {
-  const { addressId, couponCode, notes } = req.body;
+  const { addressId, couponCode, notes, paymentMethod, paymentProvider, transactionId } = req.body;
   if (!addressId) { sendError(res, 'Address required', 400); return; }
-  const order = await orderService.createOrder(req.user!.id, { addressId, couponCode, notes });
+  const order = await orderService.createOrder(req.user!.id, { 
+    addressId, 
+    couponCode, 
+    notes, 
+    paymentMethod, 
+    paymentProvider, 
+    transactionId 
+  });
   sendSuccess(res, { order }, 'Order placed successfully', 201);
 });
 

@@ -9,7 +9,7 @@ const SALT_ROUNDS = 12;
 
 export const registerUser = async (data: { name: string; email: string; password: string; phone?: string }) => {
   const existing = await prisma.user.findUnique({ where: { email: data.email } });
-  if (existing) throw new Error('Email already registered');
+  if (existing) throw new Error('Email already exists. You already have an account.');
 
   // Convert empty phone to null to prevent SQLite unique constraint violation, and check if phone is already registered
   const formattedPhone = data.phone && data.phone.trim() !== '' ? data.phone.trim() : null;
@@ -29,7 +29,7 @@ export const registerUser = async (data: { name: string; email: string; password
       email: data.email,
       password: hashedPassword,
       phone: formattedPhone,
-      isVerified: true, // Auto-verify email so they can log in immediately
+      isVerified: false,
       otp,
       otpExpiresAt,
       referralCode,
@@ -38,19 +38,12 @@ export const registerUser = async (data: { name: string; email: string; password
     select: { id: true, name: true, email: true, role: true, referralCode: true },
   });
 
-  // Award welcome bonus points
-  await prisma.reward.create({
-    data: { userId: user.id, points: 50, type: 'BONUS', description: 'Welcome bonus' },
-  });
-  await prisma.user.update({ where: { id: user.id }, data: { loyaltyPoints: 50 } });
 
-  try {
-    await sendOTPEmail(data.email, data.name, otp);
-  } catch (err) {
+  sendOTPEmail(data.email, data.name, otp).catch((err) => {
     console.error('[EMAIL WARNING] Failed to send OTP email during registration:', err);
-  }
+  });
 
-  return { user, message: 'Registration successful! You can now log in.' };
+  return { user, message: 'Registration successful! Please verify your email with the OTP sent.' };
 };
 
 export const verifyOTP = async (email: string, otp: string) => {
@@ -60,66 +53,46 @@ export const verifyOTP = async (email: string, otp: string) => {
   if (!user.otp || !user.otpExpiresAt) throw new Error('OTP not found. Please request a new one.');
   if (new Date() > user.otpExpiresAt) throw new Error('OTP has expired. Please request a new one.');
   if (user.otp !== otp) throw new Error('Invalid OTP');
-
   await prisma.user.update({
     where: { id: user.id },
     data: { isVerified: true, otp: null, otpExpiresAt: null },
   });
-
-  await sendWelcomeEmail(email, user.name);
+  sendWelcomeEmail(email, user.name).catch((err) => {
+    console.error('[EMAIL WARNING] Failed to send welcome email:', err);
+  });
   return { message: 'Email verified successfully' };
 };
-
 export const resendOTP = async (email: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) throw new Error('User not found');
   if (user.isVerified) throw new Error('Email already verified');
+  if (user.otpExpiresAt) {
+    const timeSinceLastOTP = Date.now() - (user.otpExpiresAt.getTime() - 10 * 60 * 1000);
+    if (timeSinceLastOTP < 60000) {
+      throw new Error(`Please wait ${Math.ceil((60000 - timeSinceLastOTP)/1000)}s before requesting a new OTP`);
+    }
+  }
 
   const otp = generateOTP();
   const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   await prisma.user.update({ where: { id: user.id }, data: { otp, otpExpiresAt } });
-  await sendOTPEmail(email, user.name, otp);
+  sendOTPEmail(email, user.name, otp).catch((err) => {
+    console.error('[EMAIL WARNING] Failed to send OTP email during resend:', err);
+  });
   return { message: 'OTP resent successfully' };
 };
 
 export const loginUser = async (email: string, password: string, rememberMe = false) => {
   let user = await prisma.user.findUnique({ where: { email } });
-  
+
   if (!user) {
-    // Automatically register user if they do not exist
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-    const name = email.split('@')[0];
-    const referralCode = generateReferralCode(name);
-    user = await prisma.user.create({
-      data: {
-        name: name.charAt(0).toUpperCase() + name.slice(1),
-        email,
-        password: hashedPassword,
-        isVerified: true,
-        isActive: true,
-        referralCode,
-        cart: { create: {} },
-      },
-    });
-    // Award welcome bonus points
-    await prisma.reward.create({
-      data: { userId: user.id, points: 50, type: 'BONUS', description: 'Welcome bonus' },
-    });
-    user = await prisma.user.update({
-      where: { id: user.id },
-      data: { loyaltyPoints: 50 },
-    });
-  } else {
-    // If user exists, compare password. If it is different, update the password so they can log in
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data: { password: hashedPassword }
-      });
-    }
+    throw new Error('Account does not exist. Please sign up first.');
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    throw new Error('Invalid email or password.');
   }
 
   if (!user.isActive) throw new Error('Account has been deactivated');
@@ -149,35 +122,20 @@ export const loginUser = async (email: string, password: string, rememberMe = fa
 };
 
 export const sendLoginOTP = async (email: string) => {
-  let user = await prisma.user.findUnique({ where: { email } });
-  
+  const user = await prisma.user.findUnique({ where: { email } });
+
   if (!user) {
-    // Automatically register user if they do not exist
-    const hashedPassword = await bcrypt.hash(crypto.randomBytes(16).toString('hex'), SALT_ROUNDS);
-    const name = email.split('@')[0];
-    const referralCode = generateReferralCode(name);
-    user = await prisma.user.create({
-      data: {
-        name: name.charAt(0).toUpperCase() + name.slice(1),
-        email,
-        password: hashedPassword,
-        isVerified: true,
-        isActive: true,
-        referralCode,
-        cart: { create: {} },
-      },
-    });
-    // Award welcome bonus points
-    await prisma.reward.create({
-      data: { userId: user.id, points: 50, type: 'BONUS', description: 'Welcome bonus' },
-    });
-    user = await prisma.user.update({
-      where: { id: user.id },
-      data: { loyaltyPoints: 50 },
-    });
+    throw new Error('Account does not exist. Please sign up first.');
   }
 
   if (!user.isActive) throw new Error('Account has been deactivated');
+
+  if (user.otpExpiresAt) {
+    const timeSinceLastOTP = Date.now() - (user.otpExpiresAt.getTime() - 10 * 60 * 1000);
+    if (timeSinceLastOTP < 60000) {
+      throw new Error(`Please wait ${Math.ceil((60000 - timeSinceLastOTP)/1000)}s before requesting a new OTP`);
+    }
+  }
 
   const otp = generateOTP();
   const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
@@ -187,22 +145,20 @@ export const sendLoginOTP = async (email: string) => {
     data: { otp, otpExpiresAt },
   });
 
-  try {
-    await sendOTPEmail(email, user.name, otp);
-  } catch (err) {
+  sendOTPEmail(email, user.name, otp).catch((err) => {
     console.error('[EMAIL WARNING] Failed to send OTP email for login:', err);
-  }
+  });
 
   // Return the OTP in development environment so user can use it easily without functional email setup.
-  return { 
+  return {
     message: 'OTP sent successfully',
-    otp: env.NODE_ENV === 'development' ? otp : undefined 
+    otp: env.NODE_ENV === 'development' ? otp : undefined
   };
 };
 
 export const loginWithOTP = async (email: string, otp: string, rememberMe = false) => {
   const user = await prisma.user.findUnique({ where: { email } });
-  
+
   if (!user) throw new Error('User not found. Please request an OTP first.');
   if (!user.isActive) throw new Error('Account has been deactivated');
   if (!user.otp || !user.otpExpiresAt) throw new Error('No OTP requested. Please request a new one.');
@@ -258,6 +214,13 @@ export const forgotPassword = async (email: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) return { message: 'If your email is registered, you will receive an OTP.' };
 
+  if (user.passwordResetExpires) {
+    const timeSinceLastOTP = Date.now() - (user.passwordResetExpires.getTime() - 10 * 60 * 1000);
+    if (timeSinceLastOTP < 60000) {
+      return { message: 'If your email is registered, you will receive an OTP.' };
+    }
+  }
+
   const otp = generateOTP();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
@@ -266,13 +229,11 @@ export const forgotPassword = async (email: string) => {
     data: { passwordResetToken: otp, passwordResetExpires: expiresAt },
   });
 
-  try {
-    await sendOTPEmail(email, user.name, otp);
-  } catch (err) {
+  sendOTPEmail(email, user.name, otp).catch((err) => {
     console.error('[EMAIL WARNING] Failed to send OTP email for password reset:', err);
-  }
+  });
 
-  return { 
+  return {
     message: 'If your email is registered, you will receive an OTP.'
   };
 };
@@ -325,7 +286,7 @@ export const getMe = async (userId: string) => {
 
 export const googleLoginUser = async (data: { name: string; email: string }) => {
   let user = await prisma.user.findUnique({ where: { email: data.email } });
-  
+
   if (!user) {
     // Create new user for google registration
     const randomPassword = crypto.randomBytes(16).toString('hex');
@@ -344,14 +305,7 @@ export const googleLoginUser = async (data: { name: string; email: string }) => 
       },
     });
 
-    // Award welcome bonus points
-    await prisma.reward.create({
-      data: { userId: user.id, points: 50, type: 'BONUS', description: 'Welcome bonus' },
-    });
-    user = await prisma.user.update({
-      where: { id: user.id },
-      data: { loyaltyPoints: 50 },
-    });
+
   }
 
   if (!user.isActive) throw new Error('Account has been deactivated');
@@ -383,7 +337,7 @@ export const googleLoginUser = async (data: { name: string; email: string }) => 
 
 export const facebookLoginUser = async (data: { name: string; email: string }) => {
   let user = await prisma.user.findUnique({ where: { email: data.email } });
-  
+
   if (!user) {
     // Create new user for facebook registration
     const randomPassword = crypto.randomBytes(16).toString('hex');
@@ -402,14 +356,7 @@ export const facebookLoginUser = async (data: { name: string; email: string }) =
       },
     });
 
-    // Award welcome bonus points
-    await prisma.reward.create({
-      data: { userId: user.id, points: 50, type: 'BONUS', description: 'Welcome bonus' },
-    });
-    user = await prisma.user.update({
-      where: { id: user.id },
-      data: { loyaltyPoints: 50 },
-    });
+
   }
 
   if (!user.isActive) throw new Error('Account has been deactivated');

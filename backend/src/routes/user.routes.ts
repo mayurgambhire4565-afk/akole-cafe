@@ -27,9 +27,24 @@ router.get('/profile', asyncHandler(async (req: AuthRequest, res: Response) => {
 
 router.put('/profile', asyncHandler(async (req: AuthRequest, res: Response) => {
   const { name, phone } = req.body;
+  const dbPhone = phone && phone.trim() !== '' ? phone.trim() : null;
+
+  if (dbPhone) {
+    const existing = await prisma.user.findFirst({
+      where: {
+        phone: dbPhone,
+        NOT: { id: req.user!.id },
+      },
+    });
+    if (existing) {
+      sendError(res, 'Phone number already registered by another user', 400);
+      return;
+    }
+  }
+
   const user = await prisma.user.update({
     where: { id: req.user!.id },
-    data: { name, phone },
+    data: { name, phone: dbPhone },
     select: { id: true, name: true, email: true, phone: true, avatar: true },
   });
   sendSuccess(res, { user }, 'Profile updated');

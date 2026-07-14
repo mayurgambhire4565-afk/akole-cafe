@@ -225,6 +225,27 @@ export default function ContactPage() {
             )}
           </motion.div>
         </div>
+
+        {/* Google Map Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-16 w-full h-[400px] rounded-[32px] overflow-hidden shadow-md border border-[#3C2415]/5 dark:border-white/5"
+        >
+          <iframe
+            src="https://maps.google.com/maps?q=Akole,%20Maharashtra%20422601&t=&z=14&ie=UTF8&iwloc=&output=embed"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Akole Cafe Google Map"
+            className="filter grayscale contrast-125 dark:invert-[0.9] dark:hue-rotate-[180deg]"
+          />
+        </motion.div>
+
       </div>
     </div>
   );

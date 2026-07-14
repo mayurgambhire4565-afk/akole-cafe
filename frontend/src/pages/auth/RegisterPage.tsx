@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User, Mail, Lock, Phone, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Lock, Phone, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import api from '@/api/axios';
 import toast from 'react-hot-toast';
@@ -15,13 +15,18 @@ import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
 const registerSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
-  phone: z.string().optional(),
-  password: z.string().min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Must contain an uppercase letter')
-    .regex(/[0-9]/, 'Must contain a number'),
-  confirmPassword: z.string(),
+  name: z.string()
+    .min(3, 'Name must be at least 3 characters')
+    .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces'),
+  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  phone: z.string().regex(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits'),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Must contain at least one number')
+    .regex(/[@$!%*?&#]/, 'Must contain at least one special character (@$!%*?&#)'),
+  confirmPassword: z.string().min(1, 'Confirm password is required'),
 }).refine((d) => d.password === d.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
@@ -57,7 +62,9 @@ export default function RegisterPage() {
     }
   });
 
-  const { register, handleSubmit, formState: { errors } } = useForm<RegisterForm>({
+  const [showLoginOption, setShowLoginOption] = useState(false);
+
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
   });
 
@@ -70,7 +77,11 @@ export default function RegisterPage() {
       navigate('/verify-otp', { state: { email: vars.email } });
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || 'Registration failed');
+      const errMsg = err.response?.data?.message || 'Registration failed';
+      toast.error(errMsg);
+      if (errMsg.toLowerCase().includes('already') || errMsg.toLowerCase().includes('exists') || errMsg.toLowerCase().includes('account')) {
+        setShowLoginOption(true);
+      }
     },
   });
 
@@ -84,7 +95,7 @@ export default function RegisterPage() {
           Create Account
         </h1>
         <p className="text-[#3C2415]/70 dark:text-cream-200/60 text-base font-light">
-          Join Akole Cafe and earn 50 welcome points ✦
+          Join Akole Cafe ✦
         </p>
       </div>
 
@@ -92,7 +103,7 @@ export default function RegisterPage() {
         <Input
           id="name"
           label="Full Name"
-          placeholder="Arjun Sharma"
+          placeholder="Enter your full name"
           leftIcon={<User className="w-4 h-4" />}
           error={errors.name?.message}
           {...register('name')}
@@ -102,7 +113,7 @@ export default function RegisterPage() {
           id="email"
           type="email"
           label="Email Address"
-          placeholder="your@email.com"
+          placeholder="Enter your email address"
           leftIcon={<Mail className="w-4 h-4" />}
           error={errors.email?.message}
           {...register('email')}
@@ -111,8 +122,8 @@ export default function RegisterPage() {
         <Input
           id="phone"
           type="tel"
-          label="Phone (optional)"
-          placeholder="+91 843237067"
+          label="Phone Number"
+          placeholder="Enter your number"
           leftIcon={<Phone className="w-4 h-4" />}
           error={errors.phone?.message}
           {...register('phone')}
@@ -122,7 +133,7 @@ export default function RegisterPage() {
           id="password"
           type={showPassword ? 'text' : 'password'}
           label="Password"
-          placeholder="Min. 8 chars with uppercase & number"
+          placeholder="Enter your password"
           leftIcon={<Lock className="w-4 h-4" />}
           rightIcon={
             <button type="button" onClick={() => setShowPassword(!showPassword)} className="cursor-pointer">
@@ -137,7 +148,7 @@ export default function RegisterPage() {
           id="confirmPassword"
           type={showPassword ? 'text' : 'password'}
           label="Confirm Password"
-          placeholder="Repeat your password"
+          placeholder="Confirm your password"
           leftIcon={<Lock className="w-4 h-4" />}
           error={errors.confirmPassword?.message}
           {...register('confirmPassword')}
@@ -149,7 +160,7 @@ export default function RegisterPage() {
           <button 
             type="button" 
             onClick={() => setModalType('terms')} 
-            className="text-[#1A3324] dark:text-[#D4AF37] font-bold hover:text-[#D4AF37] dark:hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 inline font-sans underline"
+            className="text-[#1A3324] dark:text-[#D4AF37] font-bold hover:text-[#D4AF37] dark:hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 inline font-sans"
           >
             Terms of Service
           </button>{' '}
@@ -157,7 +168,7 @@ export default function RegisterPage() {
           <button 
             type="button" 
             onClick={() => setModalType('privacy')} 
-            className="text-[#1A3324] dark:text-[#D4AF37] font-bold hover:text-[#D4AF37] dark:hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 inline font-sans underline"
+            className="text-[#1A3324] dark:text-[#D4AF37] font-bold hover:text-[#D4AF37] dark:hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 inline font-sans"
           >
             Privacy Policy
           </button>
@@ -166,8 +177,9 @@ export default function RegisterPage() {
         <button 
           type="submit" 
           disabled={mutation.isPending} 
-          className="w-full bg-[#3D2015] dark:bg-[#D4AF37] text-white dark:text-[#3D2015] hover:bg-[#2C150D] dark:hover:bg-[#C5A028] py-3.5 rounded-xl font-bold transition-all duration-300 hover:scale-[1.01] shadow-md hover:shadow-lg flex items-center justify-center font-sans tracking-wider text-xs uppercase"
+          className="w-full bg-[#3D2015] dark:bg-[#D4AF37] text-white dark:text-[#3D2015] hover:bg-[#2C150D] dark:hover:bg-[#C5A028] py-3.5 rounded-xl font-bold transition-all duration-300 hover:scale-[1.01] shadow-md hover:shadow-lg flex items-center justify-center font-sans tracking-wider text-xs uppercase gap-2 cursor-pointer"
         >
+          {mutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
           {mutation.isPending ? 'Creating...' : 'Create Account'}
         </button>
       </form>
@@ -177,7 +189,7 @@ export default function RegisterPage() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-[#3C2415]/10 dark:border-white/10"></div>
         </div>
-        <span className="relative bg-[#FAFAFA] dark:bg-[#18181b] px-4 text-xs font-semibold uppercase tracking-wider text-[#3C2415]/50 dark:text-cream-200/50">
+        <span className="relative bg-[#F8F4EA] dark:bg-[#0F1E15] px-4 text-xs font-semibold uppercase tracking-wider text-[#3C2415]/50 dark:text-cream-200/50">
           Or continue with
         </span>
       </div>
@@ -187,7 +199,7 @@ export default function RegisterPage() {
         <button
           type="button"
           onClick={() => googleLogin()}
-          className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg py-2.5 px-4 font-sans font-medium text-sm flex items-center justify-center gap-3 transition-colors duration-200 shadow-sm cursor-pointer"
+          className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-xl py-2.5 px-4 font-sans font-medium text-sm flex items-center justify-center gap-3 transition-colors duration-200 shadow-sm cursor-pointer select-none"
         >
           <svg className="w-[18px] h-[18px] flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -202,7 +214,11 @@ export default function RegisterPage() {
       <div className="mt-6 pt-6 border-t border-[#3C2415]/10 dark:border-white/10 text-center">
         <p className="text-[#3C2415]/60 dark:text-cream-200/60 text-sm font-medium">
           Already have an account?{' '}
-          <Link to="/login" className="text-[#D4AF37] hover:text-[#c4a02c] font-bold transition-colors">
+          <Link 
+            to="/login" 
+            state={{ allowLogin: true, email: watch('email') }} 
+            className="text-[#D4AF37] hover:text-[#c4a02c] font-bold transition-colors no-underline"
+          >
             Sign in
           </Link>
         </p>

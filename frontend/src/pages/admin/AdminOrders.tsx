@@ -122,7 +122,16 @@ export default function AdminOrders() {
                     {new Date(order.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 font-semibold text-coffee-950 dark:text-cream-50">
-                    ₹{order.total}
+                    <div>₹{order.total}</div>
+                    {order.payment && (
+                      <div className={`text-[10px] font-bold mt-1 uppercase ${
+                        order.payment.status === 'COMPLETED' || order.payment.status === 'PAID'
+                          ? 'text-green-600 dark:text-green-405'
+                          : 'text-yellow-600 dark:text-yellow-450'
+                      }`}>
+                        {order.payment.provider} • {order.payment.status === 'COMPLETED' ? 'PAID' : order.payment.status}
+                      </div>
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <select
@@ -189,6 +198,30 @@ export default function AdminOrders() {
                   </div>
                 ))}
               </div>
+
+              {selectedOrder.payment && (
+                <div className="border-t border-coffee-50 dark:border-forest-500/5 pt-4">
+                  <p className="font-bold text-coffee-900 dark:text-cream-100 mb-2">Payment Details</p>
+                  <div className="flex justify-between py-1 text-xs">
+                    <span>Payment Method:</span>
+                    <span className="font-semibold uppercase">{selectedOrder.payment.provider}</span>
+                  </div>
+                  <div className="flex justify-between py-1 text-xs">
+                    <span>Payment Status:</span>
+                    <span className={`font-semibold uppercase ${
+                      selectedOrder.payment.status === 'COMPLETED' || selectedOrder.payment.status === 'PAID'
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-yellow-600 dark:text-yellow-450'
+                    }`}>{selectedOrder.payment.status === 'COMPLETED' ? 'PAID' : selectedOrder.payment.status}</span>
+                  </div>
+                  {selectedOrder.payment.transactionId && (
+                    <div className="flex justify-between py-1 text-xs">
+                      <span>Transaction ID:</span>
+                      <span className="font-mono text-[10px] break-all max-w-[200px] text-right">{selectedOrder.payment.transactionId}</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -65,7 +65,7 @@ const AdminRewards = React.lazy(() => import('@/pages/admin/AdminRewards'));
 // Guard components
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isAuthenticated) return <Navigate to="/register" replace />;
   return <>{children}</>;
 }
 
@@ -78,7 +78,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 
 function GuestRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
-  if (isAuthenticated) return <Navigate to="/dashboard" replace />;
+  if (isAuthenticated) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 
@@ -101,9 +101,12 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Scroll to top instantly on every page transition / navigation
+  // Scroll to top smoothly on every page transition / navigation
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   }, [location.pathname]);
 
   return (
@@ -122,69 +125,66 @@ function App() {
       </AnimatePresence>
 
       <AnimatePresence mode="wait">
-        <Suspense fallback={<PageLoader />}>
-          <Routes location={location} key={location.pathname}>
-            {/* Main Layout Routes */}
-            <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/products" element={<ProductsPage />} />
-              <Route path="/products/:slug" element={<ProductDetailPage />} />
-              <Route path="/blogs" element={<BlogsPage />} />
-              <Route path="/blogs/:slug" element={<BlogDetailPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/reserve" element={<ReserveTablePage />} />
-              <Route path="/events" element={<EventsPage />} />
-              <Route path="/franchise" element={<FranchisePage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/gallery" element={<GalleryPage />} />
-              <Route path="/terms-of-service" element={<TermsPage />} />
-              <Route path="/privacy-policy" element={<PrivacyPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/order-success/:id" element={<OrderSuccessPage />} />
-            </Route>
+        <Routes location={location} key={location.pathname}>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/products/:slug" element={<ProductDetailPage />} />
+            <Route path="/blogs" element={<BlogsPage />} />
+            <Route path="/blogs/:slug" element={<BlogDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/reserve" element={<ReserveTablePage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/franchise" element={<FranchisePage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/terms-of-service" element={<TermsPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPage />} />
+            <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+            <Route path="/order-success/:id" element={<ProtectedRoute><OrderSuccessPage /></ProtectedRoute>} />
+          </Route>
 
-            {/* Auth Layout Routes */}
-            <Route element={<GuestRoute><AuthLayout /></GuestRoute>}>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/verify-otp" element={<OTPPage />} />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
-            </Route>
+          {/* Auth Layout Routes */}
+          <Route element={<GuestRoute><AuthLayout /></GuestRoute>}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/verify-otp" element={<OTPPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+          </Route>
 
-            {/* User Dashboard Routes */}
-            <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-              <Route index element={<DashboardHome />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="orders" element={<OrdersPage />} />
-              <Route path="orders/:id" element={<OrderDetailPage />} />
-              <Route path="wishlist" element={<WishlistPage />} />
-              <Route path="addresses" element={<AddressesPage />} />
-              <Route path="subscriptions" element={<SubscriptionsPage />} />
-              <Route path="rewards" element={<RewardsPage />} />
-              <Route path="coupons" element={<CouponsPage />} />
-              <Route path="notifications" element={<NotificationsPage />} />
-            </Route>
+          {/* User Dashboard Routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+            <Route index element={<DashboardHome />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="orders" element={<OrdersPage />} />
+            <Route path="orders/:id" element={<OrderDetailPage />} />
+            <Route path="wishlist" element={<WishlistPage />} />
+            <Route path="addresses" element={<AddressesPage />} />
+            <Route path="subscriptions" element={<SubscriptionsPage />} />
+            <Route path="rewards" element={<RewardsPage />} />
+            <Route path="coupons" element={<CouponsPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+          </Route>
 
-            {/* Admin Dashboard Routes */}
-            <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="products" element={<AdminProducts />} />
-              <Route path="categories" element={<AdminCategories />} />
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="users" element={<AdminUsers />} />
-              <Route path="blogs" element={<AdminBlogs />} />
-              <Route path="coupons" element={<AdminCoupons />} />
-              <Route path="reviews" element={<AdminReviews />} />
-              <Route path="subscriptions" element={<AdminSubscriptions />} />
-              <Route path="rewards" element={<AdminRewards />} />
-            </Route>
+          {/* Admin Dashboard Routes */}
+          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="blogs" element={<AdminBlogs />} />
+            <Route path="coupons" element={<AdminCoupons />} />
+            <Route path="reviews" element={<AdminReviews />} />
+            <Route path="subscriptions" element={<AdminSubscriptions />} />
+            <Route path="rewards" element={<AdminRewards />} />
+          </Route>
 
-            {/* 404 Fallback */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
+          {/* 404 Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </AnimatePresence>
     </>
   );

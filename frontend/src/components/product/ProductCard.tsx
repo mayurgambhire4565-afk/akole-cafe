@@ -75,11 +75,11 @@ export default function ProductCard({ product }: ProductCardProps) {
     <motion.div
       whileHover={{ y: -4 }}
       transition={{ duration: 0.25 }}
-      className="group bg-[#FDFBF7] rounded-[24px] shadow-sm hover:shadow-lg border border-[#3C2415]/5 transition-all overflow-hidden"
+      className="group bg-white/45 dark:bg-white/5 rounded-[24px] shadow-sm hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/35 dark:border-white/15 backdrop-blur-xl transition-all overflow-hidden"
     >
       <Link to={`/products/${product.slug}`} className="block relative">
         {/* Image Area */}
-        <div className="relative aspect-[4/3] bg-cream-100 overflow-hidden">
+        <div className="relative aspect-[4/3] bg-cream-100 dark:bg-coffee-950/20 overflow-hidden">
           {images.length > 0 ? (
               <img
                 src={images[imgIdx]}
@@ -104,20 +104,20 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Top Right Wishlist Button */}
           <button
             onClick={handleWishlist}
-            className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md transition-all hover:scale-105 z-10"
+            className="absolute top-3 right-3 w-8 h-8 bg-white/90 dark:bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center shadow-md transition-all hover:scale-105 z-10 text-forest-800 dark:text-cream-200"
           >
-            <Heart className={`w-4 h-4 ${isWishlisted ? 'text-red-500 fill-red-500' : 'text-green-800'}`} />
+            <Heart className={`w-4 h-4 ${isWishlisted ? 'text-red-500 fill-red-500' : 'currentColor'}`} />
           </button>
         </div>
 
         {/* Info Area */}
         <div className="p-5 flex flex-col justify-between" style={{ minHeight: '160px' }}>
           <div>
-            <h3 className="font-display font-semibold text-lg text-[#1A3324] mb-1.5 leading-tight group-hover:text-[#D4AF37] transition-colors">
+            <h3 className="font-display font-semibold text-lg text-[#1A3324] dark:text-cream-50 mb-1.5 leading-tight group-hover:text-[#D4AF37] dark:group-hover:text-[#D4AF37] transition-colors">
               {product.name}
             </h3>
             {product.shortDesc && (
-              <p className="text-[#3C2415]/60 text-xs font-light leading-relaxed line-clamp-2 mb-4">
+              <p className="text-[#3C2415]/60 dark:text-cream-200/60 text-xs font-light leading-relaxed line-clamp-2 mb-4">
                 {product.shortDesc}
               </p>
             )}
@@ -125,13 +125,13 @@ export default function ProductCard({ product }: ProductCardProps) {
           
           <div className="flex items-center justify-between mt-auto">
             <div className="flex items-center gap-3">
-              <span className="font-bold text-base text-[#1A3324]">
+              <span className="font-bold text-base text-[#1A3324] dark:text-cream-100">
                 ₹{effectivePrice.toFixed(0)}
               </span>
               {product.reviewCount > 0 && (
                 <div className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]" />
-                  <span className="text-xs font-medium text-[#3C2415]/60">{product.rating.toFixed(1)}</span>
+                  <span className="text-xs font-medium text-[#3C2415]/60 dark:text-cream-200/60">{product.rating.toFixed(1)}</span>
                 </div>
               )}
             </div>
@@ -139,7 +139,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <button
               onClick={handleAddToCart}
               disabled={product.stock === 0 || addToCartMutation.isPending}
-              className="w-10 h-10 rounded-full bg-[#1A3324] hover:bg-[#2C4A36] text-white flex items-center justify-center transition-all disabled:opacity-50 shadow-md hover:shadow-lg z-10"
+              className="w-10 h-10 rounded-full bg-[#1A3324] dark:bg-[#D4AF37] hover:bg-[#2C4A36] dark:hover:bg-[#e0c25a] text-white dark:text-[#1A3324] flex items-center justify-center transition-all disabled:opacity-50 shadow-md hover:shadow-lg z-10"
             >
               <ShoppingCart className="w-4 h-4" />
             </button>

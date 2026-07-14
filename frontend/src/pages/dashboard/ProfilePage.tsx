@@ -208,7 +208,7 @@ export default function ProfilePage() {
                     error={errors.email?.message}
                     className="bg-coffee-50/50 dark:bg-coffee-950/40 border-coffee-200/50 text-coffee-500 cursor-not-allowed select-none"
                   />
-                  <span className="absolute right-3 bottom-3.5 flex items-center gap-1 text-[10px] font-bold text-forest-600 dark:text-forest-400 pointer-events-none">
+                  <span className="absolute right-3 bottom-[-2px] flex items-center gap-1 text-[10px] font-bold text-forest-600 dark:text-forest-400 pointer-events-none">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     Verified
                   </span>

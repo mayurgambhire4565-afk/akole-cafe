@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShoppingCart, Heart, User, Menu, X, Search,
@@ -34,6 +34,9 @@ export default function Navbar() {
   const { itemCount, toggleCart, openCart } = useCartStore();
   const { isDark, toggleTheme } = useThemeStore();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isTransparentHome = false;
 
   useEffect(() => {
     const handler = () => setIsScrolled(window.scrollY > 20);
@@ -51,23 +54,41 @@ export default function Navbar() {
     setIsUserMenuOpen(false);
   };
 
-  const navBg = isScrolled
-    ? 'bg-[#F4EFE6]/95 dark:bg-[#1A3121]/95 border-b border-[#1A3121]/10 shadow-sm backdrop-blur-md'
-    : 'bg-[#1A3324] border-b border-[#D4AF37]/10 shadow-md';
+  const handleNavLinkClick = (to: string) => {
+    setIsMobileOpen(false);
+    if (location.pathname === to) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
 
-  const logoColor = isScrolled ? 'text-[#1A3121] dark:text-cream-50' : 'text-cream-50';
+  const navBg = isTransparentHome
+    ? 'bg-transparent'
+    : isScrolled
+      ? 'bg-[#F4EFE6]/60 dark:bg-[#0B150F]/60 border-b border-white/25 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] backdrop-blur-2xl'
+      : 'bg-[#FDFBF7]/70 dark:bg-[#0B150F]/70 border-b border-white/15 dark:border-white/5 shadow-sm backdrop-blur-xl';
 
-  const buttonColorClass = isScrolled
-    ? 'text-coffee-700 dark:text-cream-300 hover:text-forest-500 hover:bg-forest-500/5 dark:hover:bg-white/5'
-    : 'text-cream-300 hover:text-[#D4AF37] hover:bg-white/5';
+  const logoColor = isTransparentHome
+    ? 'text-cream-50'
+    : 'text-[#1A3121] dark:text-cream-50';
 
-  const activeLinkClass = isScrolled ? 'text-forest-500 dark:text-[#D4A017]' : 'text-[#D4AF37]';
+  const buttonColorClass = isTransparentHome
+    ? 'text-cream-300 hover:text-[#D4AF37] hover:bg-white/5'
+    : 'text-coffee-700 dark:text-cream-300 hover:text-forest-500 hover:bg-forest-500/5 dark:hover:bg-white/5';
+
+  const activeLinkClass = isTransparentHome
+    ? 'text-[#D4AF37]'
+    : 'text-forest-500 dark:text-[#D4A017]';
   
-  const inactiveLinkClass = isScrolled
-    ? 'text-coffee-700 dark:text-cream-200 hover:text-forest-500 dark:hover:text-[#D4A017]'
-    : 'text-cream-200 hover:text-[#D4AF37]';
+  const inactiveLinkClass = isTransparentHome
+    ? 'text-cream-200 hover:text-[#D4AF37]'
+    : 'text-coffee-700 dark:text-cream-200 hover:text-forest-500 dark:hover:text-[#D4A017]';
 
-  const activeUnderlineClass = isScrolled ? 'bg-forest-500 dark:bg-[#D4A017]' : 'bg-[#D4AF37]';
+  const activeUnderlineClass = isTransparentHome
+    ? 'bg-[#D4AF37]'
+    : 'bg-forest-500 dark:bg-[#D4A017]';
 
   return (
     <>
@@ -93,6 +114,7 @@ export default function Navbar() {
                   key={link.to}
                   to={link.to}
                   end={link.to === '/'}
+                  onClick={() => handleNavLinkClick(link.to)}
                   className={({ isActive }) =>
                     `relative px-2 py-4 lg:px-3 text-[11px] lg:text-xs font-sans font-semibold uppercase tracking-wider transition-all duration-200 whitespace-nowrap flex items-center ${
                       isActive ? activeLinkClass : inactiveLinkClass
@@ -112,29 +134,6 @@ export default function Navbar() {
                   )}
                 </NavLink>
               ))}
-              {isAuthenticated && user?.role !== 'CUSTOMER' && (
-                <NavLink
-                  to="/admin"
-                  className={({ isActive }) =>
-                    `relative px-3 py-4 text-[11px] lg:text-xs font-sans font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 ${
-                      isActive ? 'text-gold-500' : 'text-cream-200 hover:text-gold-400'
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <Crown className="w-3.5 h-3.5" />
-                      Admin
-                      {isActive && (
-                        <motion.span
-                          layoutId="activeNavUnderline"
-                          className="absolute bottom-0 left-3 right-3 h-0.5 bg-gold-500 rounded-full"
-                        />
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              )}
             </nav>
 
               {/* Desktop Actions */}
@@ -225,7 +224,7 @@ export default function Navbar() {
                         <span className="text-gold-400 text-sm font-semibold">{user?.name?.[0]?.toUpperCase()}</span>
                       )}
                     </div>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''} ${isScrolled ? 'text-coffee-700 dark:text-cream-300' : 'text-gold-400 hover:text-gold-300'}`} />
+                    <ChevronDown className={`w-4 h-4 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''} ${isTransparentHome ? 'text-gold-400 hover:text-gold-300' : 'text-coffee-700 dark:text-cream-300'}`} />
                   </button>
 
                   <AnimatePresence>
@@ -299,14 +298,14 @@ export default function Navbar() {
                 </div>
               ) : (
                 <Link
-                  to="/login"
+                  to="/register"
                   className={`px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors rounded-xl ${
-                    isScrolled
-                      ? 'text-coffee-700 dark:text-cream-200 hover:text-forest-500 dark:hover:text-[#D4AF37] hover:bg-forest-500/5 dark:hover:bg-white/5'
-                      : 'text-cream-200 hover:text-[#D4AF37] hover:bg-white/5'
+                    isTransparentHome
+                      ? 'text-cream-200 hover:text-[#D4AF37] hover:bg-white/5'
+                      : 'text-coffee-700 dark:text-cream-200 hover:text-forest-500 dark:hover:text-[#D4AF37] hover:bg-forest-500/5 dark:hover:bg-white/5'
                   }`}
                 >
-                  Login
+                  Sign Up
                 </Link>
               )}
             </div>
@@ -361,7 +360,7 @@ export default function Navbar() {
                     key={link.to}
                     to={link.to}
                     end={link.to === '/'}
-                    onClick={() => setIsMobileOpen(false)}
+                    onClick={() => handleNavLinkClick(link.to)}
                     className={({ isActive }) =>
                       `block px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                         isActive ? 'text-gold-500 bg-gold-500/10' : 'text-cream-200'

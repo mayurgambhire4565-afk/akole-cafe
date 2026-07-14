@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Coffee, LayoutDashboard, Package, Heart, MapPin, RefreshCw,
-  Star, Tag, Bell, User, ChevronLeft, ChevronRight, LogOut, Menu
+  Star, Tag, Bell, User, ChevronLeft, ChevronRight, LogOut, Menu, Loader2
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import api from '@/api/axios';
@@ -159,7 +159,13 @@ export default function DashboardLayout() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <Outlet />
+              <Suspense fallback={
+                <div className="min-h-[40vh] flex flex-col items-center justify-center">
+                  <Loader2 className="animate-spin w-8 h-8 text-gold-500" />
+                </div>
+              }>
+                <Outlet />
+              </Suspense>
             </motion.div>
           </AnimatePresence>
         </main>

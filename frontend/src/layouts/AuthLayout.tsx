@@ -1,11 +1,18 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Logo from '@/components/ui/Logo';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import React, { Suspense } from 'react';
 
 export default function AuthLayout() {
+  const location = useLocation();
+  const isRegisterPage = location.pathname === '/register';
+
+  const backToPath = isRegisterPage ? '/' : '/register';
+  const backToLabel = isRegisterPage ? 'Back to Home' : 'Back to Sign Up';
 
   return (
-    <div className="min-h-screen flex bg-[#F8F4EA] dark:bg-[#0F1E15] transition-colors duration-300">
+    <div className="h-screen overflow-hidden flex bg-[#F8F4EA] dark:bg-[#0F1E15] transition-colors duration-300">
       {/* Left Panel - Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden border-r border-[#D4AF37]/10">
         {/* Background Image */}
@@ -65,8 +72,8 @@ export default function AuthLayout() {
       </div>
 
       {/* Right Panel - Auth Form */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-16 relative bg-[#F8F4EA] dark:bg-[#0F1E15] transition-colors duration-300">
-
+      <div className="flex-1 h-screen overflow-y-auto flex flex-col justify-start py-12 lg:py-16 relative bg-[#F8F4EA] dark:bg-[#0F1E15] transition-colors duration-300">
+        
 
         {/* Mobile Header Logo */}
         <div className="lg:hidden flex items-center justify-center mb-10">
@@ -79,9 +86,15 @@ export default function AuthLayout() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md mx-auto"
+          className="w-full max-w-md mx-auto my-auto py-8"
         >
-          <Outlet />
+          <Suspense fallback={
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="animate-spin w-8 h-8 text-gold-500" />
+            </div>
+          }>
+            <Outlet />
+          </Suspense>
         </motion.div>
       </div>
     </div>
