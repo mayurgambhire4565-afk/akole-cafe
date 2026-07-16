@@ -5,7 +5,7 @@ import fs from 'fs';
 
 // Helper to find the logo path in various environments (dev, build, docker)
 const getLogoPath = (): string | null => {
-  const fileNames = ['logo.jpg', 'gold-logo.png'];
+  const fileNames = ['logo.webp', 'gold-logo.webp', 'logo.jpg', 'gold-logo.png'];
   const baseDirectories = [
     path.join(process.cwd(), 'src/assets'),
     path.join(process.cwd(), 'dist/assets'),
@@ -54,12 +54,7 @@ const sendEmail = async (to: string, subject: string, html: string): Promise<voi
   }
 
   try {
-    const logoPath = getLogoPath();
-    const attachments = logoPath ? [{
-      filename: path.basename(logoPath),
-      path: logoPath,
-      cid: 'logo'
-    }] : [];
+    const attachments: any[] = [];
 
     await transporter.sendMail({
       from: env.EMAIL_FROM,
@@ -87,7 +82,6 @@ export const sendWelcomeEmail = async (to: string, name: string): Promise<void> 
   const html = `
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: #1a0f0a; color: #f5e6d3; padding: 40px; border-radius: 12px;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="cid:logo" alt="Akole Cafe Logo" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #D4AF37; margin-bottom: 15px; object-fit: cover;" />
         <h1 style="color: #D4AF37; font-family: 'Playfair Display', 'Georgia', serif; font-size: 26px; font-weight: bold; margin: 0; letter-spacing: 1px;">Akole Cafe</h1>
         <p style="color: #8b7355; margin: 8px 0 0;">Brewing Connections, Serving Memories</p>
       </div>
@@ -108,7 +102,6 @@ export const sendOTPEmail = async (to: string, name: string, otp: string): Promi
   const html = `
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: #1a0f0a; color: #f5e6d3; padding: 40px; border-radius: 12px;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="cid:logo" alt="Akole Cafe Logo" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #D4AF37; margin-bottom: 15px; object-fit: cover;" />
         <h1 style="color: #D4AF37; font-family: 'Playfair Display', 'Georgia', serif; font-size: 26px; font-weight: bold; margin: 0; letter-spacing: 1px;">Akole Cafe</h1>
       </div>
       <h2 style="color: #f5e6d3; font-weight: 600; font-size: 20px; border-bottom: 1px solid #3d251c; padding-bottom: 12px; margin-bottom: 20px;">Email Verification</h2>
@@ -129,7 +122,6 @@ export const sendPasswordResetEmail = async (to: string, name: string, resetUrl:
   const html = `
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: #1a0f0a; color: #f5e6d3; padding: 40px; border-radius: 12px;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="cid:logo" alt="Akole Cafe Logo" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #D4AF37; margin-bottom: 15px; object-fit: cover;" />
         <h1 style="color: #D4AF37; font-family: 'Playfair Display', 'Georgia', serif; font-size: 26px; font-weight: bold; margin: 0; letter-spacing: 1px;">Akole Cafe</h1>
       </div>
       <h2 style="color: #f5e6d3; font-weight: 600; font-size: 20px; border-bottom: 1px solid #3d251c; padding-bottom: 12px; margin-bottom: 20px;">Reset Your Password</h2>
@@ -154,7 +146,6 @@ export const sendOrderConfirmationEmail = async (
   const html = `
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: #1a0f0a; color: #f5e6d3; padding: 40px; border-radius: 12px;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="cid:logo" alt="Akole Cafe Logo" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #D4AF37; margin-bottom: 15px; object-fit: cover;" />
         <h1 style="color: #D4AF37; font-family: 'Playfair Display', 'Georgia', serif; font-size: 26px; font-weight: bold; margin: 0; letter-spacing: 1px;">Akole Cafe</h1>
       </div>
       <h2>Order Confirmed! 🎉</h2>
@@ -184,7 +175,6 @@ export const sendReservationConfirmationEmail = async (
   const html = `
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: #1a0f0a; color: #f5e6d3; padding: 40px; border-radius: 12px;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="cid:logo" alt="Akole Cafe Logo" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #D4AF37; margin-bottom: 15px; object-fit: cover;" />
         <h1 style="color: #D4AF37; font-family: 'Playfair Display', 'Georgia', serif; font-size: 26px; font-weight: bold; margin: 0; letter-spacing: 1px;">Akole Cafe</h1>
         <p style="color: #8b7355; margin: 8px 0 0;">Brewing Connections, Serving Memories</p>
       </div>

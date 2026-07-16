@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Star } from 'lucide-react';
-import type {  Product  } from '@/types';
+import { ShoppingCart, Heart, Star, Clock3, Flame, Leaf } from 'lucide-react';
+import type { Product } from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/api/axios';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
 import toast from 'react-hot-toast';
+import { useTranslation } from '@/store/languageStore';
 
 interface ProductCardProps {
   product: Product;
@@ -18,6 +19,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [imgIdx] = useState(0);
   const { isAuthenticated } = useAuthStore();
   const { setCart, openCart } = useCartStore();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const effectivePrice = product.salePrice ?? product.price;
@@ -97,7 +99,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Top Left Badge */}
           {product.isBestseller && (
             <div className="absolute top-3 left-3 bg-[#D4AF37] text-[#3C2415] text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full shadow-sm">
-              Bestseller
+              {t('bestseller')}
             </div>
           )}
 
@@ -121,6 +123,25 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {product.shortDesc}
               </p>
             )}
+
+            <div className="flex flex-wrap gap-2 text-[11px] text-[#3C2415]/70 dark:text-cream-200/70 mb-4">
+              <div className="inline-flex items-center gap-1 rounded-full bg-[#F5F3E9]/70 dark:bg-white/10 px-2.5 py-1">
+                <Leaf className="w-3.5 h-3.5 text-[#2E7D32]" />
+                <span>{product.isVeg ? t('veg') : t('nonVeg')}</span>
+              </div>
+              {product.spiceLevel && (
+                <div className="inline-flex items-center gap-1 rounded-full bg-[#1A3324]/8 dark:bg-[#F5F3E9]/10 px-2.5 py-1">
+                  <Flame className="w-3.5 h-3.5 text-[#D0443F]" />
+                  <span>{product.spiceLevel.replace('-', ' ')}</span>
+                </div>
+              )}
+              {product.prepTime && (
+                <div className="inline-flex items-center gap-1 rounded-full bg-[#F5F3E9]/70 dark:bg-white/10 px-2.5 py-1">
+                  <Clock3 className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  <span>{product.prepTime}</span>
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="flex items-center justify-between mt-auto">

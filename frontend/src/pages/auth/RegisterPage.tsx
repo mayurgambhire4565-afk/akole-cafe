@@ -40,27 +40,20 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        });
-        const { name, email } = userInfo.data;
-        
-        const res = await api.post('/auth/google', { name, email });
-        const { user, accessToken } = res.data.data;
-        login(user, accessToken);
-        toast.success(`Registered with Google as ${user.name}! ☕`);
-        navigate('/');
-      } catch (err: any) {
-        toast.error(err.response?.data?.message || 'Google authentication failed');
-      }
-    },
-    onError: () => {
-      toast.error('Google Sign Up Failed');
+  const handleGoogleSignupSimulated = async () => {
+    try {
+      const res = await api.post('/auth/google', { 
+        name: 'Google Test User', 
+        email: 'googletest@example.com' 
+      });
+      const { user, accessToken } = res.data.data;
+      login(user, accessToken);
+      toast.success(`Simulated Google Sign Up as ${user.name}! ☕`);
+      navigate('/');
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Google authentication failed');
     }
-  });
+  };
 
   const [showLoginOption, setShowLoginOption] = useState(false);
 
@@ -177,7 +170,7 @@ export default function RegisterPage() {
         <button 
           type="submit" 
           disabled={mutation.isPending} 
-          className="w-full bg-[#3D2015] dark:bg-[#D4AF37] text-white dark:text-[#3D2015] hover:bg-[#2C150D] dark:hover:bg-[#C5A028] py-3.5 rounded-xl font-bold transition-all duration-300 hover:scale-[1.01] shadow-md hover:shadow-lg flex items-center justify-center font-sans tracking-wider text-xs uppercase gap-2 cursor-pointer"
+          className="w-full btn btn-primary py-3.5 font-bold hover:scale-[1.01] transition-transform text-xs uppercase tracking-wider cursor-pointer flex items-center justify-center gap-2"
         >
           {mutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
           {mutation.isPending ? 'Creating...' : 'Create Account'}
@@ -185,21 +178,20 @@ export default function RegisterPage() {
       </form>
 
       {/* Or Separator */}
-      <div className="relative my-6 flex items-center justify-center">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-[#3C2415]/10 dark:border-white/10"></div>
-        </div>
-        <span className="relative bg-[#F8F4EA] dark:bg-[#0F1E15] px-4 text-xs font-semibold uppercase tracking-wider text-[#3C2415]/50 dark:text-cream-200/50">
+      <div className="relative my-6 flex items-center">
+        <div className="flex-grow border-t border-[#3C2415]/10 dark:border-white/10"></div>
+        <span className="flex-shrink mx-4 text-xs font-semibold uppercase tracking-wider text-[#3C2415]/50 dark:text-cream-200/50">
           Or continue with
         </span>
+        <div className="flex-grow border-t border-[#3C2415]/10 dark:border-white/10"></div>
       </div>
 
       {/* Google Sign Up Button */}
       <div className="w-full flex justify-center mt-4">
         <button
           type="button"
-          onClick={() => googleLogin()}
-          className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-xl py-2.5 px-4 font-sans font-medium text-sm flex items-center justify-center gap-3 transition-colors duration-200 shadow-sm cursor-pointer select-none"
+          onClick={handleGoogleSignupSimulated}
+          className="w-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-gray-700 dark:text-cream-200 border border-[#3C2415]/15 dark:border-white/10 backdrop-blur-md rounded-xl py-2.5 px-4 font-sans font-medium text-sm flex items-center justify-center gap-3 transition-colors duration-200 shadow-sm cursor-pointer select-none"
         >
           <svg className="w-[18px] h-[18px] flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>

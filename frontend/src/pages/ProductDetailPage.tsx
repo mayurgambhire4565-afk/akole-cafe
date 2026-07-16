@@ -177,10 +177,10 @@ export default function ProductDetailPage() {
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-6">
               <span className="text-4xl font-bold text-espresso-900 dark:text-cream-50">
-                ₹{effectivePrice.toFixed(0)}
+                ₹{(effectivePrice * qty).toFixed(0)}
               </span>
               {product.salePrice && (
-                <span className="text-lg text-espresso-400 line-through">₹{product.price.toFixed(0)}</span>
+                <span className="text-lg text-espresso-400 line-through">₹{(product.price * qty).toFixed(0)}</span>
               )}
             </div>
 

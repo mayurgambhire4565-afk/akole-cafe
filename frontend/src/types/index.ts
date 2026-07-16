@@ -63,6 +63,10 @@ export interface Product {
   roastLevel?: string;
   flavor?: string;
   tags?: string[];
+  isVeg?: boolean;
+  isChefSpecial?: boolean;
+  spiceLevel?: 'mild' | 'medium' | 'hot' | 'extra-hot';
+  prepTime?: string;
   reviews?: Review[];
   createdAt: string;
 }

@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -6,6 +6,7 @@ import { Mail, RefreshCw } from 'lucide-react';
 import api from '@/api/axios';
 import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
+import { useAuthStore } from '@/store/authStore';
 
 export default function OTPPage() {
   const location = useLocation();
@@ -13,6 +14,22 @@ export default function OTPPage() {
   const email = (location.state as any)?.email || '';
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const values = useRef<string[]>(Array(6).fill(''));
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+  const { login } = useAuthStore();
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
 
   useEffect(() => {
     if (!email) navigate('/register');
@@ -20,16 +37,21 @@ export default function OTPPage() {
 
   const verifyMutation = useMutation({
     mutationFn: (otp: string) => api.post('/auth/verify-otp', { email, otp }),
-    onSuccess: () => {
-      toast.success('Email verified successfully! ☕');
-      navigate('/login');
+    onSuccess: (res) => {
+      const { user, accessToken } = res.data.data;
+      login(user, accessToken);
+      toast.success(`Email verified successfully! Welcome, ${user.name}! ☕`);
+      navigate('/');
     },
     onError: (err: any) => toast.error(err.response?.data?.message || 'Invalid OTP'),
   });
 
   const resendMutation = useMutation({
     mutationFn: () => api.post('/auth/resend-otp', { email }),
-    onSuccess: () => toast.success('OTP resent to your email'),
+    onSuccess: () => {
+      toast.success('OTP resent to your email');
+      setTimeLeft(600);
+    },
     onError: () => toast.error('Failed to resend OTP'),
   });
 
@@ -103,7 +125,9 @@ export default function OTPPage() {
         >
           Resend OTP
         </Button>
-        <p className="text-xs text-[#3C2415]/50 dark:text-cream-200/40">OTP expires in 10 minutes</p>
+        <p className="text-xs text-[#3C2415]/50 dark:text-cream-200/40">
+          {timeLeft > 0 ? `OTP expires in ${formatTime(timeLeft)}` : 'OTP has expired'}
+        </p>
       </div>
     </div>
   );

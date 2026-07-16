@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
+import { useTranslation } from '@/store/languageStore';
 
 export default function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="bg-[#1A3324] border-t border-[#D4AF37]/10 text-[#F5F3E9]/80 font-sans">
       <div className="container-custom py-16">
@@ -14,7 +17,7 @@ export default function Footer() {
               <Logo size={48} showText={true} textColor="text-cream-50" />
             </Link>
             <p className="text-[#F5F3E9]/75 text-sm leading-relaxed max-w-sm font-light">
-              Brewing Connections, Serving Memories. A premium café experience crafted for those who appreciate the art of coffee.
+              {t('footerText')}
             </p>
             {/* Social Icons */}
             <div className="flex items-center gap-3">
@@ -74,15 +77,15 @@ export default function Footer() {
 
           {/* Explore Column */}
           <div className="space-y-4">
-            <h3 className="font-sans font-bold text-xs uppercase tracking-[0.2em] text-[#D4AF37]">Explore</h3>
+            <h3 className="font-sans font-bold text-xs uppercase tracking-[0.2em] text-[#D4AF37]">{t('explore')}</h3>
             <ul className="space-y-3">
               {[
-                { label: 'Menu', to: '/products' },
-                { label: 'Reserve a Table', to: '/reserve' },
-                { label: 'Events', to: '/events' },
-                { label: 'Gallery', to: '/gallery' }
+                { label: t('menu'), to: '/products' },
+                { label: t('reserveTable'), to: '/reserve' },
+                { label: t('events'), to: '/events' },
+                { label: t('gallery'), to: '/gallery' }
               ].map((link) => (
-                <li key={link.label}>
+                <li key={link.to}>
                   <Link
                     to={link.to}
                     className="text-[#F5F3E9]/75 text-sm hover:text-[#D4AF37] transition-colors font-sans font-medium"
@@ -96,15 +99,15 @@ export default function Footer() {
 
           {/* Company Column */}
           <div className="space-y-4">
-            <h3 className="font-sans font-bold text-xs uppercase tracking-[0.2em] text-[#D4AF37]">Company</h3>
+            <h3 className="font-sans font-bold text-xs uppercase tracking-[0.2em] text-[#D4AF37]">{t('company')}</h3>
             <ul className="space-y-3">
               {[
-                { label: 'About Us', to: '/about' },
-                { label: 'Franchise', to: '/franchise' },
-                { label: 'Blog', to: '/blogs' },
-                { label: 'Contact', to: '/contact' }
+                { label: t('aboutUs'), to: '/about' },
+                { label: t('franchise'), to: '/franchise' },
+                { label: t('blog'), to: '/blogs' },
+                { label: t('contact'), to: '/contact' }
               ].map((link) => (
-                <li key={link.label}>
+                <li key={link.to}>
                   <Link
                     to={link.to}
                     className="text-[#F5F3E9]/75 text-sm hover:text-[#D4AF37] transition-colors font-sans font-medium"
@@ -119,7 +122,7 @@ export default function Footer() {
           {/* Visit Us & Hours Column */}
           <div className="space-y-6">
             <div className="space-y-4">
-              <h3 className="font-sans font-bold text-xs uppercase tracking-[0.2em] text-[#D4AF37]">Visit Us</h3>
+              <h3 className="font-sans font-bold text-xs uppercase tracking-[0.2em] text-[#D4AF37]">{t('visitUs')}</h3>
               <ul className="space-y-3.5 text-sm text-[#F5F3E9]/75 font-light">
                 <li className="flex items-start gap-2.5">
                   <MapPin className="w-4 h-4 text-[#D4AF37] flex-shrink-0 mt-0.5" />
@@ -137,10 +140,10 @@ export default function Footer() {
             </div>
 
             <div className="space-y-3 pt-2">
-              <h4 className="font-sans font-bold text-xs uppercase tracking-[0.2em] text-[#D4AF37]">Hours</h4>
+              <h4 className="font-sans font-bold text-xs uppercase tracking-[0.2em] text-[#D4AF37]">{t('hours')}</h4>
               <ul className="text-xs text-[#F5F3E9]/70 space-y-1.5 font-light">
-                <li>Mon – Fri: 7:00 AM – 11:00 PM</li>
-                <li>Sat – Sun: 8:00 AM – 12:00 AM</li>
+                <li>{t('hoursWeek')}</li>
+                <li>{t('hoursWeekend')}</li>
               </ul>
             </div>
           </div>

@@ -33,7 +33,12 @@ export const verifyOTP = asyncHandler(async (req: Request, res: Response) => {
   const { email, otp } = req.body;
   if (!email || !otp) { sendError(res, 'Email and OTP are required', 400); return; }
   const result = await authService.verifyOTP(email, otp);
-  sendSuccess(res, result, 'Email verified successfully');
+  
+  // Set refresh token in httpOnly cookie
+  const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+  res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, { ...COOKIE_OPTIONS, maxAge });
+
+  sendSuccess(res, { user: result.user, accessToken: result.accessToken }, 'Email verified successfully');
 });
 
 export const resendOTP = asyncHandler(async (req: Request, res: Response) => {
@@ -49,7 +54,6 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   const result = await authService.loginUser(email, password, rememberMe);
   
-  // Set refresh token in httpOnly cookie
   const maxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;
   res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, { ...COOKIE_OPTIONS, maxAge });
 
@@ -69,7 +73,6 @@ export const loginWithOTP = asyncHandler(async (req: Request, res: Response) => 
 
   const result = await authService.loginWithOTP(email, otp, rememberMe);
 
-  // Set refresh token in httpOnly cookie
   const maxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;
   res.cookie(REFRESH_TOKEN_COOKIE, result.refreshToken, { ...COOKIE_OPTIONS, maxAge });
 

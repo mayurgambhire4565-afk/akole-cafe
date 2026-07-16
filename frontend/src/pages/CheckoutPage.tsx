@@ -18,6 +18,11 @@ export default function CheckoutPage() {
   const [upiId, setUpiId] = useState('');
   const [upiPhone, setUpiPhone] = useState('');
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [showUpiModal, setShowUpiModal] = useState(false);
+  const [upiTransactionId, setUpiTransactionId] = useState('');
+  const [showCardOtpModal, setShowCardOtpModal] = useState(false);
+  const [cardOtp, setCardOtp] = useState('');
+  const [cardOtpError, setCardOtpError] = useState('');
   const { cart, clearCart } = useCartStore();
   const navigate = useNavigate();
 
@@ -60,6 +65,82 @@ export default function CheckoutPage() {
   const tax = (subtotal - discount) * 0.05;
   const total = subtotal - discount + deliveryFee + tax;
 
+  const handleConfirmUpiPayment = () => {
+    if (!upiTransactionId.trim()) {
+      toast.error('Please enter the 12-digit UPI UTR / Transaction Ref No.');
+      return;
+    }
+    if (!/^\d{12}$/.test(upiTransactionId)) {
+      toast.error('Transaction ID (UTR) must be exactly 12 digits');
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    const verifyToastId = toast.loading('Verifying transaction with bank...');
+
+    setTimeout(() => {
+      toast.dismiss(verifyToastId);
+      toast.success('Payment Verified & Received successfully! 🎉');
+      setShowUpiModal(false);
+      setIsProcessingPayment(false);
+
+      const providerName = selectedUpiApp === 'gpay' ? 'Google Pay' : selectedUpiApp === 'phonepe' ? 'PhonePe' : selectedUpiApp === 'paytm' ? 'Paytm' : 'UPI';
+      orderMutation.mutate({
+        paymentMethod: 'upi',
+        paymentProvider: providerName,
+        transactionId: `TXN-${providerName.toUpperCase().replace(/\s+/g, '')}-${upiTransactionId}`
+      });
+      setUpiTransactionId('');
+    }, 2000);
+  };
+
+  const handleCancelUpiPayment = () => {
+    setShowUpiModal(false);
+    setIsProcessingPayment(false);
+    setUpiTransactionId('');
+    toast.error('Payment cancelled');
+  };
+
+  const handleConfirmCardPayment = () => {
+    if (!cardOtp.trim()) {
+      setCardOtpError('OTP is required');
+      return;
+    }
+    if (!/^\d{6}$/.test(cardOtp)) {
+      setCardOtpError('OTP must be exactly 6 digits');
+      return;
+    }
+    if (cardOtp !== '123456') {
+      setCardOtpError('Invalid OTP code. For simulation, please use 123456');
+      return;
+    }
+
+    setCardOtpError('');
+    setIsProcessingPayment(true);
+    const verifyToastId = toast.loading('Processing card transaction...');
+    setShowCardOtpModal(false);
+
+    setTimeout(() => {
+      toast.dismiss(verifyToastId);
+      toast.success('Card Payment successful! 💳');
+      setIsProcessingPayment(false);
+      orderMutation.mutate({
+        paymentMethod: 'card',
+        paymentProvider: 'CARD',
+        transactionId: `TXN-CARD-${Date.now().toString().slice(-6)}`
+      });
+      setCardOtp('');
+    }, 2000);
+  };
+
+  const handleCancelCardPayment = () => {
+    setShowCardOtpModal(false);
+    setIsProcessingPayment(false);
+    setCardOtp('');
+    setCardOtpError('');
+    toast.error('Card authentication cancelled');
+  };
+
   const handlePlaceOrder = () => {
     if (!selectedAddress) {
       toast.error('Please select a delivery address');
@@ -81,38 +162,20 @@ export default function CheckoutPage() {
       }
 
       setIsProcessingPayment(true);
-      const paymentToastId = toast.loading(`Waiting for payment confirmation on ${
-        selectedUpiApp === 'gpay' ? 'Google Pay' : selectedUpiApp === 'phonepe' ? 'PhonePe' : selectedUpiApp === 'paytm' ? 'Paytm' : 'UPI App'
-      }...`);
+      setShowUpiModal(true);
 
-      setTimeout(() => {
-        toast.dismiss(paymentToastId);
-        toast.success('Payment Received successfully! 🎉');
-        setIsProcessingPayment(false);
-        const txId = selectedUpiApp === 'upi_id' ? upiId : upiPhone;
-        const providerName = selectedUpiApp === 'gpay' ? 'Google Pay' : selectedUpiApp === 'phonepe' ? 'PhonePe' : selectedUpiApp === 'paytm' ? 'Paytm' : 'UPI';
-        orderMutation.mutate({
-          paymentMethod: 'upi',
-          paymentProvider: providerName,
-          transactionId: `TXN-${providerName.toUpperCase().replace(/\s+/g, '')}-${Date.now().toString().slice(-6)}-${txId}`
-        });
-      }, 2500);
+      const upiUrl = `upi://pay?pa=akolecafe@okaxis&pn=Akole%20Cafe&am=${total.toFixed(2)}&cu=INR&tn=Akole%20Cafe%20Order`;
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = upiUrl;
+      }
       return;
     }
 
     if (selectedPayment === 'card') {
-      setIsProcessingPayment(true);
-      const paymentToastId = toast.loading('Processing card authentication...');
-      setTimeout(() => {
-        toast.dismiss(paymentToastId);
-        toast.success('Card Payment successful! 💳');
-        setIsProcessingPayment(false);
-        orderMutation.mutate({
-          paymentMethod: 'card',
-          paymentProvider: 'CARD',
-          transactionId: `TXN-CARD-${Date.now().toString().slice(-6)}`
-        });
-      }, 2500);
+      setCardOtp('');
+      setCardOtpError('');
+      setShowCardOtpModal(true);
       return;
     }
 
@@ -243,8 +306,8 @@ export default function CheckoutPage() {
                 <p className="text-xs font-bold text-coffee-900 dark:text-cream-100 uppercase tracking-wider">Select UPI App</p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
-                    { id: 'gpay', name: 'Google Pay', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo.svg' },
-                    { id: 'phonepe', name: 'PhonePe', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/PhonePe_Logo.svg' },
+                    { id: 'gpay', name: 'Google Pay', logo: '/gpay-logo.svg' },
+                    { id: 'phonepe', name: 'PhonePe', logo: '/phonepe-logo.svg' },
                     { id: 'paytm', name: 'Paytm', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg' },
                     { id: 'upi_id', name: 'Any UPI ID', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg' }
                   ].map(app => {
@@ -442,6 +505,185 @@ export default function CheckoutPage() {
           )}
         </div>
       </div>
+
+      {/* UPI Payment Modal */}
+      {showUpiModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-full max-w-sm bg-white dark:bg-[#0F1E15] border border-coffee-100 dark:border-white/10 rounded-3xl p-6 shadow-2xl text-center space-y-4"
+          >
+            <div className="flex justify-between items-center border-b border-coffee-50 dark:border-white/5 pb-2">
+              <span className="text-sm font-bold text-coffee-900 dark:text-cream-100 uppercase tracking-wider">Scan & Pay (UPI)</span>
+              <button 
+                type="button"
+                onClick={handleCancelUpiPayment}
+                className="text-coffee-400 hover:text-coffee-600 dark:hover:text-cream-200 text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-xs text-coffee-400 dark:text-coffee-400 font-semibold uppercase tracking-wider">Pay to Akole Cafe</p>
+              <p className="text-2xl font-black text-gold-500">₹{total.toFixed(0)}</p>
+            </div>
+
+            {/* QR Code Container */}
+            <div className="flex flex-col items-center justify-center bg-white dark:bg-white/5 p-3 rounded-2xl border border-coffee-100 dark:border-white/10 w-fit mx-auto">
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+                  `upi://pay?pa=akolecafe@okaxis&pn=Akole%20Cafe&am=${total.toFixed(2)}&cu=INR&tn=Akole%20Cafe%20Order`
+                )}`}
+                alt="UPI Payment QR Code"
+                className="w-36 h-36 object-contain rounded-lg"
+              />
+              <p className="text-[10px] text-coffee-500 dark:text-cream-300/80 font-bold uppercase tracking-wider mt-2">
+                Scan with any UPI App
+              </p>
+            </div>
+
+            {/* Mobile Launch Button */}
+            {/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && (
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = `upi://pay?pa=akolecafe@okaxis&pn=Akole%20Cafe&am=${total.toFixed(2)}&cu=INR&tn=Akole%20Cafe%20Order`;
+                }}
+                className="w-full bg-[#D4AF37] text-white hover:bg-[#C5A028] py-2 rounded-lg font-bold text-xs uppercase tracking-wider"
+              >
+                Open Installed UPI App
+              </button>
+            )}
+
+            {/* Transaction ID Input (Required) */}
+            <div className="space-y-1 text-left bg-coffee-50/50 dark:bg-coffee-950/45 p-3 rounded-xl border border-coffee-100 dark:border-white/5">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-coffee-600 dark:text-cream-300">
+                  Enter 12-digit UPI UTR / Ref No.
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const mockUtr = Math.floor(100000000000 + Math.random() * 900000000000).toString();
+                    setUpiTransactionId(mockUtr);
+                  }}
+                  className="text-[9px] font-bold text-[#D4AF37] hover:underline"
+                >
+                  Autofill Mock ID
+                </button>
+              </div>
+              <input
+                type="text"
+                placeholder="e.g. 123456789012"
+                maxLength={12}
+                value={upiTransactionId}
+                onChange={e => setUpiTransactionId(e.target.value.replace(/\D/g, ''))}
+                className="input w-full text-xs font-semibold tracking-widest text-center border-coffee-100 dark:border-forest-500/10 py-1.5"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2 pt-1">
+              <button
+                type="button"
+                onClick={handleConfirmUpiPayment}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-colors duration-200 shadow-md cursor-pointer"
+              >
+                Verify Payment & Place Order
+              </button>
+              <button
+                type="button"
+                onClick={handleCancelUpiPayment}
+                className="w-full bg-red-500/10 hover:bg-red-500/25 text-red-500 dark:text-red-400 font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition-colors duration-200 cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Card Payment OTP Modal */}
+      {showCardOtpModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-full max-w-sm bg-white dark:bg-[#0F1E15] border border-coffee-100 dark:border-white/10 rounded-3xl p-6 shadow-2xl text-center space-y-4"
+          >
+            <div className="flex justify-between items-center border-b border-coffee-50 dark:border-white/5 pb-2">
+              <span className="text-sm font-bold text-coffee-900 dark:text-cream-100 uppercase tracking-wider">Card Verification</span>
+              <button 
+                type="button"
+                onClick={handleCancelCardPayment}
+                className="text-coffee-400 hover:text-coffee-600 dark:hover:text-cream-200 text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-xs text-coffee-500 dark:text-coffee-400 font-semibold leading-relaxed">
+                A 6-digit OTP code has been sent to your registered mobile number ending in ****. Please enter it below to authorize this transaction of:
+              </p>
+              <p className="text-xl font-black text-gold-500 mt-1">₹{total.toFixed(0)}</p>
+            </div>
+
+            {/* OTP Input Container */}
+            <div className="space-y-1.5 text-left bg-coffee-50/50 dark:bg-coffee-950/45 p-3.5 rounded-xl border border-coffee-100 dark:border-white/5">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-coffee-600 dark:text-cream-300">
+                  Enter 6-digit OTP
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCardOtp('123456');
+                    setCardOtpError('');
+                  }}
+                  className="text-[9px] font-bold text-[#D4AF37] hover:underline"
+                >
+                  Use Mock OTP (123456)
+                </button>
+              </div>
+              <input
+                type="text"
+                placeholder="******"
+                maxLength={6}
+                value={cardOtp}
+                onChange={e => {
+                  setCardOtp(e.target.value.replace(/\D/g, ''));
+                  setCardOtpError('');
+                }}
+                className="input w-full text-sm font-bold tracking-widest text-center border-coffee-100 dark:border-forest-500/10 py-2"
+              />
+              {cardOtpError && (
+                <p className="text-red-500 text-[10px] font-bold mt-1 text-center">
+                  {cardOtpError}
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2 pt-1">
+              <button
+                type="button"
+                onClick={handleConfirmCardPayment}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-colors duration-200 shadow-md cursor-pointer"
+              >
+                Verify OTP & Place Order
+              </button>
+              <button
+                type="button"
+                onClick={handleCancelCardPayment}
+                className="w-full bg-red-500/10 hover:bg-red-500/25 text-red-500 dark:text-red-400 font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition-colors duration-200 cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

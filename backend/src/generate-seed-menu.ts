@@ -1,12 +1,23 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const seedMenuPath = path.join(__dirname, 'seed-menu.ts');
+const seedMenuPath = path.join(process.cwd(), 'src', 'seed-menu.ts');
 
 const content = `import prisma from './database/prisma';
 
 async function main() {
   console.log('Starting comprehensive menu seeding...');
+
+  // Clear existing database records to prevent duplicate constraints
+  await prisma.cartItem.deleteMany({});
+  await prisma.cart.deleteMany({});
+  await prisma.wishlist.deleteMany({});
+  await prisma.review.deleteMany({});
+  await prisma.orderItem.deleteMany({});
+  await prisma.payment.deleteMany({});
+  await prisma.order.deleteMany({});
+  await prisma.product.deleteMany({});
+  await prisma.category.deleteMany({});
 
   // --- Category Upserts ---
   const hotCoffeeCat = await prisma.category.upsert({
@@ -1100,7 +1111,7 @@ async function main() {
       shortDesc: 'Warm brownie and vanilla sundae.',
       price: 150,
       stock: 45,
-      images: ['https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=3840&q=100'],
+      images: ['/images/menu/nutella_brownie_sundae.png'],
       categoryId: iceCreamCat.id,
       rating: 4.9,
       reviewCount: 130,

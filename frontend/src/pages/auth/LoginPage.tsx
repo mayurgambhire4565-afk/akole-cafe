@@ -79,11 +79,7 @@ export default function LoginPage() {
 
   const emailValue = watch('email');
 
-  useEffect(() => {
-    if (!(location.state as any)?.allowLogin) {
-      navigate('/register', { replace: true });
-    }
-  }, [location.state, navigate]);
+
 
   useEffect(() => {
     return () => {
@@ -150,27 +146,20 @@ export default function LoginPage() {
     },
   });
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        });
-        const { name, email } = userInfo.data;
-        
-        const res = await api.post('/auth/google', { name, email });
-        const { user, accessToken } = res.data.data;
-        login(user, accessToken);
-        toast.success(`Logged in with Google as ${user.name}! ☕`);
-        navigate('/');
-      } catch (err: any) {
-        toast.error(err.response?.data?.message || 'Google authentication failed');
-      }
-    },
-    onError: () => {
-      toast.error('Google Login Failed');
+  const handleGoogleLoginSimulated = async () => {
+    try {
+      const res = await api.post('/auth/google', { 
+        name: 'Google Test User', 
+        email: 'googletest@example.com' 
+      });
+      const { user, accessToken } = res.data.data;
+      login(user, accessToken);
+      toast.success(`Simulated Google Login as ${user.name}! ☕`);
+      navigate('/');
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Google authentication failed');
     }
-  });
+  };
 
   const onSubmit = (data: LoginForm) => {
     if (loginMode === 'password') {
@@ -449,21 +438,20 @@ export default function LoginPage() {
       </form>
 
       {/* Or Separator */}
-      <div className="relative my-6 flex items-center justify-center">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-[#3C2415]/10 dark:border-white/10"></div>
-        </div>
-        <span className="relative bg-[#F8F4EA] dark:bg-[#0F1E15] px-4 text-xs font-semibold uppercase tracking-wider text-[#3C2415]/50 dark:text-cream-200/50">
+      <div className="relative my-6 flex items-center">
+        <div className="flex-grow border-t border-[#3C2415]/10 dark:border-white/10"></div>
+        <span className="flex-shrink mx-4 text-xs font-semibold uppercase tracking-wider text-[#3C2415]/50 dark:text-cream-200/50">
           Or continue with
         </span>
+        <div className="flex-grow border-t border-[#3C2415]/10 dark:border-white/10"></div>
       </div>
 
       {/* Google Login Button */}
       <div className="w-full flex justify-center mt-4">
         <button
           type="button"
-          onClick={() => googleLogin()}
-          className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-xl py-2.5 px-4 font-sans font-medium text-sm flex items-center justify-center gap-3 transition-colors duration-200 shadow-sm cursor-pointer select-none"
+          onClick={handleGoogleLoginSimulated}
+          className="w-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-gray-700 dark:text-cream-200 border border-[#3C2415]/15 dark:border-white/10 backdrop-blur-md rounded-xl py-2.5 px-4 font-sans font-medium text-sm flex items-center justify-center gap-3 transition-colors duration-200 shadow-sm cursor-pointer select-none"
         >
           <svg className="w-[18px] h-[18px] flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>

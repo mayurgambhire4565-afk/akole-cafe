@@ -152,15 +152,19 @@
     border-radius: 10px !important;
   }
 
+  .glass-panel {
+    @apply bg-white/40 dark:bg-black/30 border border-[#3C2415]/10 dark:border-white/10 shadow-xl rounded-3xl p-8 backdrop-blur-lg;
+  }
+
   .btn-primary {
-    @apply btn bg-gold-500 hover:bg-gold-600 text-espresso-900 
+    @apply btn bg-gold-500/80 hover:bg-gold-600/90 text-espresso-900 border border-gold-400/20 backdrop-blur-md
            focus-visible:ring-gold-500 shadow-coffee hover:shadow-coffee-lg
            hover:-translate-y-0.5 active:translate-y-0;
   }
 
   .btn-outline {
-    @apply btn border-2 border-gold-500 text-gold-500 hover:bg-gold-500 
-           hover:text-espresso-900 focus-visible:ring-gold-500;
+    @apply btn border-2 border-gold-500/40 text-gold-500 hover:bg-gold-500/10 
+           backdrop-blur-md focus-visible:ring-gold-500;
   }
 
   .btn-ghost {

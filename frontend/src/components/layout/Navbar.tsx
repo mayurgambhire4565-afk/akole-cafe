@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShoppingCart, Heart, User, Menu, X, Search,
   LogOut, Settings, Package, ChevronDown, Crown, BookOpen, Store,
-  Sun, Moon,
+  Sun, Moon, MapPin,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
@@ -13,6 +13,8 @@ import api from '@/api/axios';
 import toast from 'react-hot-toast';
 import Logo from '@/components/ui/Logo';
 import HeartLogo from '@/components/ui/HeartLogo';
+import LocationModal from './LocationModal';
+import { useTranslation } from '@/store/languageStore';
 
 const NAV_LINKS = [
   { label: 'Home', to: '/' },
@@ -29,12 +31,14 @@ export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { isAuthenticated, user, logout } = useAuthStore();
   const { itemCount, toggleCart, openCart } = useCartStore();
   const { isDark, toggleTheme } = useThemeStore();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const isTransparentHome = false;
 
@@ -123,7 +127,7 @@ export default function Navbar() {
                 >
                   {({ isActive }) => (
                     <>
-                      {link.label}
+                      {t(link.label.toLowerCase() as any)}
                       {isActive && (
                         <motion.span
                           layoutId="activeNavUnderline"
@@ -142,7 +146,7 @@ export default function Navbar() {
                 to="/products"
                 className="bg-[#D4AF37] hover:bg-[#C5A028] text-[#3D2015] font-bold text-xs uppercase tracking-wider px-5 h-9 rounded-full mr-1.5 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap flex-shrink-0 border border-gold-400/20 flex items-center justify-center"
               >
-                Order Now
+                {t('orderNow')}
               </Link>
 
               <div className="relative flex items-center">
@@ -165,7 +169,7 @@ export default function Navbar() {
                     >
                       <input
                         type="text"
-                        placeholder="Search coffees..."
+                        placeholder={t('searchPlaceholder')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         autoFocus
@@ -185,6 +189,14 @@ export default function Navbar() {
                   {isSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
                 </button>
               </div>
+
+              <button
+                onClick={() => setIsLocationOpen(true)}
+                className={`p-2.5 rounded-xl transition-all relative ${buttonColorClass}`}
+                aria-label="Location"
+              >
+                <MapPin className="w-5 h-5" />
+              </button>
 
               <button
                 onClick={() => isAuthenticated ? openCart() : toggleCart()}
@@ -314,6 +326,14 @@ export default function Navbar() {
             {/* Mobile Actions & Menu Buttons */}
             <div className="flex items-center gap-2 md:hidden">
               <button
+                onClick={() => setIsLocationOpen(true)}
+                className={`p-2 rounded-xl transition-all relative ${buttonColorClass}`}
+                aria-label="Location"
+              >
+                <MapPin className="w-5 h-5" />
+              </button>
+
+              <button
                 onClick={() => isAuthenticated ? openCart() : toggleCart()}
                 className={`p-2 rounded-xl transition-all relative ${buttonColorClass}`}
                 aria-label="Cart"
@@ -367,7 +387,7 @@ export default function Navbar() {
                       }`
                     }
                   >
-                    {link.label}
+                    {t(link.label.toLowerCase() as any)}
                   </NavLink>
                 ))}
                 <div className="flex gap-2 pt-2 border-t border-gold-500/10">
@@ -378,19 +398,19 @@ export default function Navbar() {
                         onClick={() => setIsMobileOpen(false)}
                         className="flex-1 btn btn-outline btn-sm"
                       >
-                        Dashboard
+                        {t('dashboard')}
                       </Link>
                       <button onClick={handleLogout} className="flex-1 btn btn-danger btn-sm">
-                        Logout
+                        {t('logout')}
                       </button>
                     </>
                   ) : (
                     <>
                       <Link to="/login" onClick={() => setIsMobileOpen(false)} className="flex-1 btn btn-outline btn-sm">
-                        Login
+                        {t('login')}
                       </Link>
                       <Link to="/register" onClick={() => setIsMobileOpen(false)} className="flex-1 btn btn-primary btn-sm">
-                        Sign Up
+                        {t('signUp')}
                       </Link>
                     </>
                   )}
@@ -403,6 +423,8 @@ export default function Navbar() {
 
       {/* Spacer to prevent content jump */}
       <div className="h-16 md:h-20" />
+
+      <LocationModal isOpen={isLocationOpen} onClose={() => setIsLocationOpen(false)} />
     </>
   );
 }

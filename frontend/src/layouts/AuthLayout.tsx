@@ -86,15 +86,17 @@ export default function AuthLayout() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md mx-auto my-auto py-8"
+          className="w-full max-w-md mx-auto my-auto py-8 px-4"
         >
-          <Suspense fallback={
-            <div className="flex flex-col items-center justify-center py-12">
-              <Loader2 className="animate-spin w-8 h-8 text-gold-500" />
-            </div>
-          }>
-            <Outlet />
-          </Suspense>
+          <div className="glass-panel">
+            <Suspense fallback={
+              <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="animate-spin w-8 h-8 text-gold-500" />
+              </div>
+            }>
+              <Outlet />
+            </Suspense>
+          </div>
         </motion.div>
       </div>
     </div>

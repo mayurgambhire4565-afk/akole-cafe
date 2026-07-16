@@ -9,11 +9,15 @@ import api from '@/api/axios';
 import toast from 'react-hot-toast';
 import botanicalStrip from '@/assets/image copy.png';
 import HeartLogo from '@/components/ui/HeartLogo';
+import { FEATURED_DISHES } from '@/data/maharashtraMenu';
+import { useTranslation } from '@/store/languageStore';
 
 // ================================
 // HERO SECTION
 // ================================
 function HeroSection() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative bg-[#F5F3E9] pt-20 pb-10 min-h-[75vh] flex items-center">
       <div className="container-custom relative z-10">
@@ -26,26 +30,25 @@ function HeroSection() {
             className="max-w-xl"
           >
             <p className="text-[#D4AF37] font-semibold tracking-[0.2em] uppercase text-[10px] sm:text-xs mb-4 sm:mb-6">
-              Welcome to Akole Cafe
+              {t('welcomeToCafe')}
             </p>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-[#1A3324] leading-[1.15] mb-4 sm:mb-6">
-              Brewing <br />
-              Connections, <br />
-              Serving <br />
-              <span className="italic font-light text-[#1A3324]">Memories</span>
+              {t('brewing')} <br />
+              {t('connections')} <br />
+              {t('serving')} <br />
+              <span className="italic font-light text-[#1A3324]">{t('memories')}</span>
             </h1>
             <p className="text-[#3C2415]/70 text-base sm:text-lg mb-8 sm:mb-10 font-light leading-relaxed">
-              Experience the perfect blend of rich flavors and a cozy atmosphere
-              crafted just for you. Every cup tells a story.
+              {t('heroSub')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/products" className="w-full sm:w-auto bg-[#1A3324] text-white hover:bg-[#112218] rounded-full px-8 py-4 flex items-center justify-center gap-2 text-xs font-bold tracking-widest uppercase shadow-[0_10px_20px_rgba(26,51,36,0.15)] hover:shadow-[0_12px_24px_rgba(26,51,36,0.25)] hover:-translate-y-0.5 transition-all duration-300 group">
-                Explore Menu
+                {t('exploreMenu')}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-white" />
               </Link>
               <Link to="/reserve" className="w-full sm:w-auto border-2 border-[#1A3324]/20 hover:border-[#1A3324] text-[#1A3324] hover:bg-[#1A3324]/5 rounded-full px-8 py-4 flex items-center justify-center gap-2.5 text-xs font-bold tracking-widest uppercase hover:-translate-y-0.5 transition-all duration-300">
                 <Calendar className="w-4 h-4 text-[#1A3324]" />
-                Reserve A Table
+                {t('reserveTable')}
               </Link>
             </div>
           </motion.div>
@@ -116,12 +119,62 @@ function BrandStatement() {
           Brewing Connections, Serving Memories.
         </h2>
         <p className="text-[#F5F3E9]/60 italic mb-10 max-w-xl font-light">
-          Experience the perfect blend in every sip, crafted with love and dedication.
+          Experience the warmth of Maharashtrian hospitality blended with the finest specialty coffees and traditional delicacies.
         </p>
         <Link to="/products" className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#3C2415] rounded-full px-8 py-3.5 uppercase tracking-widest text-xs font-bold transition-all duration-300 transform hover:-translate-y-0.5">
           Explore Our Menu
         </Link>
       </motion.div>
+    </section>
+  );
+}
+
+function FeaturedDishesSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
+
+  return (
+    <section ref={ref} className="bg-[#F5F3E9] py-12 md:py-16">
+      <div className="container-custom">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7 }}
+          className="text-center mb-12"
+        >
+          <p className="text-[#D4AF37] font-semibold tracking-widest uppercase text-xs mb-3">Signature Selections</p>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-[#1A3324] mb-4">Featured Dishes</h2>
+          <p className="text-[#3C2415]/70 max-w-2xl mx-auto font-light">
+            Savor our chef-curated favorites, where regional inspiration meets premium presentation.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {FEATURED_DISHES.map((dish, index) => (
+            <motion.div
+              key={dish.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="relative overflow-hidden rounded-[32px] shadow-xl bg-white border border-[#3C2415]/10"
+            >
+              <div className="relative h-72 overflow-hidden">
+                <img
+                  src={dish.image}
+                  alt={dish.title}
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1A3324]/90 via-[#1A3324]/10 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <p className="text-xs uppercase tracking-[0.24em] text-[#D4AF37] mb-3">{dish.category}</p>
+                  <h3 className="text-2xl font-display font-bold text-white mb-2">{dish.title}</h3>
+                  <p className="text-sm text-[#F5F3E9]/85 leading-relaxed">{dish.subtitle}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
@@ -287,14 +340,14 @@ function StorySection() {
               <span className="text-[#D4AF37] italic font-light">Tells a Story</span>
             </h2>
             <p className="text-[#F5F3E9]/80 leading-relaxed mb-8 text-lg font-light">
-              Born from a passion for exceptional coffee and warm hospitality, Akole Cafe
-              is more than just a place to grab your morning brew. It's a sanctuary for the local
-              community. We carefully select the finest beans, ensuring that every cup is a
-              masterpiece.
+              Rooted in the rich cultural heritage of Maharashtra, Akole Cafe brings you the
+              perfect fusion of premium specialty coffee and authentic Maharashtrian delicacies. 
+              From freshly ground espressos to legendary local favorites like Misal Pav and Ukadiche Modak, 
+              we craft each recipe to honor our regional flavors.
             </p>
             <p className="text-[#F5F3E9]/80 leading-relaxed mb-10 text-lg font-light">
-              Come and experience the warmth, the aroma, and the perfect blend that will make
-              you feel right at home. Your perfect coffee awaits.
+              Come and experience the warmth, the aroma, and the perfect blend of tradition and modernity
+              that will make you feel right at home. Your perfect cup and traditional bite await.
             </p>
             <Link to="/about" className="text-[#D4AF37] hover:text-[#e0c25a] font-medium uppercase tracking-widest text-xs flex items-center gap-3 transition-colors w-fit group border-b border-transparent hover:border-[#D4AF37] pb-1">
               Read Our Full Story
@@ -481,6 +534,7 @@ export default function HomePage() {
       <HeroSection />
       <BotanicalStrip />
       <BrandStatement />
+      <FeaturedDishesSection />
       <BestsellersSection />
       <StorySection />
       <TestimonialsSection />

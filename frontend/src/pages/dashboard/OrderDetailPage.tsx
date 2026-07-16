@@ -1,6 +1,7 @@
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, CreditCard, Calendar, Clock, ShoppingBag, Coffee, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, MapPin, CreditCard, Calendar, Clock, ShoppingBag, Coffee, AlertTriangle, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '@/api/axios';
 
@@ -10,6 +11,15 @@ export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [satelliteMode, setSatelliteMode] = useState(false);
+  const [driverPosition, setDriverPosition] = useState<[number, number]>([19.5415, 74.0025]);
+
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const leafletMapRef = useRef<any>(null);
+  const streetLayerRef = useRef<any>(null);
+  const satelliteLayerRef = useRef<any>(null);
 
   const { data: order, isLoading } = useQuery({
     queryKey: ['order-detail', id],
@@ -33,6 +43,157 @@ export default function OrderDetailPage() {
       toast.error(err.response?.data?.message || 'Failed to cancel order');
     },
   });
+
+  // Load Leaflet dynamically
+  useEffect(() => {
+    if (!order) return;
+    if ((window as any).L) {
+      setMapLoaded(true);
+      return;
+    }
+
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(link);
+
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.onload = () => {
+      setMapLoaded(true);
+    };
+    document.head.appendChild(script);
+  }, [order]);
+
+  // Animate driver position on OUT_FOR_DELIVERY status
+  useEffect(() => {
+    if (!order) return;
+    if (order.status !== 'OUT_FOR_DELIVERY') {
+      if (order.status === 'DELIVERED') {
+        setDriverPosition([19.5350, 74.0125]);
+      } else {
+        setDriverPosition([19.5415, 74.0025]);
+      }
+      return;
+    }
+
+    const path = [
+      [19.5415, 74.0025],
+      [19.5402, 74.0038],
+      [19.5391, 74.0055],
+      [19.5378, 74.0078],
+      [19.5365, 74.0098],
+      [19.5350, 74.0125]
+    ];
+
+    let step = 0;
+    const interval = setInterval(() => {
+      setDriverPosition(path[step] as [number, number]);
+      step = (step + 1) % path.length;
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [order?.status]);
+
+  // Handle map creation and layer switching
+  useEffect(() => {
+    if (!mapLoaded || !mapContainerRef.current || !order) return;
+
+    const L = (window as any).L;
+    if (!L) return;
+
+    if (leafletMapRef.current) {
+      return;
+    }
+
+    const map = L.map(mapContainerRef.current, {
+      zoomControl: true,
+      scrollWheelZoom: true
+    }).setView([19.5382, 74.0075], 14);
+
+    const streetLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      attribution: '&copy; Google Maps'
+    });
+
+    const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      attribution: '&copy; Google Maps'
+    });
+
+    streetLayer.addTo(map);
+    streetLayerRef.current = streetLayer;
+    satelliteLayerRef.current = satelliteLayer;
+    leafletMapRef.current = map;
+
+    // Custom Icons
+    const cafeIcon = L.divIcon({
+      html: `<div style="background-color: #3D2015; border: 2px solid #D4AF37; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><span style="font-size: 14px; line-height: 28px;">☕</span></div>`,
+      className: 'custom-div-icon',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    });
+
+    const homeIcon = L.divIcon({
+      html: `<div style="background-color: #2E7D32; border: 2px solid white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><span style="font-size: 14px; line-height: 28px;">🏠</span></div>`,
+      className: 'custom-div-icon',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    });
+
+    // Add cafe and home markers
+    L.marker([19.5415, 74.0025], { icon: cafeIcon }).addTo(map).bindPopup('<b>Akole Cafe</b><br/>Cafe Location');
+    L.marker([19.5350, 74.0125], { icon: homeIcon }).addTo(map).bindPopup('<b>Delivery Destination</b><br/>Your Location');
+
+    // Add path polyline
+    const path = [
+      [19.5415, 74.0025],
+      [19.5402, 74.0038],
+      [19.5391, 74.0055],
+      [19.5378, 74.0078],
+      [19.5365, 74.0098],
+      [19.5350, 74.0125]
+    ];
+    L.polyline(path, { color: '#D4AF37', weight: 4, dashArray: '5, 8', opacity: 0.8 }).addTo(map);
+
+    return () => {
+      // Leave map instance active or cleanup on unmount
+    };
+  }, [mapLoaded, order]);
+
+  // Update driver marker position
+  useEffect(() => {
+    if (!mapLoaded || !leafletMapRef.current) return;
+    const L = (window as any).L;
+    if (!L) return;
+
+    if ((leafletMapRef.current as any).driverMarker) {
+      (leafletMapRef.current as any).driverMarker.remove();
+    }
+
+    const driverIcon = L.divIcon({
+      html: `<div style="background-color: #D4AF37; border: 2px solid #3D2015; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"><span style="font-size: 16px; line-height: 32px; display: block; transform: scaleX(-1);">🛵</span></div>`,
+      className: 'custom-div-icon-driver',
+      iconSize: [36, 36],
+      iconAnchor: [18, 18]
+    });
+
+    const marker = L.marker(driverPosition, { icon: driverIcon }).addTo(leafletMapRef.current);
+    (leafletMapRef.current as any).driverMarker = marker;
+  }, [driverPosition, mapLoaded]);
+
+  const toggleMapType = () => {
+    if (!leafletMapRef.current || !streetLayerRef.current || !satelliteLayerRef.current) return;
+    if (satelliteMode) {
+      leafletMapRef.current.removeLayer(satelliteLayerRef.current);
+      streetLayerRef.current.addTo(leafletMapRef.current);
+      setSatelliteMode(false);
+    } else {
+      leafletMapRef.current.removeLayer(streetLayerRef.current);
+      satelliteLayerRef.current.addTo(leafletMapRef.current);
+      setSatelliteMode(true);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -133,6 +294,43 @@ export default function OrderDetailPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* Live Map Tracking widget */}
+        {!isCancelled && (
+          <div className="p-6 sm:p-8 border-b border-coffee-100 dark:border-forest-500/10">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-coffee-900 dark:text-cream-100">Live Delivery Route Map</h3>
+              <button
+                type="button"
+                onClick={toggleMapType}
+                className="px-3.5 py-1.5 text-[10px] font-bold rounded-xl border border-coffee-100 dark:border-white/10 bg-coffee-50 dark:bg-white/5 text-coffee-600 dark:text-cream-300 hover:bg-[#D4AF37] hover:text-[#3D2015] dark:hover:bg-[#D4AF37] dark:hover:text-[#3D2015] transition-all uppercase tracking-wider cursor-pointer"
+              >
+                {satelliteMode ? '🗺️ Standard View' : '🛰️ Satellite View'}
+              </button>
+            </div>
+            
+            <div className="relative border border-coffee-100 dark:border-white/10 rounded-2xl overflow-hidden shadow-inner">
+              {!mapLoaded && (
+                <div className="absolute inset-0 bg-coffee-50/50 dark:bg-coffee-950/40 backdrop-blur-sm z-10 flex flex-col items-center justify-center py-20 gap-2">
+                  <Loader2 className="animate-spin w-6 h-6 text-gold-500" />
+                  <p className="text-xs font-bold text-coffee-600 dark:text-cream-300">Preparing live map route...</p>
+                </div>
+              )}
+              <div 
+                ref={mapContainerRef} 
+                style={{ height: '300px' }} 
+                className="w-full relative bg-coffee-50/20"
+              />
+              <div className="bg-coffee-50/60 dark:bg-white/5 p-3 border-t border-coffee-100 dark:border-white/5 text-[10px] text-coffee-500 dark:text-cream-300/70 font-semibold text-center select-none flex items-center justify-center gap-1.5">
+                <span>☕ Akole Cafe</span>
+                <span className="text-coffee-300">➔</span>
+                <span>🛵 Driver (Moving)</span>
+                <span className="text-coffee-300">➔</span>
+                <span>🏠 Delivery Destination</span>
+              </div>
             </div>
           </div>
         )}

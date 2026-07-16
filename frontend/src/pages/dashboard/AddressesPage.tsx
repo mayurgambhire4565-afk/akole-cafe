@@ -35,6 +35,29 @@ export default function AddressesPage() {
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<AddressFormData>();
   const watchLabel = watch('label', 'Home');
 
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [geocoding, setGeocoding] = useState(false);
+  const [satelliteMode, setSatelliteMode] = useState(false);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const leafletMapRef = useRef<any>(null);
+  const leafletMarkerRef = useRef<any>(null);
+  const streetLayerRef = useRef<any>(null);
+  const satelliteLayerRef = useRef<any>(null);
+
+  const toggleMapType = () => {
+    if (!leafletMapRef.current || !streetLayerRef.current || !satelliteLayerRef.current) return;
+    if (satelliteMode) {
+      leafletMapRef.current.removeLayer(satelliteLayerRef.current);
+      streetLayerRef.current.addTo(leafletMapRef.current);
+      setSatelliteMode(false);
+    } else {
+      leafletMapRef.current.removeLayer(streetLayerRef.current);
+      satelliteLayerRef.current.addTo(leafletMapRef.current);
+      setSatelliteMode(true);
+    }
+  };
+
   // Close suggestions when clicking outside
   useEffect(() => {
     const handleOutsideClick = () => {
@@ -47,6 +70,143 @@ export default function AddressesPage() {
       document.removeEventListener('click', handleOutsideClick);
     };
   }, [showSuggestions]);
+
+  // Load Leaflet dynamically
+  useEffect(() => {
+    if (!showMap) return;
+    if ((window as any).L) {
+      setMapLoaded(true);
+      return;
+    }
+
+    // Add CSS
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(link);
+
+    // Add JS
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.onload = () => {
+      setMapLoaded(true);
+    };
+    document.head.appendChild(script);
+  }, [showMap]);
+
+  const reverseGeocode = async (lat: number, lon: number) => {
+    setGeocoding(true);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`
+      );
+      const data = await res.json();
+      if (data && data.address) {
+        const addr = data.address;
+        const streetParts = [
+          addr.house_number,
+          addr.road,
+          addr.suburb,
+          addr.neighbourhood,
+          addr.village
+        ].filter(Boolean);
+        
+        const streetName = streetParts.length > 0 ? streetParts.join(', ') : data.display_name;
+        const cityName = addr.city || addr.town || addr.village || addr.municipality || '';
+        const stateName = addr.state || '';
+        const postcodeVal = addr.postcode || '';
+
+        setValue('street', streetName, { shouldValidate: true });
+        setValue('city', cityName, { shouldValidate: true });
+        setValue('state', stateName, { shouldValidate: true });
+        setValue('pincode', postcodeVal, { shouldValidate: true });
+      }
+    } catch (err) {
+      console.error('Reverse geocoding failed:', err);
+    } finally {
+      setGeocoding(false);
+    }
+  };
+
+  // Map Initialization Effect
+  useEffect(() => {
+    if (!mapLoaded || !showMap || !mapContainerRef.current) return;
+
+    let initLat = 19.54;
+    let initLon = 74.00;
+
+    const L = (window as any).L;
+    if (!L) return;
+
+    if (leafletMapRef.current) {
+      leafletMapRef.current.remove();
+      leafletMapRef.current = null;
+    }
+
+    const streetLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      attribution: '&copy; Google Maps'
+    });
+
+    const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      attribution: '&copy; Google Maps'
+    });
+
+    const map = L.map(mapContainerRef.current, {
+      zoomControl: true,
+      scrollWheelZoom: true
+    }).setView([initLat, initLon], 14);
+
+    if (satelliteMode) {
+      satelliteLayer.addTo(map);
+    } else {
+      streetLayer.addTo(map);
+    }
+
+    streetLayerRef.current = streetLayer;
+    satelliteLayerRef.current = satelliteLayer;
+
+    const marker = L.marker([initLat, initLon], {
+      draggable: true
+    }).addTo(map);
+
+    leafletMapRef.current = map;
+    leafletMarkerRef.current = marker;
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          map.setView([latitude, longitude], 15);
+          marker.setLatLng([latitude, longitude]);
+          reverseGeocode(latitude, longitude);
+        },
+        () => {
+          reverseGeocode(initLat, initLon);
+        }
+      );
+    } else {
+      reverseGeocode(initLat, initLon);
+    }
+
+    marker.on('dragend', () => {
+      const position = marker.getLatLng();
+      reverseGeocode(position.lat, position.lng);
+    });
+
+    map.on('click', (e: any) => {
+      marker.setLatLng(e.latlng);
+      reverseGeocode(e.latlng.lat, e.latlng.lng);
+    });
+
+    return () => {
+      if (leafletMapRef.current) {
+        leafletMapRef.current.remove();
+        leafletMapRef.current = null;
+      }
+    };
+  }, [mapLoaded, showMap]);
 
   const handleStreetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -251,6 +411,7 @@ export default function AddressesPage() {
     setEditingAddress(null);
     setSuggestions([]);
     setShowSuggestions(false);
+    setShowMap(false);
   };
 
   const onSubmit = (data: AddressFormData) => {
@@ -552,6 +713,59 @@ export default function AddressesPage() {
                     </div>
                   );
                 })()}
+
+                {/* Map Picker section */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[11px] font-bold text-coffee-500 dark:text-cream-300/60 uppercase tracking-wider">
+                      Or Pin Location on Map
+                    </span>
+                    <div className="flex items-center gap-3">
+                      {showMap && (
+                        <button
+                          type="button"
+                          onClick={toggleMapType}
+                          className="px-2 py-1 text-[9px] font-bold rounded-lg border border-coffee-100 dark:border-white/10 bg-coffee-50 dark:bg-white/5 text-coffee-600 dark:text-cream-300 hover:bg-[#D4AF37] hover:text-[#3D2015] dark:hover:bg-[#D4AF37] dark:hover:text-[#3D2015] transition-all uppercase tracking-wider cursor-pointer"
+                        >
+                          {satelliteMode ? '🗺️ Standard View' : '🛰️ Satellite View'}
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setShowMap(!showMap)}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-forest-600 dark:text-emerald-500 hover:underline cursor-pointer"
+                      >
+                        <MapPin className="w-3.5 h-3.5" />
+                        {showMap ? 'Hide Map Picker' : 'Show Map Picker'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {showMap && (
+                    <div className="relative border border-coffee-100 dark:border-white/10 rounded-2xl overflow-hidden shadow-inner">
+                      {!mapLoaded && (
+                        <div className="absolute inset-0 bg-coffee-50/50 dark:bg-coffee-950/40 backdrop-blur-sm z-10 flex flex-col items-center justify-center py-12 gap-2">
+                          <Loader2 className="animate-spin w-6 h-6 text-gold-500" />
+                          <p className="text-xs font-bold text-coffee-600 dark:text-cream-300">Loading Map Engine...</p>
+                        </div>
+                      )}
+                      {geocoding && (
+                        <div className="absolute top-2 right-2 bg-white/90 dark:bg-coffee-950/90 backdrop-blur-sm z-[1000] px-3 py-1 rounded-full border border-coffee-100 dark:border-white/10 shadow-sm flex items-center gap-1.5 text-[10px] font-bold text-forest-600 dark:text-emerald-450 animate-pulse">
+                          <Loader2 className="animate-spin w-3 h-3 text-gold-500" />
+                          Resolving Address...
+                        </div>
+                      )}
+                      <div 
+                        ref={mapContainerRef} 
+                        style={{ height: '240px' }} 
+                        className="w-full relative bg-coffee-50/20"
+                      />
+                      <div className="bg-coffee-50/60 dark:bg-white/5 p-3 border-t border-coffee-100 dark:border-white/5 text-[10px] text-coffee-500 dark:text-cream-300/70 font-semibold text-center select-none">
+                        📍 Drag the red marker or click anywhere on the map to pinpoint your location
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* City, State, PIN Code */}
                 <div className="grid grid-cols-3 gap-4">

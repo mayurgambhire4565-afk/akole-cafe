@@ -39,6 +39,10 @@ export const registerUser = async (data: { name: string; email: string; password
   });
 
 
+  if (env.NODE_ENV === 'development') {
+    console.log(`\n🔑 [DEVELOPMENT ONLY] Registration OTP for ${data.email}: ${otp}\n`);
+  }
+
   sendOTPEmail(data.email, data.name, otp).catch((err) => {
     console.error('[EMAIL WARNING] Failed to send OTP email during registration:', err);
   });
@@ -53,14 +57,35 @@ export const verifyOTP = async (email: string, otp: string) => {
   if (!user.otp || !user.otpExpiresAt) throw new Error('OTP not found. Please request a new one.');
   if (new Date() > user.otpExpiresAt) throw new Error('OTP has expired. Please request a new one.');
   if (user.otp !== otp) throw new Error('Invalid OTP');
-  await prisma.user.update({
+  
+  const updatedUser = await prisma.user.update({
     where: { id: user.id },
     data: { isVerified: true, otp: null, otpExpiresAt: null },
   });
+  
   sendWelcomeEmail(email, user.name).catch((err) => {
     console.error('[EMAIL WARNING] Failed to send welcome email:', err);
   });
-  return { message: 'Email verified successfully' };
+
+  const tokenPayload = { id: user.id, email: user.email, role: user.role };
+  const accessToken = generateAccessToken(tokenPayload);
+  const refreshToken = generateRefreshToken(tokenPayload);
+
+  // Hash and store refresh token
+  const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+  await prisma.user.update({ where: { id: user.id }, data: { refreshToken: hashedRefreshToken } });
+
+  const userData = {
+    id: updatedUser.id,
+    name: updatedUser.name,
+    email: updatedUser.email,
+    role: updatedUser.role,
+    avatar: updatedUser.avatar,
+    loyaltyPoints: updatedUser.loyaltyPoints,
+    isVerified: true,
+  };
+
+  return { user: userData, accessToken, refreshToken, message: 'Email verified successfully' };
 };
 export const resendOTP = async (email: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
@@ -77,6 +102,9 @@ export const resendOTP = async (email: string) => {
   const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   await prisma.user.update({ where: { id: user.id }, data: { otp, otpExpiresAt } });
+  if (env.NODE_ENV === 'development') {
+    console.log(`\n🔑 [DEVELOPMENT ONLY] Resent OTP for ${email}: ${otp}\n`);
+  }
   sendOTPEmail(email, user.name, otp).catch((err) => {
     console.error('[EMAIL WARNING] Failed to send OTP email during resend:', err);
   });
@@ -109,34 +137,27 @@ export const loginUser = async (email: string, password: string, rememberMe = fa
   const accessToken = generateAccessToken(tokenPayload);
   const refreshToken = generateRefreshToken(tokenPayload);
 
-  // Hash and store refresh token
+  // Hash and store refresh t
   const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
   await prisma.user.update({ where: { id: user.id }, data: { refreshToken: hashedRefreshToken } });
-
   const userData = {
     id: user.id, name: user.name, email: user.email, role: user.role,
     avatar: user.avatar, loyaltyPoints: user.loyaltyPoints, isVerified: user.isVerified,
   };
-
   return { user: userData, accessToken, refreshToken, rememberMe };
 };
-
 export const sendLoginOTP = async (email: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
-
   if (!user) {
     throw new Error('Account does not exist. Please sign up first.');
   }
-
   if (!user.isActive) throw new Error('Account has been deactivated');
-
   if (user.otpExpiresAt) {
     const timeSinceLastOTP = Date.now() - (user.otpExpiresAt.getTime() - 10 * 60 * 1000);
     if (timeSinceLastOTP < 60000) {
       throw new Error(`Please wait ${Math.ceil((60000 - timeSinceLastOTP)/1000)}s before requesting a new OTP`);
     }
   }
-
   const otp = generateOTP();
   const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
@@ -228,6 +249,10 @@ export const forgotPassword = async (email: string) => {
     where: { id: user.id },
     data: { passwordResetToken: otp, passwordResetExpires: expiresAt },
   });
+
+  if (env.NODE_ENV === 'development') {
+    console.log(`\n🔑 [DEVELOPMENT ONLY] Password Reset OTP for ${email}: ${otp}\n`);
+  }
 
   sendOTPEmail(email, user.name, otp).catch((err) => {
     console.error('[EMAIL WARNING] Failed to send OTP email for password reset:', err);

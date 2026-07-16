@@ -1,4 +1,4 @@
-﻿import { useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, Package, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -12,7 +12,7 @@ export default function OrderSuccessPage() {
         </div>
       </motion.div>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-        <h1 className="text-3xl font-display font-bold text-espresso-900 dark:text-cream-50 mb-3">Order Placed! ☕</h1>
+        <h1 className="text-3xl font-display font-bold text-espresso-900 dark:text-cream-50 mb-3">Order Placed! ?</h1>
         <p className="text-espresso-500 dark:text-espresso-400 mb-8">Thank you for your order. You'll receive a confirmation email shortly.</p>
         <div className="flex gap-3 justify-center">
           <Link to={'/dashboard/orders/' + id} className="btn btn-primary"><Package className="w-4 h-4" />Track Order</Link>
