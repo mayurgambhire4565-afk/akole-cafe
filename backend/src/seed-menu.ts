@@ -1948,7 +1948,7 @@ async function main() {
       categoryId: mocktailCat.id,
       rating: 4.8,
       reviewCount: 47,
-      isActive: true,
+      pisActive: true,
     },
     {
       id: 'mc-20',
