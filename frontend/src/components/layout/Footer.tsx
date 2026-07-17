@@ -130,11 +130,15 @@ export default function Footer() {
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Phone className="w-4 h-4 text-[#D4AF37] flex-shrink-0" />
-                  <span>+91 84323 87067</span>
+                  <a href="tel:+918432387067" className="hover:text-[#D4AF37] transition-colors">
+                    +91 84323 87067
+                  </a>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Mail className="w-4 h-4 text-[#D4AF37] flex-shrink-0" />
-                  <span>hello@akolecafe.com</span>
+                  <a href="mailto:mayurkgambhire09@mail.com" className="hover:text-[#D4AF37] transition-colors">
+                    mayurkgambhire09@mail.com
+                  </a>
                 </li>
               </ul>
             </div>

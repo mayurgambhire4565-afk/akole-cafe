@@ -14,6 +14,7 @@ import ProductCard from '@/components/product/ProductCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import Button from '@/components/ui/Button';
 import toast from 'react-hot-toast';
+import { cleanSubtitle } from '@/utils/text';
 
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -185,7 +186,7 @@ export default function ProductDetailPage() {
             </div>
 
             <p className="text-espresso-600 dark:text-espresso-300 leading-relaxed mb-6">
-              {product.shortDesc || product.description}
+              {cleanSubtitle(product.name, product.shortDesc || product.description)}
             </p>
 
             {/* Attributes */}

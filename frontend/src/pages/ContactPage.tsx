@@ -73,10 +73,8 @@ export default function ContactPage() {
                   <div>
                     <h4 className="font-sans font-bold text-xs uppercase tracking-wider text-[#D4AF37] mb-1.5">Phone & WhatsApp</h4>
                     <a 
-                      href="https://wa.me/918432387067" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-[#FDFBF7]/80 hover:text-[#D4AF37] text-sm font-light leading-relaxed transition-colors block"
+                      href="tel:+918432387067" 
+                      className="text-[#FDFBF7]/80 hover:text-[#D4AF37] text-sm font-light leading-relaxed transition-all duration-300 block hover:translate-x-1"
                     >
                       +91 8432387067
                     </a>
@@ -89,9 +87,12 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h4 className="font-sans font-bold text-xs uppercase tracking-wider text-[#D4AF37] mb-1.5">Direct Email</h4>
-                    <p className="text-[#FDFBF7]/80 text-sm font-light leading-relaxed">
-                      hello@akolecafe.com
-                    </p>
+                    <a 
+                      href="mailto:mayurkgambhire09@mail.com" 
+                      className="text-[#FDFBF7]/80 hover:text-[#D4AF37] text-sm font-light leading-relaxed transition-all duration-300 block hover:translate-x-1"
+                    >
+                      mayurkgambhire09@mail.com
+                    </a>
                   </div>
                 </div>
 

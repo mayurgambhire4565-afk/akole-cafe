@@ -7,10 +7,11 @@ import { useAuthStore } from '@/store/authStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/api/axios';
 import toast from 'react-hot-toast';
-import botanicalStrip from '@/assets/image copy.png';
+import botanicalStrip from '@/assets/botanical-strip.png';
 import HeartLogo from '@/components/ui/HeartLogo';
 import { FEATURED_DISHES } from '@/data/maharashtraMenu';
 import { useTranslation } from '@/store/languageStore';
+import { cleanSubtitle } from '@/utils/text';
 
 // ================================
 // HERO SECTION
@@ -269,7 +270,7 @@ function BestsellersSection() {
                 </div>
                 
                 <h3 className="font-display font-bold text-lg text-[#1A3324] mb-2">{product.name}</h3>
-                <p className="text-[#3C2415]/60 text-sm mb-4 leading-relaxed flex-1 line-clamp-2">{product.shortDesc}</p>
+                <p className="text-[#3C2415]/60 text-sm mb-4 leading-relaxed flex-1 line-clamp-2">{cleanSubtitle(product.name, product.shortDesc)}</p>
                 
                 <div className="flex items-center justify-between mt-auto pt-2">
                   <div className="flex items-center gap-1.5">

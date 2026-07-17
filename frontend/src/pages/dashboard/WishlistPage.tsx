@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import api from '@/api/axios';
 import { useCartStore } from '@/store/cartStore';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { cleanSubtitle } from '@/utils/text';
 
 export default function WishlistPage() {
   const queryClient = useQueryClient();
@@ -170,7 +171,7 @@ export default function WishlistPage() {
                         </h3>
                       </Link>
                       <p className="text-coffee-500 dark:text-coffee-400 text-xs mt-1.5 leading-relaxed line-clamp-2">
-                        {product.shortDesc || product.description}
+                        {cleanSubtitle(product.name, product.shortDesc || product.description)}
                       </p>
                     </div>
 

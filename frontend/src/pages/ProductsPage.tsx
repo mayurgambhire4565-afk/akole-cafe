@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, ChevronDown, SlidersHorizontal, X } from 'lucide-react';
+import { Search, ChevronDown, SlidersHorizontal, X, Leaf, Flame } from 'lucide-react';
 import type { Product } from '@/types';
 import ProductCard from '@/components/product/ProductCard';
 import { ProductCardSkeleton } from '@/components/ui/Skeleton';
@@ -24,7 +24,7 @@ const DIET_OPTIONS = [
 
 export default function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { t, getCategoryTranslation } = useTranslation();
+  const { t, language, getCategoryTranslation } = useTranslation();
 
   const page = parseInt(searchParams.get('page') || '1');
   const search = searchParams.get('search')?.trim() || '';
@@ -226,7 +226,7 @@ export default function ProductsPage() {
             {vegProducts.length > 0 && (
               <div>
                 <h2 className="text-3xl font-display font-bold text-[#1A3324] dark:text-emerald-400 mb-8 flex items-center gap-3 border-b border-[#3C2415]/10 dark:border-white/10 pb-3 tracking-wide">
-                  <span className="text-2xl">🥦</span> {t('vegSpecialities')}
+                  <Leaf className="w-7 h-7 text-forest-600 dark:text-forest-400" /> {t('vegSpecialities')}
                 </h2>
                 <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                   {vegProducts.map((product) => (
@@ -239,7 +239,7 @@ export default function ProductsPage() {
             {nonVegProducts.length > 0 && (
               <div>
                 <h2 className="text-3xl font-display font-bold text-[#8B2218] dark:text-rose-400 mb-8 flex items-center gap-3 border-b border-[#3C2415]/10 dark:border-white/10 pb-3 tracking-wide mt-6">
-                  <span className="text-2xl">🍗</span> {t('nonVegSpecialities')}
+                  <Flame className="w-7 h-7 text-[#D0443F]" /> {t('nonVegSpecialities')}
                 </h2>
                 <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                   {nonVegProducts.map((product) => (

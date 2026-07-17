@@ -15,7 +15,7 @@ const CAFE_LNG = 74.0044;
 
 export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
   const { t } = useTranslation();
-  const [mapType, setMapType] = useState<'normal' | 'satellite'>('normal');
+  const [mapType, setMapType] = useState<'normal' | 'satellite'>('satellite');
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [routingInfo, setRoutingInfo] = useState<{
@@ -193,7 +193,7 @@ export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
     }
   };
 
-  // Toggle tile styles between OSM and Esri Satellite
+  // Toggle tile styles between Google Maps Roads and Hybrid
   const toggleMapType = () => {
     if (!mapRef.current || !tileLayerRef.current) return;
     mapRef.current.removeLayer(tileLayerRef.current);
@@ -202,11 +202,13 @@ export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
     setMapType(nextType);
 
     const url = nextType === 'satellite'
-      ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-      : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      ? 'https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
+      : 'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
 
     tileLayerRef.current = L.tileLayer(url, {
-      attribution: nextType === 'satellite' ? 'Esri' : 'OpenStreetMap',
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      attribution: 'Google Maps',
+      noWrap: false,
     }).addTo(mapRef.current);
   };
 
@@ -217,24 +219,37 @@ export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
     const map = L.map(mapContainerRef.current, {
       zoomControl: false,
       attributionControl: false,
-    }).setView([CAFE_LAT, CAFE_LNG], 14);
+      minZoom: 1,
+      worldCopyJump: true,
+      bounceAtZoomLimits: false,
+    }).setView([CAFE_LAT, CAFE_LNG], 2);
 
     mapRef.current = map;
 
     const tileLayerUrl = mapType === 'satellite'
-      ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-      : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      ? 'https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
+      : 'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
 
-    tileLayerRef.current = L.tileLayer(tileLayerUrl, {}).addTo(map);
+    tileLayerRef.current = L.tileLayer(tileLayerUrl, {
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      attribution: 'Google Maps',
+      noWrap: false,
+    }).addTo(map);
 
     // Add Cafe Marker with custom Cafe Logo
     L.marker([CAFE_LAT, CAFE_LNG], { icon: cafeIcon }).addTo(map)
       .bindPopup('<b class="text-forest-900 font-bold text-sm">Akole Café</b><br/><span class="text-xs text-[#3C2415]/70">Brewing Connections, Serving Memories</span>')
       .openPopup();
 
+    // Invalidate size after animation completes
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 450);
+
     startTracking();
 
     return () => {
+      clearTimeout(timer);
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
@@ -246,9 +261,11 @@ export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
   }, [isOpen]);
 
   const startNavigation = () => {
-    const origin = userLocation ? `${userLocation[0]},${userLocation[1]}` : '';
-    const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${CAFE_LAT},${CAFE_LNG}&travelmode=driving`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+    if (userLocation) {
+      recenter();
+    } else {
+      startTracking();
+    }
   };
 
   return (

@@ -44,6 +44,22 @@ export const MENU_CATEGORIES = [
   },
 ];
 
+const cleanSubtitle = (name: string, desc?: string): string => {
+  if (!desc) return '';
+  const normalizedDesc = desc.trim();
+  const lowerDesc = normalizedDesc.toLowerCase();
+  const lowerName = name.toLowerCase();
+
+  if (lowerDesc.startsWith(lowerName)) {
+    const afterName = normalizedDesc.slice(name.length).trim();
+    const match = afterName.match(/^([–—\-|:])\s*(.*)/);
+    if (match) {
+      return match[2].trim();
+    }
+  }
+  return normalizedDesc;
+};
+
 const buildMenuItem = (
   categoryId: string,
   categoryName: string,
@@ -61,28 +77,31 @@ const buildMenuItem = (
     reviewCount?: number;
     image: string;
   }
-): Product => ({
-  id: item.id || `${categoryId}-${slugify(item.name)}`,
-  name: item.name,
-  slug: slugify(item.name),
-  description: item.shortDesc,
-  shortDesc: item.shortDesc,
-  price: item.price,
-  stock: 999,
-  images: [item.image],
-  categoryId,
-  category: { name: categoryName, slug: categoryId },
-  rating: item.rating ?? 4.8,
-  reviewCount: item.reviewCount ?? 120,
-  isActive: true,
-  isFeatured: item.isChefSpecial ?? false,
-  isBestseller: item.isBestseller ?? false,
-  isVeg: item.isVeg,
-  isChefSpecial: item.isChefSpecial ?? false,
-  spiceLevel: item.spiceLevel as ('mild' | 'medium' | 'hot' | 'extra-hot' | undefined),
-  prepTime: item.prepTime ?? '15 mins',
-  createdAt: new Date().toISOString(),
-});
+): Product => {
+  const cleanedDesc = cleanSubtitle(item.name, item.shortDesc);
+  return {
+    id: item.id || `${categoryId}-${slugify(item.name)}`,
+    name: item.name,
+    slug: slugify(item.name),
+    description: cleanedDesc,
+    shortDesc: cleanedDesc,
+    price: item.price,
+    stock: 999,
+    images: [item.image],
+    categoryId,
+    category: { name: categoryName, slug: categoryId },
+    rating: item.rating ?? 4.8,
+    reviewCount: item.reviewCount ?? 120,
+    isActive: true,
+    isFeatured: item.isChefSpecial ?? false,
+    isBestseller: item.isBestseller ?? false,
+    isVeg: item.isVeg,
+    isChefSpecial: item.isChefSpecial ?? false,
+    spiceLevel: item.spiceLevel as ('mild' | 'medium' | 'hot' | 'extra-hot' | undefined),
+    prepTime: item.prepTime ?? '15 mins',
+    createdAt: new Date().toISOString(),
+  };
+};
 
 const inventoryByCategory = [
   {
@@ -216,6 +235,1639 @@ const inventoryByCategory = [
         rating: 4.9, 
         reviewCount: 142, 
         image: '/images/menu/maswadi.png' 
+      },
+      { 
+        id: 'v-grilled-veg-sandwich',
+        name: 'Grilled Veg Sandwich', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Grilled Veg Sandwich – वेगवेगळ्या ताज्या भाज्या आणि बटर लावून ग्रिल केलेले सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-cheese-veg-sandwich',
+        name: 'Cheese Veg Sandwich', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Cheese Veg Sandwich – भाज्या आणि भरपूर चीज घातलेले सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-cheese-grilled-sandwich',
+        name: 'Cheese Grilled Sandwich', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Cheese Grilled Sandwich – ग्रिल केलेले भरपूर चीज आणि बटरचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/grilled_cheese_tomato.png' 
+      },
+      { 
+        id: 'v-bombay-sandwich',
+        name: 'Bombay Sandwich', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Bombay Sandwich – बटाटा, काकडी, टोमॅटो आणि पुदिना चटणीचे बॉम्बे सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/bombay_masala_toast.png' 
+      },
+      { 
+        id: 'v-club-sandwich',
+        name: 'Club Sandwich', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Club Sandwich – तीन लेअर्सचे आणि भाज्यांचे परिपूर्ण क्लब सँडविच.', 
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/indori_club_sandwich.png' 
+      },
+      { 
+        id: 'v-mayo-veg-sandwich',
+        name: 'Mayo Veg Sandwich', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Mayo Veg Sandwich – क्रीमी मेयोनेझ आणि भाज्यांचे सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-cheese-mayo-sandwich',
+        name: 'Cheese Mayo Sandwich', 
+        price: 115, 
+        isVeg: true, 
+        shortDesc: 'Cheese Mayo Sandwich – चीज आणि मेयोनेझचे क्रीमी सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1539252554453-80ab65ce3586?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-corn-sandwich',
+        name: 'Corn Sandwich', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Corn Sandwich – गोड मका (स्वीट कॉर्न) आणि सॉसचे सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/corn_spinach_toastie.png' 
+      },
+      { 
+        id: 'v-cheese-corn-sandwich-special',
+        name: 'Cheese Corn Sandwich', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Cheese Corn Sandwich – मका आणि वितळलेल्या चीजचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1592415499556-74fcb9f18667?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-paneer-sandwich',
+        name: 'Paneer Sandwich', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Paneer Sandwich – मऊ पनीर तुकडे आणि हिरव्या चटणीचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-paneer-cheese-sandwich',
+        name: 'Paneer Cheese Sandwich', 
+        price: 125, 
+        isVeg: true, 
+        shortDesc: 'Paneer Cheese Sandwich – पनीर आणि भरपूर अमूल चीजचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1539252554453-80ab65ce3586?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-paneer-tikka-sandwich-special',
+        name: 'Paneer Tikka Sandwich', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Paneer Tikka Sandwich – तंदूर पनीर आणि तिखट मसाल्याचे सँडविच.', 
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-aloo-sandwich',
+        name: 'Aloo Sandwich', 
+        price: 70, 
+        isVeg: true, 
+        shortDesc: 'Aloo Sandwich – उकडलेले बटाटे आणि हिरव्या मिरचीचे सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1584776296944-ab6fb57b0bdd?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-capsicum-cheese-sandwich',
+        name: 'Capsicum Cheese Sandwich', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Capsicum Cheese Sandwich – शिमला मिरची आणि चीजचे सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1550507992-eb63ffee0847?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-spinach-corn-sandwich',
+        name: 'Spinach Corn Sandwich', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Spinach Corn Sandwich – पालक आणि स्वीट कॉर्नचे क्रीमी सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-mushroom-sandwich',
+        name: 'Mushroom Sandwich', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Mushroom Sandwich – बटन मशरूम आणि कांद्याचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1559598467-f8b76c8155d0?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-veg-delight-sandwich',
+        name: 'Veg Delight Sandwich', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Veg Delight Sandwich – सर्व भाज्या आणि स्पेशल सॉसचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-schezwan-veg-sandwich-special',
+        name: 'Schezwan Veg Sandwich', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Schezwan Veg Sandwich – तिखट चायनीज शेजवान सॉसचे सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-schezwan-cheese-sandwich',
+        name: 'Schezwan Cheese Sandwich', 
+        price: 115, 
+        isVeg: true, 
+        shortDesc: 'Schezwan Cheese Sandwich – शेजवान सॉस आणि चीजचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-peri-peri-sandwich',
+        name: 'Peri Peri Sandwich', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Peri Peri Sandwich – पेरी पेरी मसाल्याचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-mexican-sandwich',
+        name: 'Mexican Sandwich', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Mexican Sandwich – मेक्सिकन सॉस, मका आणि भाज्यांचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-tandoori-paneer-sandwich',
+        name: 'Tandoori Paneer Sandwich', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Tandoori Paneer Sandwich – तंदूरी पनीरचे सँडविच.', 
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-chilli-paneer-sandwich',
+        name: 'Chilli Paneer Sandwich', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Chilli Paneer Sandwich – चायनीज चिली पनीर स्टाईल सँडविच.', 
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-chocolate-sandwich',
+        name: 'Chocolate Sandwich', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Chocolate Sandwich – वितळलेले डार्क चॉकलेट सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/chocolate_banana_toast.png' 
+      },
+      { 
+        id: 'v-nutella-sandwich',
+        name: 'Nutella Sandwich', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Nutella Sandwich – क्रीमी नुटेला चॉकलेट सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-peanut-butter-sandwich',
+        name: 'Peanut Butter Sandwich', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Peanut Butter Sandwich – क्रीमी पीनट बटर सँडविच.', 
+        prepTime: '6 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1568254183919-78a4f43a2877?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-jam-sandwich',
+        name: 'Jam Sandwich', 
+        price: 60, 
+        isVeg: true, 
+        shortDesc: 'Jam Sandwich – फळांचे गोड जॅम सँडविच.', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-honey-butter-sandwich',
+        name: 'Honey Butter Sandwich', 
+        price: 70, 
+        isVeg: true, 
+        shortDesc: 'Honey Butter Sandwich – शुद्ध मध आणि बटर सँडविच.', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-banana-chocolate-sandwich',
+        name: 'Banana Chocolate Sandwich', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Banana Chocolate Sandwich – केळी आणि चॉकलेटचे गोड सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1511018556340-d16986a1c194?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-triple-layer-sandwich',
+        name: 'Triple Layer Sandwich', 
+        price: 140, 
+        isVeg: true, 
+        shortDesc: 'Triple Layer Sandwich – तीन थरांचे आणि भरपूर भाज्यांचे सँडविच.', 
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-cheese-burst-sandwich',
+        name: 'Cheese Burst Sandwich', 
+        price: 150, 
+        isVeg: true, 
+        shortDesc: 'Cheese Burst Sandwich – लिक्विड चीज आणि भरपूर मोझारेला चीजचे सँडविच.', 
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-loaded-veg-sandwich',
+        name: 'Loaded Veg Sandwich', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Loaded Veg Sandwich – भरपूर भाज्या, चीज आणि सॉसचे सँडविच.', 
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-italian-sandwich',
+        name: 'Italian Sandwich', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Italian Sandwich – इटालियन औषधी वनस्पती आणि ऑलिव्हचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1550507992-eb63ffee0847?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-garlic-cheese-sandwich',
+        name: 'Garlic Cheese Sandwich', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Garlic Cheese Sandwich – लसूण आणि मोझारेला चीजचे सँडविच.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1573821663912-569905455b1c?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-pesto-veg-sandwich',
+        name: 'Pesto Veg Sandwich', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Pesto Veg Sandwich – इटालियन पेस्टो सॉस आणि भाज्यांचे सँडविच.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-kanda-pohe',
+        name: 'Kanda Pohe', 
+        price: 50, 
+        isVeg: true, 
+        shortDesc: 'Kanda Pohe – कांदा आणि पोहे लिंबू आणि खोबऱ्यासह.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/kanda_poha.png' 
+      },
+      { 
+        id: 'v-tarri-pohe',
+        name: 'Tarri Pohe', 
+        price: 65, 
+        isVeg: true, 
+        shortDesc: 'Tarri Pohe – झणझणीत रस्सा (तारी) घालून कांदा पोहे.', 
+        spiceLevel: 'hot',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/tarri_pohe.png' 
+      },
+      { 
+        id: 'v-upma',
+        name: 'Upma', 
+        price: 55, 
+        isVeg: true, 
+        shortDesc: 'Upma – पौष्टिक आणि मऊ रव्याचा उपमा.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/upma.png' 
+      },
+      { 
+        id: 'v-sheera',
+        name: 'Sheera', 
+        price: 60, 
+        isVeg: true, 
+        shortDesc: 'Sheera – साजूक तुपातील गोड आणि मऊ रवा शिरा.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/sheera.png' 
+      },
+      { 
+        id: 'v-usal-pav',
+        name: 'Usal Pav', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Usal Pav – मटकी आणि कडधान्यांची उसळ आणि पाव.', 
+        spiceLevel: 'medium',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/usal_pav.png' 
+      },
+      { 
+        id: 'v-rassa-vada',
+        name: 'Rassa Vada', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Rassa Vada – तिखट कट (रस्सा) मध्ये बुडवलेला गरम वडा.', 
+        spiceLevel: 'hot',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/rassa_vada.png' 
+      },
+      { 
+        id: 'v-idli',
+        name: 'Idli', 
+        price: 60, 
+        isVeg: true, 
+        shortDesc: 'Idli – वाफेवर शिजवलेली मऊ साऊथ INDIAN इडली.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/idli.png' 
+      },
+      { 
+        id: 'v-medu-vada',
+        name: 'Medu Vada', 
+        price: 70, 
+        isVeg: true, 
+        shortDesc: 'Medu Vada – कुरकुरीत उडीद डाळीचा मेदू वडा.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/medu_vada.png' 
+      },
+      { 
+        id: 'v-plain-dosa',
+        name: 'Plain Dosa', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Plain Dosa – कुरकुरीत आणि ताजी साधी डोसा.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=600&auto=format&fit=crop&q=60&sig=v-plain-dosa' 
+      },
+      { 
+        id: 'v-masala-dosa',
+        name: 'Masala Dosa', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Masala Dosa – बटाटा भाजी स्टफ केलेला कुरकुरीत डोसा.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/masala_dosa.png' 
+      },
+      { 
+        id: 'v-mysore-dosa',
+        name: 'Mysore Dosa', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Mysore Dosa – लाल चटणी आणि बटाटा मसाल्याचा डोसा.', 
+        spiceLevel: 'medium',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?w=600&auto=format&fit=crop&q=60&sig=v-mysore-dosa' 
+      },
+      { 
+        id: 'v-cheese-dosa',
+        name: 'Cheese Dosa', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Cheese Dosa – भरपूर चीज आणि बटाटा भाजीचा डोसा.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&auto=format&fit=crop&q=60&sig=v-cheese-dosa' 
+      },
+      { 
+        id: 'v-onion-dosa',
+        name: 'Onion Dosa', 
+        price: 95, 
+        isVeg: true, 
+        shortDesc: 'Onion Dosa – भरपूर कांदा घालून बनवलेला डोसा.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600&auto=format&fit=crop&q=60&sig=v-onion-dosa' 
+      },
+      { 
+        id: 'v-uttapam',
+        name: 'Uttapam', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Uttapam – कांदा आणि टोमॅटोचे साऊथ INDIAN उत्तपम.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/uttapam.png' 
+      },
+      { 
+        id: 'v-veg-sandwich',
+        name: 'Veg Sandwich', 
+        price: 70, 
+        isVeg: true, 
+        shortDesc: 'Veg Sandwich – ताज्या भाज्यांचे सँडविच.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/veg_club_sandwich.png' 
+      },
+      { 
+        id: 'v-cheese-sandwich',
+        name: 'Cheese Sandwich', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Cheese Sandwich – भरपूर चीज आणि सँडविच मसाला.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/chutney_cheese_sandwich.png' 
+      },
+      { 
+        id: 'v-grilled-sandwich',
+        name: 'Grilled Sandwich', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Grilled Sandwich – बटर लावून ग्रिल केलेले सँडविच.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-pav-bhaji',
+        name: 'Pav Bhaji', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Pav Bhaji – चमचमीत भाजी आणि गरम बटर पाव.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/pav_bhaji.png' 
+      },
+      { 
+        id: 'v-thecha',
+        name: 'Thecha', 
+        price: 30, 
+        isVeg: true, 
+        shortDesc: 'Thecha – तिखट जळजळीत हिरव्या मिरचीचा ठेचा.', 
+        spiceLevel: 'extra-hot',
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=600&auto=format&fit=crop&q=60&sig=v-thecha' 
+      },
+      { 
+        id: 'v-bharli-vangi',
+        name: 'Bharli Vangi', 
+        price: 140, 
+        isVeg: true, 
+        shortDesc: 'Bharli Vangi – मसाल्यात भरलेले वांगे.', 
+        spiceLevel: 'hot',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600&auto=format&fit=crop&q=60&sig=v-bharli-vangi' 
+      },
+      { 
+        id: 'v-shev-bhaji',
+        name: 'Shev Bhaji', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Shev Bhaji – तिखट शेव घालून बनवलेली खानदेशी शेव भाजी.', 
+        spiceLevel: 'hot',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&auto=format&fit=crop&q=60&sig=v-shev-bhaji' 
+      },
+      { 
+        id: 'v-matki-usal',
+        name: 'Matki Usal', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Matki Usal – मोड आलेल्या मटकीची गावरान उसळ.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=600&auto=format&fit=crop&q=60&sig=v-matki-usal' 
+      },
+      { 
+        id: 'v-kala-chana-usal',
+        name: 'Kala Chana Usal', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Kala Chana Usal – काळ्या चण्याची चवदार उसळ.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop&q=60&sig=v-kala-chana-usal' 
+      },
+      { 
+        id: 'v-varan',
+        name: 'Varan', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Varan – साधे वरण तुपाची धार लावून.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60&sig=v-varan' 
+      },
+      { 
+        id: 'v-aamti',
+        name: 'Aamti', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Aamti – आंबट-गोड चवीची महाराष्ट्रीयन आमटी.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=600&auto=format&fit=crop&q=60&sig=v-aamti' 
+      },
+      { 
+        id: 'v-khichdi',
+        name: 'Khichdi', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Khichdi – मुगाची डाळ आणि तांदूळाची साधी खिचडी.', 
+        spiceLevel: 'mild',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/sabudana_khichdi.png' 
+      },
+      { 
+        id: 'v-kadhi',
+        name: 'Kadhi', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Kadhi – दही आणि बेसनाची गोडसर कढी.', 
+        spiceLevel: 'mild',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/solkadhi.png' 
+      },
+      { 
+        id: 'v-veg-thali',
+        name: 'Veg Thali', 
+        price: 220, 
+        isVeg: true, 
+        shortDesc: 'Veg Thali – भाजी, वरण, भात, चपाती आणि गोड पदार्थांची परिपूर्ण थाळी.', 
+        spiceLevel: 'medium',
+        prepTime: '22 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/pithla_bhakri.png' 
+      },
+      { 
+        id: 'v-paneer-butter-masala',
+        name: 'Paneer Butter Masala', 
+        price: 220, 
+        isVeg: true, 
+        shortDesc: 'Paneer Butter Masala – क्रीमी आणि बटर ग्रेव्हीमधील पनीर.', 
+        spiceLevel: 'mild',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=60&sig=v-paneer-butter-masala' 
+      },
+      { 
+        id: 'v-kadai-paneer',
+        name: 'Kadai Paneer', 
+        price: 210, 
+        isVeg: true, 
+        shortDesc: 'Kadai Paneer – कढई मसाल्यातील पनीर आणि शिमला मिरची.', 
+        spiceLevel: 'medium',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?w=600&auto=format&fit=crop&q=60&sig=v-kadai-paneer' 
+      },
+      { 
+        id: 'v-shahi-paneer',
+        name: 'Shahi Paneer', 
+        price: 230, 
+        isVeg: true, 
+        shortDesc: 'Shahi Paneer – काजू आणि मलईच्या शाही ग्रेव्हीमधील पनीर.', 
+        spiceLevel: 'mild',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1539252554453-80ab65ce3586?w=600&auto=format&fit=crop&q=60&sig=v-shahi-paneer' 
+      },
+      { 
+        id: 'v-paneer-tikka-masala',
+        name: 'Paneer Tikka Masala', 
+        price: 240, 
+        isVeg: true, 
+        shortDesc: 'Paneer Tikka Masala – तंदूर पनीर आणि तिखट मसाला ग्रेव्ही.', 
+        spiceLevel: 'medium',
+        prepTime: '20 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600&auto=format&fit=crop&q=60&sig=v-paneer-tikka-masala' 
+      },
+      { 
+        id: 'v-paneer-kolhapuri',
+        name: 'Paneer Kolhapuri', 
+        price: 210, 
+        isVeg: true, 
+        shortDesc: 'Paneer Kolhapuri – तिखट आणि झणझणीत कोल्हापुरी पनीर.', 
+        spiceLevel: 'hot',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=600&auto=format&fit=crop&q=60&sig=v-paneer-kolhapuri' 
+      },
+      { 
+        id: 'v-paneer-handi',
+        name: 'Paneer Handi', 
+        price: 220, 
+        isVeg: true, 
+        shortDesc: 'Paneer Handi – हांडी मसाल्यात शिजवलेले लज्जतदार पनीर.', 
+        spiceLevel: 'medium',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-matar-paneer',
+        name: 'Matar Paneer', 
+        price: 190, 
+        isVeg: true, 
+        shortDesc: 'Matar Paneer – ताजे मटार आणि पनीर ग्रेव्ही.', 
+        spiceLevel: 'medium',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&auto=format&fit=crop&q=60&sig=v-matar-paneer' 
+      },
+      { 
+        id: 'v-palak-paneer',
+        name: 'Palak Paneer', 
+        price: 190, 
+        isVeg: true, 
+        shortDesc: 'Palak Paneer – ताज्या पालकाच्या प्युरीमधील मऊ पनीर.', 
+        spiceLevel: 'mild',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&auto=format&fit=crop&q=60&sig=v-palak-paneer' 
+      },
+      { 
+        id: 'v-paneer-bhurji',
+        name: 'Paneer Bhurji', 
+        price: 210, 
+        isVeg: true, 
+        shortDesc: 'Paneer Bhurji – किसलेले पनीर आणि मसाल्यांचे कोरडे मिश्रण.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop&q=60&sig=v-paneer-bhurji' 
+      },
+      { 
+        id: 'v-paneer-angara',
+        name: 'Paneer Angara', 
+        price: 240, 
+        isVeg: true, 
+        shortDesc: 'Paneer Angara – कोळशाची धुरी दिलेले तिखट पनीर.', 
+        spiceLevel: 'hot',
+        prepTime: '20 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&auto=format&fit=crop&q=60&sig=v-paneer-angara' 
+      },
+      { 
+        id: 'v-paneer-lababdar',
+        name: 'Paneer Lababdar', 
+        price: 230, 
+        isVeg: true, 
+        shortDesc: 'Paneer Lababdar – क्रीमी आणि टोमॅटो मसाल्यांचे समृद्ध पनीर.', 
+        spiceLevel: 'mild',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop&q=60&sig=v-paneer-lababdar' 
+      },
+      { 
+        id: 'v-paneer-do-pyaza',
+        name: 'Paneer Do Pyaza', 
+        price: 220, 
+        isVeg: true, 
+        shortDesc: 'Paneer Do Pyaza – भरपूर कांद्यासह बनवलेले गोडसर-स्पायसी पनीर.', 
+        spiceLevel: 'medium',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600&auto=format&fit=crop&q=60&sig=v-paneer-do-pyaza' 
+      },
+      { 
+        id: 'v-paneer-jalfrezi',
+        name: 'Paneer Jalfrezi', 
+        price: 210, 
+        isVeg: true, 
+        shortDesc: 'Paneer Jalfrezi – शिमला मिरची आणि भाज्यांसह पनीर जलफ्रेझी.', 
+        spiceLevel: 'medium',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&auto=format&fit=crop&q=60&sig=v-paneer-jalfrezi' 
+      },
+      { 
+        id: 'v-paneer-korma',
+        name: 'Paneer Korma', 
+        price: 220, 
+        isVeg: true, 
+        shortDesc: 'Paneer Korma – गोडसर आणि बदाम-काजूच्या क्रीमी कढीतील पनीर.', 
+        spiceLevel: 'mild',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-veg-kolhapuri',
+        name: 'Veg Kolhapuri', 
+        price: 190, 
+        isVeg: true, 
+        shortDesc: 'Veg Kolhapuri – कोल्हापुरी मसाल्यांची तिखट मिक्स व्हेज.', 
+        spiceLevel: 'hot',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=600&auto=format&fit=crop&q=60&sig=v-veg-kolhapuri' 
+      },
+      { 
+        id: 'v-veg-handi',
+        name: 'Veg Handi', 
+        price: 200, 
+        isVeg: true, 
+        shortDesc: 'Veg Handi – हांडी मसाल्यामध्ये शिजवलेल्या मिक्स भाज्या.', 
+        spiceLevel: 'medium',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&auto=format&fit=crop&q=60&sig=v-veg-handi' 
+      },
+      { 
+        id: 'v-veg-jaipuri',
+        name: 'Veg Jaipuri', 
+        price: 200, 
+        isVeg: true, 
+        shortDesc: 'Veg Jaipuri – पनीर आणि भाज्यांचे जयपुरी स्टाईल मिश्रण.', 
+        spiceLevel: 'medium',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&auto=format&fit=crop&q=60&sig=v-veg-jaipuri' 
+      },
+      { 
+        id: 'v-mix-veg',
+        name: 'Mix Veg', 
+        price: 180, 
+        isVeg: true, 
+        shortDesc: 'Mix Veg – कोबी, गाजर, वाटाणे आणि बटाट्याची सुकी भाजी.', 
+        spiceLevel: 'medium',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1478145046317-39f10e56b5e9?w=600&auto=format&fit=crop&q=60&sig=v-mix-veg' 
+      },
+      { 
+        id: 'v-veg-makhanwala',
+        name: 'Veg Makhanwala', 
+        price: 210, 
+        isVeg: true, 
+        shortDesc: 'Veg Makhanwala – बटर आणि क्रीमी टोमॅटो सॉस मधील भाज्या.', 
+        spiceLevel: 'mild',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=600&auto=format&fit=crop&q=60&sig=v-veg-makhanwala' 
+      },
+      { 
+        id: 'v-veg-korma',
+        name: 'Veg Korma', 
+        price: 200, 
+        isVeg: true, 
+        shortDesc: 'Veg Korma – काजू आणि नारळ ग्रेव्हीमधील मिक्स भाज्या.', 
+        spiceLevel: 'mild',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?w=600&auto=format&fit=crop&q=60&sig=v-veg-korma' 
+      },
+      { 
+        id: 'v-veg-jalfrezi',
+        name: 'Veg Jalfrezi', 
+        price: 190, 
+        isVeg: true, 
+        shortDesc: 'Veg Jalfrezi – शिमला मिरची आणि तिखट सॉस मधील मिक्स भाज्या.', 
+        spiceLevel: 'medium',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&auto=format&fit=crop&q=60&sig=v-veg-jalfrezi' 
+      },
+      { 
+        id: 'v-navratan-korma',
+        name: 'Navratan Korma', 
+        price: 240, 
+        isVeg: true, 
+        shortDesc: 'Navratan Korma – नऊ प्रकारच्या भाज्या, फळे आणि ड्रायफ्रुट्सचा गोडसर कोर्मा.', 
+        spiceLevel: 'mild',
+        prepTime: '20 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&auto=format&fit=crop&q=60&sig=v-navratan-korma' 
+      },
+      { 
+        id: 'v-aloo-gobi',
+        name: 'Aloo Gobi', 
+        price: 140, 
+        isVeg: true, 
+        shortDesc: 'Aloo Gobi – बटाटा आणि फ्लॉवरची सुकी मसालेदार भाजी.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1543353071-10c8ba85a904?w=600&auto=format&fit=crop&q=60&sig=v-aloo-gobi' 
+      },
+      { 
+        id: 'v-aloo-matar',
+        name: 'Aloo Matar', 
+        price: 140, 
+        isVeg: true, 
+        shortDesc: 'Aloo Matar – बटाटा आणि वाटाण्याची घरगुती पद्धतीची भाजी.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=60&sig=v-aloo-matar' 
+      },
+      { 
+        id: 'v-dum-aloo',
+        name: 'Dum Aloo', 
+        price: 160, 
+        isVeg: true, 
+        shortDesc: 'Dum Aloo – दह्याच्या ग्रेव्हीमध्ये शिजवलेले छोटे बटाटे.', 
+        spiceLevel: 'medium',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&auto=format&fit=crop&q=60&sig=v-dum-aloo' 
+      },
+      { 
+        id: 'v-chana-masala',
+        name: 'Chana Masala', 
+        price: 150, 
+        isVeg: true, 
+        shortDesc: 'Chana Masala – काबुली चण्याची चवदार मसालेदार ग्रेव्ही.', 
+        spiceLevel: 'medium',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&auto=format&fit=crop&q=60&sig=v-chana-masala' 
+      },
+      { 
+        id: 'v-rajma-masala',
+        name: 'Rajma Masala', 
+        price: 150, 
+        isVeg: true, 
+        shortDesc: 'Rajma Masala – काश्मिरी राजमा आणि घट्ट टोमॅटो ग्रेव्ही.', 
+        spiceLevel: 'medium',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1485962398705-ef6a13c41e8f?w=600&auto=format&fit=crop&q=60&sig=v-rajma-masala' 
+      },
+      { 
+        id: 'v-dal-fry',
+        name: 'Dal Fry', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Dal Fry – तुरीची डाळ फोडणी कांदा-लसूण आणि मसाल्यासह.', 
+        spiceLevel: 'medium',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=600&auto=format&fit=crop&q=60&sig=v-dal-fry' 
+      },
+      { 
+        id: 'v-dal-tadka',
+        name: 'Dal Tadka', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Dal Tadka – जिरे, मोहरी आणि लाल मिरचीची फोडणी दिलेली पिवळी डाळ.', 
+        spiceLevel: 'medium',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=600&auto=format&fit=crop&q=60&sig=v-dal-tadka' 
+      },
+      { 
+        id: 'v-dal-makhani',
+        name: 'Dal Makhani', 
+        price: 160, 
+        isVeg: true, 
+        shortDesc: 'Dal Makhani – हळूहळू शिजवलेली काळी उडीद डाळ बटर आणि क्रीमसह.', 
+        spiceLevel: 'mild',
+        prepTime: '20 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=60&sig=v-dal-makhani' 
+      },
+      { 
+        id: 'v-palak-corn',
+        name: 'Palak Corn', 
+        price: 170, 
+        isVeg: true, 
+        shortDesc: 'Palak Corn – पालकाच्या प्युरीमध्ये शिजवलेले गोड मका (कॉर्न).', 
+        spiceLevel: 'mild',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=600&auto=format&fit=crop&q=60&sig=v-palak-corn' 
+      },
+      { 
+        id: 'v-corn-masala',
+        name: 'Corn Masala', 
+        price: 160, 
+        isVeg: true, 
+        shortDesc: 'Corn Masala – गोड मका आणि मसालेदार ग्रेव्ही.', 
+        spiceLevel: 'medium',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=600&auto=format&fit=crop&q=60&sig=v-corn-masala' 
+      },
+      { 
+        id: 'v-mushroom-masala',
+        name: 'Mushroom Masala', 
+        price: 210, 
+        isVeg: true, 
+        shortDesc: 'Mushroom Masala – बटन मशरूमची लज्जतदार मसालेदार ग्रेव्ही.', 
+        spiceLevel: 'medium',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=600&auto=format&fit=crop&q=60&sig=v-mushroom-masala' 
+      },
+      { 
+        id: 'v-mushroom-handi',
+        name: 'Mushroom Handi', 
+        price: 220, 
+        isVeg: true, 
+        shortDesc: 'Mushroom Handi – हांडी मसाल्यामध्ये शिजवलेले मशरूम.', 
+        spiceLevel: 'medium',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-mushroom-do-pyaza',
+        name: 'Mushroom Do Pyaza', 
+        price: 220, 
+        isVeg: true, 
+        shortDesc: 'Mushroom Do Pyaza – भरपूर कांद्यासह बनवलेले मशरूम.', 
+        spiceLevel: 'medium',
+        prepTime: '18 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=600&auto=format&fit=crop&q=60&sig=v-mushroom-do-pyaza' 
+      },
+      { 
+        id: 'v-steam-rice',
+        name: 'Steam Rice', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Steam Rice – पांढरा शिजवलेला बासमती भात.', 
+        spiceLevel: 'mild',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=60&sig=v-steam-rice' 
+      },
+      { 
+        id: 'v-jeera-rice',
+        name: 'Jeera Rice', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Jeera Rice – जिरे आणि फोडणी दिलेला बासमती भात.', 
+        spiceLevel: 'mild',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-veg-pulav',
+        name: 'Veg Pulav', 
+        price: 140, 
+        isVeg: true, 
+        shortDesc: 'Veg Pulav – वेगवेगळ्या भाज्यांसह बनवलेला पुलाव भात.', 
+        spiceLevel: 'mild',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?w=600&auto=format&fit=crop&q=60&sig=v-veg-pulav' 
+      },
+      { 
+        id: 'v-veg-biryani',
+        name: 'Veg Biryani', 
+        price: 170, 
+        isVeg: true, 
+        shortDesc: 'Veg Biryani – मसाल्याच्या थरातील सुगंधी व्हेज बिर्याणी.', 
+        spiceLevel: 'medium',
+        prepTime: '20 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&auto=format&fit=crop&q=60&sig=v-veg-biryani' 
+      },
+      { 
+        id: 'v-paneer-biryani',
+        name: 'Paneer Biryani', 
+        price: 190, 
+        isVeg: true, 
+        shortDesc: 'Paneer Biryani – मऊ पनीर तुकड्यांची सुगंधी व्हेज बिर्याणी.', 
+        spiceLevel: 'medium',
+        prepTime: '20 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=600&auto=format&fit=crop&q=60&sig=v-paneer-biryani' 
+      },
+      { 
+        id: 'v-masale-bhat-rice',
+        name: 'Masale Bhat', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Masale Bhat – गोडा मसाल्याचा पारंपारिक मसाले भात.', 
+        spiceLevel: 'medium',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&auto=format&fit=crop&q=60&sig=v-masale-bhat-rice' 
+      },
+      { 
+        id: 'v-curd-rice',
+        name: 'Curd Rice', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Curd Rice – दही आणि मोहरीची फोडणी दिलेला साऊथ INDIAN दही भात.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&auto=format&fit=crop&q=60&sig=v-curd-rice' 
+      },
+      { 
+        id: 'v-lemon-rice',
+        name: 'Lemon Rice', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Lemon Rice – लिंबू आणि शेंगदाणे घातलेला पिवळा भात.', 
+        spiceLevel: 'mild',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=600&auto=format&fit=crop&q=60&sig=v-lemon-rice' 
+      },
+      { 
+        id: 'v-tomato-rice',
+        name: 'Tomato Rice', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Tomato Rice – टोमॅटो आणि मसाल्यांच्या फोडणीचा भात.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format&fit=crop&q=60&sig=v-tomato-rice' 
+      },
+      { 
+        id: 'v-fried-rice',
+        name: 'Fried Rice', 
+        price: 140, 
+        isVeg: true, 
+        shortDesc: 'Fried Rice – चायनीज पद्धतीचा व्हेज फ्राईड राईस.', 
+        spiceLevel: 'mild',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?w=600&auto=format&fit=crop&q=60&sig=v-fried-rice' 
+      },
+      { 
+        id: 'v-schezwan-fried-rice',
+        name: 'Schezwan Fried Rice', 
+        price: 150, 
+        isVeg: true, 
+        shortDesc: 'Schezwan Fried Rice – तिखट शेजवान सॉस मधील चायनीज फ्राईड राईस.', 
+        spiceLevel: 'hot',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&auto=format&fit=crop&q=60&sig=v-schezwan-fried-rice' 
+      },
+      { 
+        id: 'v-veg-hakka-noodles',
+        name: 'Veg Hakka Noodles', 
+        price: 140, 
+        isVeg: true, 
+        shortDesc: 'Veg Hakka Noodles – चायनीज हक्का नूडल्स.', 
+        spiceLevel: 'mild',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&auto=format&fit=crop&q=60&sig=v-veg-hakka-noodles' 
+      },
+      { 
+        id: 'v-schezwan-noodles',
+        name: 'Schezwan Noodles', 
+        price: 150, 
+        isVeg: true, 
+        shortDesc: 'Schezwan Noodles – तिखट शेजवान नूडल्स.', 
+        spiceLevel: 'hot',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1612927601601-6638404737ce?w=600&auto=format&fit=crop&q=60&sig=v-schezwan-noodles' 
+      },
+      { 
+        id: 'v-garlic-noodles',
+        name: 'Garlic Noodles', 
+        price: 150, 
+        isVeg: true, 
+        shortDesc: 'Garlic Noodles – लसूण आणि तिखट मसाल्याचे नूडल्स.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&auto=format&fit=crop&q=60&sig=v-garlic-noodles' 
+      },
+      { 
+        id: 'v-paneer-noodles',
+        name: 'Paneer Noodles', 
+        price: 170, 
+        isVeg: true, 
+        shortDesc: 'Paneer Noodles – मऊ पनीर तुकडे घातलेले चायनीज नूडल्स.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=600&auto=format&fit=crop&q=60&sig=v-paneer-noodles' 
+      },
+      { 
+        id: 'v-triple-noodles',
+        name: 'Triple Noodles', 
+        price: 190, 
+        isVeg: true, 
+        shortDesc: 'Triple Noodles – नूडल्स, फ्राईड राईस आणि चायनीज ग्रेव्हीचे मिश्रण.', 
+        spiceLevel: 'hot',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600&auto=format&fit=crop&q=60&sig=v-triple-noodles' 
+      },
+      { 
+        id: 'v-french-fries',
+        name: 'French Fries', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'French Fries – बटाट्याचे कुरकुरीत फ्रेंच फ्राईज.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&auto=format&fit=crop&q=60&sig=v-french-fries' 
+      },
+      { 
+        id: 'v-peri-peri-fries',
+        name: 'Peri Peri Fries', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Peri Peri Fries – पेरी पेरी मसाला लावलेले फ्रेंच फ्राईज.', 
+        spiceLevel: 'medium',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/peri_peri_fries.png' 
+      },
+      { 
+        id: 'v-cheese-fries',
+        name: 'Cheese Fries', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Cheese Fries – वितळलेल्या चीझसह कुरकुरीत फ्रेंच फ्राईज.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=600&auto=format&fit=crop&q=60&sig=v-cheese-fries' 
+      },
+      { 
+        id: 'v-spring-roll',
+        name: 'Spring Roll', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Spring Roll – डीप-फ्राईड व्हेज स्प्रिंग रोल.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop&q=60&sig=v-spring-roll' 
+      },
+      { 
+        id: 'v-veg-momos',
+        name: 'Veg Momos', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Veg Momos – वाफेवर शिजवलेले व्हेज मोमोज (८ नग).', 
+        spiceLevel: 'mild',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60&sig=v-veg-momos' 
+      },
+      { 
+        id: 'v-paneer-momos',
+        name: 'Paneer Momos', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Paneer Momos – वाफेवर शिजवलेले पनीर मोमोज (८ नग).', 
+        spiceLevel: 'mild',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=600&auto=format&fit=crop&q=60&sig=v-paneer-momos' 
+      },
+      { 
+        id: 'v-cheese-corn-balls',
+        name: 'Cheese Corn Balls', 
+        price: 140, 
+        isVeg: true, 
+        shortDesc: 'Cheese Corn Balls – कुरकुरीत चीज आणि मक्याचे बॉल्स.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=60&sig=v-cheese-corn-balls' 
+      },
+      { 
+        id: 'v-veg-cutlet',
+        name: 'Veg Cutlet', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Veg Cutlet – तळलेले मसालेदार cutlet.', 
+        spiceLevel: 'medium',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?w=600&auto=format&fit=crop&q=60&sig=v-veg-cutlet' 
+      },
+      { 
+        id: 'v-cheese-balls',
+        name: 'Cheese Balls', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Cheese Balls – कुरकुरीत डीप फ्राईड चीझ बॉल्स.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/cheese_balls.png' 
+      },
+      { 
+        id: 'v-garlic-bread',
+        name: 'Garlic Bread', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Garlic Bread – तव्यावर भाजलेले बटर लसूण ब्रेड (४ नग).', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1573821663912-569905455b1c?w=600&auto=format&fit=crop&q=60&sig=v-garlic-bread' 
+      },
+      { 
+        id: 'v-pizza',
+        name: 'Pizza', 
+        price: 180, 
+        isVeg: true, 
+        shortDesc: 'Pizza – चीज आणि वेगवेगळ्या भाज्यांची पिझ्झा.', 
+        spiceLevel: 'mild',
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/paneer_tikka_pizza.png' 
+      },
+      { 
+        id: 'v-burger',
+        name: 'Burger', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Burger – टिक्की आणि चीज घातलेली व्हेज बर्गर.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=60&sig=v-burger' 
+      },
+      { 
+        id: 'v-wraps',
+        name: 'Wraps', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Wraps – भाज्या आणि चटणीचे व्हेज रॅप.', 
+        spiceLevel: 'medium',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'v-nachos',
+        name: 'Nachos', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Nachos – चीज सॉस आणि साल्सा सोबत कुरकुरीत नाचोज.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=600&auto=format&fit=crop&q=60&sig=v-nachos' 
+      },
+      { 
+        id: 'v-tomato-soup',
+        name: 'Tomato Soup', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Tomato Soup – गोड आणि आंबट ताजे टोमॅटो सूप.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=600&auto=format&fit=crop&q=60&sig=v-tomato-soup' 
+      },
+      { 
+        id: 'v-sweet-corn-soup',
+        name: 'Sweet Corn Soup', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Sweet Corn Soup – क्रश केलेले मका आणि भाज्यांचे सूप.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&auto=format&fit=crop&q=60&sig=v-sweet-corn-soup' 
+      },
+      { 
+        id: 'v-hot-sour-soup',
+        name: 'Hot & Sour Soup', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Hot & Sour Soup – तिखट आणि आंबट चायनीज व्हेज सूप.', 
+        spiceLevel: 'medium',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=600&auto=format&fit=crop&q=60&sig=v-hot-sour-soup' 
+      },
+      { 
+        id: 'v-manchow-soup',
+        name: 'Manchow Soup', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Manchow Soup – कुरकुरीत नूडल्स सोबत तिखट चायनीज सूप.', 
+        spiceLevel: 'medium',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format&fit=crop&q=60&sig=v-manchow-soup' 
+      },
+      { 
+        id: 'v-veg-clear-soup',
+        name: 'Veg Clear Soup', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Veg Clear Soup – हलके आणि आरोग्यदायी उकडलेल्या भाज्यांचे सूप.', 
+        spiceLevel: 'mild',
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?w=600&auto=format&fit=crop&q=60&sig=v-veg-clear-soup' 
+      },
+      { 
+        id: 'v-mushroom-soup',
+        name: 'Mushroom Soup', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Mushroom Soup – बटन mushroom चे सूप.', 
+        spiceLevel: 'mild',
+        prepTime: '12 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&auto=format&fit=crop&q=60&sig=v-mushroom-soup' 
+      },
+      { 
+        id: 'v-green-salad',
+        name: 'Green Salad', 
+        price: 60, 
+        isVeg: true, 
+        shortDesc: 'Green Salad – काकडी, गाजर आणि टोमॅटोचे ताजे सॅलड.', 
+        spiceLevel: 'mild',
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60&sig=v-green-salad' 
+      },
+      { 
+        id: 'v-kachumber-salad',
+        name: 'Kachumber Salad', 
+        price: 50, 
+        isVeg: true, 
+        shortDesc: 'Kachumber Salad – बारीक चिरलेला कांदा, टोमॅटो आणि काकडीचे कोशिंबीर.', 
+        spiceLevel: 'mild',
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=600&auto=format&fit=crop&q=60&sig=v-kachumber-salad' 
+      },
+      { 
+        id: 'v-russian-salad',
+        name: 'Russian Salad', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Russian Salad – मेयोनेझ आणि उकडलेल्या भाज्यांचे सॅलड.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=60&sig=v-russian-salad' 
+      },
+      { 
+        id: 'v-fruit-salad',
+        name: 'Fruit Salad', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Fruit Salad – वेगवेगळ्या ताज्या फळांचे मिक्स सॅलड.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?w=600&auto=format&fit=crop&q=60&sig=v-fruit-salad' 
+      },
+      { 
+        id: 'v-sprouts-salad',
+        name: 'Sprouts Salad', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Sprouts Salad – मोड आलेल्या कडधान्यांचे सॅलड.', 
+        spiceLevel: 'mild',
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1539252554453-80ab65ce3586?w=600&auto=format&fit=crop&q=60&sig=v-sprouts-salad' 
       },
     ],
   },
@@ -400,7 +2052,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.7, 
         reviewCount: 130, 
-        image: '/images/menu/chicken_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=600&auto=format&fit=crop&q=60' 
       },
       { 
         id: 'nv-chicken-sukka',
@@ -424,7 +2076,7 @@ const inventoryByCategory = [
         prepTime: '16 mins', 
         rating: 4.9, 
         reviewCount: 175, 
-        image: '/images/menu/chicken_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-kolhapuri' 
       },
       { 
         id: 'nv-chicken-masala',
@@ -436,7 +2088,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.8, 
         reviewCount: 160, 
-        image: '/images/menu/chicken_handi.png' 
+        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60' 
       },
       { 
         id: 'nv-chicken-kheema',
@@ -448,7 +2100,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.8, 
         reviewCount: 92, 
-        image: '/images/menu/chicken_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-kheema' 
       },
       { 
         id: 'nv-chicken-tikka',
@@ -460,7 +2112,7 @@ const inventoryByCategory = [
         prepTime: '18 mins', 
         rating: 4.8, 
         reviewCount: 110, 
-        image: '/images/menu/tandoori_chicken.png' 
+        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-tikka' 
       },
       { 
         id: 'nv-chicken-lollipop',
@@ -472,7 +2124,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.7, 
         reviewCount: 185, 
-        image: '/images/menu/tandoori_chicken.png' 
+        image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-lollipop' 
       },
       { 
         id: 'nv-chicken-65',
@@ -484,7 +2136,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.8, 
         reviewCount: 120, 
-        image: '/images/menu/tandoori_chicken.png' 
+        image: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-65' 
       },
       { 
         id: 'nv-chicken-chilli',
@@ -496,7 +2148,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.7, 
         reviewCount: 145, 
-        image: '/images/menu/chicken_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-chilli' 
       },
       { 
         id: 'nv-chicken-manchurian',
@@ -508,7 +2160,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.7, 
         reviewCount: 115, 
-        image: '/images/menu/chicken_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-manchurian' 
       },
       { 
         id: 'nv-butter-chicken',
@@ -520,7 +2172,7 @@ const inventoryByCategory = [
         prepTime: '20 mins', 
         rating: 4.9, 
         reviewCount: 310, 
-        image: '/images/menu/chicken_handi.png' 
+        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60&sig=nv-butter-chicken' 
       },
       { 
         id: 'nv-kadai-chicken',
@@ -532,7 +2184,7 @@ const inventoryByCategory = [
         prepTime: '18 mins', 
         rating: 4.8, 
         reviewCount: 95, 
-        image: '/images/menu/chicken_handi.png' 
+        image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&auto=format&fit=crop&q=60&sig=nv-kadai-chicken' 
       },
       { 
         id: 'nv-chicken-do-pyaza',
@@ -544,7 +2196,7 @@ const inventoryByCategory = [
         prepTime: '18 mins', 
         rating: 4.7, 
         reviewCount: 78, 
-        image: '/images/menu/chicken_handi.png' 
+        image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-do-pyaza' 
       },
       { 
         id: 'nv-chicken-hyderabadi',
@@ -556,7 +2208,7 @@ const inventoryByCategory = [
         prepTime: '20 mins', 
         rating: 4.8, 
         reviewCount: 88, 
-        image: '/images/menu/chicken_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-hyderabadi' 
       },
       { 
         id: 'nv-chicken-pulav',
@@ -568,7 +2220,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.7, 
         reviewCount: 95, 
-        image: '/images/menu/chicken_biryani.png' 
+        image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&auto=format&fit=crop&q=60' 
       },
       // New requested Mutton Specialities
       { 
@@ -581,7 +2233,7 @@ const inventoryByCategory = [
         prepTime: '20 mins', 
         rating: 4.8, 
         reviewCount: 165, 
-        image: '/images/menu/mutton_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=600&auto=format&fit=crop&q=60&sig=nv-mutton-curry' 
       },
       { 
         id: 'nv-mutton-sukka',
@@ -593,7 +2245,7 @@ const inventoryByCategory = [
         prepTime: '20 mins', 
         rating: 4.9, 
         reviewCount: 198, 
-        image: '/images/menu/mutton_thali.png' 
+        image: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=600&auto=format&fit=crop&q=60&sig=nv-mutton-sukka' 
       },
       { 
         id: 'nv-mutton-kolhapuri',
@@ -605,7 +2257,7 @@ const inventoryByCategory = [
         prepTime: '22 mins', 
         rating: 4.9, 
         reviewCount: 145, 
-        image: '/images/menu/mutton_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=600&auto=format&fit=crop&q=60&sig=nv-mutton-kolhapuri' 
       },
       { 
         id: 'nv-mutton-masala',
@@ -617,7 +2269,7 @@ const inventoryByCategory = [
         prepTime: '20 mins', 
         rating: 4.8, 
         reviewCount: 132, 
-        image: '/images/menu/mutton_handi.png' 
+        image: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=600&auto=format&fit=crop&q=60&sig=nv-mutton-masala' 
       },
       { 
         id: 'nv-mutton-kheema',
@@ -629,7 +2281,7 @@ const inventoryByCategory = [
         prepTime: '18 mins', 
         rating: 4.9, 
         reviewCount: 154, 
-        image: '/images/menu/mutton_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=600&auto=format&fit=crop&q=60&sig=nv-mutton-kheema' 
       },
       { 
         id: 'nv-mutton-pulav',
@@ -641,7 +2293,7 @@ const inventoryByCategory = [
         prepTime: '18 mins', 
         rating: 4.8, 
         reviewCount: 90, 
-        image: '/images/menu/mutton_biryani.png' 
+        image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&auto=format&fit=crop&q=60' 
       },
       { 
         id: 'nv-mutton-rogan-josh',
@@ -653,7 +2305,7 @@ const inventoryByCategory = [
         prepTime: '25 mins', 
         rating: 4.9, 
         reviewCount: 88, 
-        image: '/images/menu/mutton_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?w=600&auto=format&fit=crop&q=60' 
       },
       { 
         id: 'nv-mutton-liver-fry',
@@ -665,7 +2317,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.8, 
         reviewCount: 125, 
-        image: '/images/menu/mutton_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=600&auto=format&fit=crop&q=60&sig=nv-mutton-liver-fry' 
       },
       { 
         id: 'nv-mutton-brain-fry',
@@ -677,7 +2329,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.8, 
         reviewCount: 94, 
-        image: '/images/menu/mutton_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1543353071-10c8ba85a904?w=600&auto=format&fit=crop&q=60&sig=nv-mutton-brain-fry' 
       },
       { 
         id: 'nv-mutton-paya-soup',
@@ -689,7 +2341,7 @@ const inventoryByCategory = [
         prepTime: '20 mins', 
         rating: 4.9, 
         reviewCount: 140, 
-        image: '/images/menu/mutton_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=60&sig=nv-mutton-paya-soup' 
       },
       { 
         id: 'nv-mutton-chops',
@@ -701,7 +2353,7 @@ const inventoryByCategory = [
         prepTime: '20 mins', 
         rating: 4.8, 
         reviewCount: 78, 
-        image: '/images/menu/mutton_thali.png' 
+        image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=600&auto=format&fit=crop&q=60&sig=nv-mutton-chops' 
       },
       // New requested Fish Specialities
       { 
@@ -714,7 +2366,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.7, 
         reviewCount: 110, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60' 
       },
       { 
         id: 'nv-surmai-fry',
@@ -726,7 +2378,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.9, 
         reviewCount: 168, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&auto=format&fit=crop&q=60&sig=nv-surmai-fry' 
       },
       { 
         id: 'nv-pomfret-fry',
@@ -738,7 +2390,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.9, 
         reviewCount: 134, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&auto=format&fit=crop&q=60' 
       },
       { 
         id: 'nv-bangda-fry',
@@ -750,7 +2402,7 @@ const inventoryByCategory = [
         prepTime: '12 mins', 
         rating: 4.8, 
         reviewCount: 145, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=600&auto=format&fit=crop&q=60&sig=nv-bangda-fry' 
       },
       { 
         id: 'nv-bangda-curry',
@@ -762,7 +2414,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.7, 
         reviewCount: 92, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600&auto=format&fit=crop&q=60&sig=nv-bangda-curry' 
       },
       { 
         id: 'nv-rawas-fry',
@@ -774,7 +2426,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.8, 
         reviewCount: 74, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=600&auto=format&fit=crop&q=60&sig=nv-rawas-fry' 
       },
       { 
         id: 'nv-fish-thali',
@@ -787,7 +2439,7 @@ const inventoryByCategory = [
         prepTime: '20 mins', 
         rating: 4.9, 
         reviewCount: 180, 
-        image: '/images/menu/fish_fry.png' 
+        image: '/images/menu/fish_thali.png' 
       },
       // New requested Crab & Seafood Specialities
       { 
@@ -800,7 +2452,7 @@ const inventoryByCategory = [
         prepTime: '18 mins', 
         rating: 4.7, 
         reviewCount: 65, 
-        image: '/images/menu/khekda_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&auto=format&fit=crop&q=60&sig=nv-crab-curry-seafood' 
       },
       { 
         id: 'nv-prawn-fry',
@@ -812,7 +2464,7 @@ const inventoryByCategory = [
         prepTime: '12 mins', 
         rating: 4.8, 
         reviewCount: 112, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=600&auto=format&fit=crop&q=60&sig=nv-prawn-fry' 
       },
       { 
         id: 'nv-prawn-curry',
@@ -824,7 +2476,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.7, 
         reviewCount: 94, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60' 
       },
       { 
         id: 'nv-prawn-masala',
@@ -836,7 +2488,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.8, 
         reviewCount: 124, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=600&auto=format&fit=crop&q=60&sig=nv-prawn-masala' 
       },
       { 
         id: 'nv-prawn-biryani',
@@ -849,7 +2501,7 @@ const inventoryByCategory = [
         prepTime: '20 mins', 
         rating: 4.9, 
         reviewCount: 104, 
-        image: '/images/menu/chicken_biryani.png' 
+        image: '/images/menu/prawn_biryani.png' 
       },
       { 
         id: 'nv-squid-fry',
@@ -861,7 +2513,7 @@ const inventoryByCategory = [
         prepTime: '12 mins', 
         rating: 4.7, 
         reviewCount: 58, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1543353071-10c8ba85a904?w=600&auto=format&fit=crop&q=60&sig=nv-squid-fry' 
       },
       { 
         id: 'nv-squid-masala',
@@ -873,7 +2525,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.8, 
         reviewCount: 62, 
-        image: '/images/menu/fish_fry.png' 
+        image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=60&sig=nv-squid-masala' 
       },
       // New requested Desi / Gavran
       { 
@@ -887,7 +2539,7 @@ const inventoryByCategory = [
         prepTime: '22 mins', 
         rating: 4.9, 
         reviewCount: 194, 
-        image: '/images/menu/chicken_rassa.png' 
+        image: '/images/menu/desi_kombdi_rassa.png' 
       },
       { 
         id: 'nv-desi-kombdi-sukka',
@@ -951,7 +2603,7 @@ const inventoryByCategory = [
         prepTime: '10 mins', 
         rating: 4.7, 
         reviewCount: 168, 
-        image: '/images/menu/chicken_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop&q=60&sig=nv-egg-curry' 
       },
       { 
         id: 'nv-egg-masala',
@@ -963,7 +2615,7 @@ const inventoryByCategory = [
         prepTime: '12 mins', 
         rating: 4.8, 
         reviewCount: 130, 
-        image: '/images/menu/chicken_rassa.png' 
+        image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop&q=60' 
       },
       { 
         id: 'nv-egg-bhurji',
@@ -976,7 +2628,7 @@ const inventoryByCategory = [
         prepTime: '8 mins', 
         rating: 4.8, 
         reviewCount: 285, 
-        image: '/images/menu/kanda_poha.png' 
+        image: '/images/menu/egg_bhurji.png' 
       },
       { 
         id: 'nv-egg-fry',
@@ -988,7 +2640,7 @@ const inventoryByCategory = [
         prepTime: '5 mins', 
         rating: 4.6, 
         reviewCount: 94, 
-        image: '/images/menu/kanda_poha.png' 
+        image: 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=600&auto=format&fit=crop&q=60&sig=nv-egg-fry' 
       },
       { 
         id: 'nv-boiled-egg',
@@ -1000,7 +2652,7 @@ const inventoryByCategory = [
         prepTime: '5 mins', 
         rating: 4.7, 
         reviewCount: 140, 
-        image: '/images/menu/kanda_poha.png' 
+        image: 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=600&auto=format&fit=crop&q=60' 
       },
       { 
         id: 'nv-egg-biryani',
@@ -1012,7 +2664,7 @@ const inventoryByCategory = [
         prepTime: '18 mins', 
         rating: 4.8, 
         reviewCount: 154, 
-        image: '/images/menu/chicken_biryani.png' 
+        image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&auto=format&fit=crop&q=60&sig=nv-egg-biryani' 
       },
       { 
         id: 'nv-anda-ghotala',
@@ -1025,7 +2677,7 @@ const inventoryByCategory = [
         prepTime: '12 mins', 
         rating: 4.9, 
         reviewCount: 110, 
-        image: '/images/menu/kanda_poha.png' 
+        image: '/images/menu/anda_ghotala.png' 
       },
       { 
         id: 'nv-half-fry',
@@ -1037,7 +2689,7 @@ const inventoryByCategory = [
         prepTime: '5 mins', 
         rating: 4.8, 
         reviewCount: 198, 
-        image: '/images/menu/kanda_poha.png' 
+        image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&auto=format&fit=crop&q=60&sig=nv-half-fry' 
       },
       { 
         id: 'nv-omelette',
@@ -1049,7 +2701,7 @@ const inventoryByCategory = [
         prepTime: '5 mins', 
         rating: 4.8, 
         reviewCount: 220, 
-        image: '/images/menu/kanda_poha.png' 
+        image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&auto=format&fit=crop&q=60&sig=nv-omelette' 
       },
       { 
         id: 'nv-cheese-omelette',
@@ -1061,7 +2713,7 @@ const inventoryByCategory = [
         prepTime: '6 mins', 
         rating: 4.8, 
         reviewCount: 142, 
-        image: '/images/menu/kanda_poha.png' 
+        image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop&q=60&sig=nv-cheese-omelette' 
       }
     ],
   },
@@ -1111,7 +2763,7 @@ const inventoryByCategory = [
         prepTime: '5 mins',
         rating: 4.6,
         reviewCount: 110,
-        image: '/images/menu/tandoori_roti.png'
+        image: '/images/menu/roti.png'
       },
       {
         id: 'b-naan',
@@ -1145,6 +2797,127 @@ const inventoryByCategory = [
         rating: 4.9,
         reviewCount: 204,
         image: '/images/menu/jwari_bhakar.png'
+      },
+      {
+        id: 'b-butter-roti',
+        name: 'Butter Roti',
+        price: 15,
+        isVeg: true,
+        shortDesc: 'Butter Roti – बटर लावलेली गव्हाची तवा रोटी.',
+        prepTime: '5 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: '/images/menu/butter_roti.png'
+      },
+      {
+        id: 'b-plain-naan',
+        name: 'Plain Naan',
+        price: 25,
+        isVeg: true,
+        shortDesc: 'Plain Naan – तंदूरमध्ये भाजलेला साधा नान.',
+        prepTime: '8 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=600&auto=format&fit=crop&q=60'
+      },
+      {
+        id: 'b-garlic-naan',
+        name: 'Garlic Naan',
+        price: 40,
+        isVeg: true,
+        shortDesc: 'Garlic Naan – भरपूर लसूण आणि बटर लावलेला नान.',
+        prepTime: '8 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=600&auto=format&fit=crop&q=60&sig=b-garlic-naan'
+      },
+      {
+        id: 'b-cheese-naan',
+        name: 'Cheese Naan',
+        price: 50,
+        isVeg: true,
+        shortDesc: 'Cheese Naan – चीज भरलेला तंदूरी नान.',
+        prepTime: '10 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop&q=60&sig=b-cheese-naan'
+      },
+      {
+        id: 'b-kulcha',
+        name: 'Kulcha',
+        price: 35,
+        isVeg: true,
+        shortDesc: 'Kulcha – मऊ आणि भाजलेला तवा कुलचा.',
+        prepTime: '8 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=600&auto=format&fit=crop&q=60&sig=b-kulcha'
+      },
+      {
+        id: 'b-stuffed-kulcha',
+        name: 'Stuffed Kulcha',
+        price: 50,
+        isVeg: true,
+        shortDesc: 'Stuffed Kulcha – बटाटा आणि पनीर स्टफ केलेला कुलचा.',
+        prepTime: '10 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop&q=60&sig=b-stuffed-kulcha'
+      },
+      {
+        id: 'b-paratha',
+        name: 'Paratha',
+        price: 30,
+        isVeg: true,
+        shortDesc: 'Paratha – तव्यावर शेकलेला साधा पराठा.',
+        prepTime: '8 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=600&auto=format&fit=crop&q=60&sig=b-paratha'
+      },
+      {
+        id: 'b-aloo-paratha',
+        name: 'Aloo Paratha',
+        price: 70,
+        isVeg: true,
+        shortDesc: 'Aloo Paratha – मसालेदार बटाटा स्टफिंगचा पराठा.',
+        prepTime: '10 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&auto=format&fit=crop&q=60&sig=b-aloo-paratha'
+      },
+      {
+        id: 'b-gobi-paratha',
+        name: 'Gobi Paratha',
+        price: 70,
+        isVeg: true,
+        shortDesc: 'Gobi Paratha – किसलेला फ्लॉवर आणि मसाल्यांचा पराठा.',
+        prepTime: '10 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600&auto=format&fit=crop&q=60&sig=b-gobi-paratha'
+      },
+      {
+        id: 'b-paneer-paratha',
+        name: 'Paneer Paratha',
+        price: 90,
+        isVeg: true,
+        shortDesc: 'Paneer Paratha – मसालेदार पनीर स्टफिंगचा पराठा.',
+        prepTime: '10 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=60&sig=b-paneer-paratha'
+      },
+      {
+        id: 'b-lachha-paratha',
+        name: 'Lachha Paratha',
+        price: 40,
+        isVeg: true,
+        shortDesc: 'Lachha Paratha – अनेक पदर असलेला कुरकुरीत पराठा.',
+        prepTime: '8 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=600&auto=format&fit=crop&q=60&sig=b-lachha-paratha'
       }
     ]
   },
@@ -1178,6 +2951,116 @@ const inventoryByCategory = [
         reviewCount: 201, 
         image: '/images/menu/jalebi.png' 
       },
+      { 
+        id: 'd-gulab-jamun',
+        name: 'Gulab Jamun', 
+        price: 60, 
+        isVeg: true, 
+        shortDesc: 'Gulab Jamun – खव्याचे रसाळ आणि गरम गुलाबजाम (२ नग).', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/gulab_jamun.png' 
+      },
+      { 
+        id: 'd-rasgulla',
+        name: 'Rasgulla', 
+        price: 60, 
+        isVeg: true, 
+        shortDesc: 'Rasgulla – मऊ आणि रसाळ पांढरे रसगुल्ले (२ नग).', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1589218436045-ee320057f443?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'd-rasmalai',
+        name: 'Rasmalai', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Rasmalai – केशर दुधात भिजवलेले मऊ रसमलाई (२ नग).', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/rasmalai.png' 
+      },
+      { 
+        id: 'd-basundi',
+        name: 'Basundi', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Basundi – घट्ट आटवलेले गोड केशर दूध बासुंदी.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/basundi.png' 
+      },
+      { 
+        id: 'd-shrikhand',
+        name: 'Shrikhand', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Shrikhand – गोड आणि क्रीमी विलायची फ्लेवर श्रीखंड.', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/shrikhand.png' 
+      },
+      { 
+        id: 'd-rabdi',
+        name: 'Rabdi', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Rabdi – पारंपरिक पद्धतीने आटवलेली रबडी.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/rabdi.png' 
+      },
+      { 
+        id: 'd-kheer',
+        name: 'Kheer', 
+        price: 70, 
+        isVeg: true, 
+        shortDesc: 'Kheer – तांदूळ, दूध आणि ड्रायफ्रूट्सची सुगंधी खीर.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/kheer.png' 
+      },
+      { 
+        id: 'd-ice-cream',
+        name: 'Ice Cream', 
+        price: 60, 
+        isVeg: true, 
+        shortDesc: 'Ice Cream – व्हॅनिला, चॉकलेट किंवा मँगो फ्लेवर आईस्क्रीम.', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/kulfi.png' 
+      },
+      { 
+        id: 'd-brownie-ice-cream',
+        name: 'Brownie with Ice Cream', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Brownie with Ice Cream – गरम चॉकलेट ब्राउनी आईस्क्रीमसह.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&auto=format&fit=crop&q=60&sig=d-brownie-ice-cream' 
+      },
+      { 
+        id: 'd-falooda',
+        name: 'Falooda', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Falooda – शेवया, आईस्क्रीम आणि रोझ सिरपचे फालुदा.', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/falooda.png' 
+      },
     ],
   },
   {
@@ -1196,6 +3079,160 @@ const inventoryByCategory = [
         rating: 4.9, 
         reviewCount: 389, 
         image: '/images/menu/cutting_chai.png' 
+      },
+      { 
+        id: 'b-tea',
+        name: 'Tea', 
+        price: 20, 
+        isVeg: true, 
+        shortDesc: 'Tea – दुधाचा चहा आल्याच्या फ्लेवरसह.', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/cutting_chai.png' 
+      },
+      { 
+        id: 'b-coffee',
+        name: 'Coffee', 
+        price: 30, 
+        isVeg: true, 
+        shortDesc: 'Coffee – गरम आणि क्रीमी कॉफी.', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&auto=format&fit=crop&q=60&sig=b-coffee' 
+      },
+      { 
+        id: 'b-cold-coffee',
+        name: 'Cold Coffee', 
+        price: 70, 
+        isVeg: true, 
+        shortDesc: 'Cold Coffee – चॉकलेट सिरप आणि आईस्क्रीमसह थंडगार कॉफी.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=600&auto=format&fit=crop&q=60&sig=b-cold-coffee' 
+      },
+      { 
+        id: 'b-hot-chocolate',
+        name: 'Hot Chocolate', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Hot Chocolate – गरम क्रीमी चॉकलेट पेय.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600&auto=format&fit=crop&q=60&sig=b-hot-chocolate' 
+      },
+      { 
+        id: 'b-lassi',
+        name: 'Lassi', 
+        price: 60, 
+        isVeg: true, 
+        shortDesc: 'Lassi – थंडगार क्रीमी दही लस्सी.', 
+        prepTime: '6 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/lassi.png' 
+      },
+      { 
+        id: 'b-taak',
+        name: 'Buttermilk (Taak)', 
+        price: 30, 
+        isVeg: true, 
+        shortDesc: 'Buttermilk (Taak) – ताजे आणि थंडगार ताक जिरे-कोथिंबीर फोडणीसह.', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/taak.png' 
+      },
+      { 
+        id: 'b-lemon-juice',
+        name: 'Lemon Juice', 
+        price: 35, 
+        isVeg: true, 
+        shortDesc: 'Lemon Juice – ताजे लिंबू सरबत.', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/fresh_lemon_juice.png' 
+      },
+      { 
+        id: 'b-lime-soda',
+        name: 'Lime Soda', 
+        price: 45, 
+        isVeg: true, 
+        shortDesc: 'Lime Soda – soda आणि लिंबू रसाचे मिश्रण.', 
+        prepTime: '5 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1607532941433-304659e8198a?w=600&auto=format&fit=crop&q=60&sig=b-lime-soda' 
+      },
+      { 
+        id: 'b-mojito',
+        name: 'Mojito (Non-Alcoholic)', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Mojito – पुदिना, लिंबू आणि सोड्याचे रिफ्रेशिंग पेय.', 
+        prepTime: '6 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: '/images/menu/mojito.png' 
+      },
+      { 
+        id: 'b-fresh-juice',
+        name: 'Fresh Fruit Juice', 
+        price: 85, 
+        isVeg: true, 
+        shortDesc: 'Fresh Fruit Juice – मोसंबी, सफरचंद किंवा अननसचा रस.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'b-milkshake',
+        name: 'Milkshake', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Milkshake – आंबा, स्ट्रॉबेरी किंवा चॉकलेट मिल्कशेक्स.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=600&auto=format&fit=crop&q=60&sig=b-milkshake' 
+      },
+      { 
+        id: 'b-smoothie',
+        name: 'Smoothie', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Smoothie – फळे आणि दह्याचे थंडगार मिश्रण.', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=600&auto=format&fit=crop&q=60' 
+      },
+      { 
+        id: 'b-soft-drinks',
+        name: 'Soft Drinks', 
+        price: 40, 
+        isVeg: true, 
+        shortDesc: 'Soft Drinks – कोल्ड ड्रिंक्स.', 
+        prepTime: '3 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?w=600&auto=format&fit=crop&q=60&sig=b-soft-drinks' 
+      },
+      { 
+        id: 'b-mineral-water',
+        name: 'Mineral Water', 
+        price: 20, 
+        isVeg: true, 
+        shortDesc: 'Mineral Water – पॅकेज्ड मिनरल वॉटर बाटली (१ ली).', 
+        prepTime: '2 mins', 
+        rating: 4.8, 
+        reviewCount: 120, 
+        image: 'https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?w=600&auto=format&fit=crop&q=60&sig=b-mineral-water' 
       },
     ],
   },

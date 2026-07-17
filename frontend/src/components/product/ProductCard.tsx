@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
 import toast from 'react-hot-toast';
 import { useTranslation } from '@/store/languageStore';
+import { cleanSubtitle } from '@/utils/text';
 
 interface ProductCardProps {
   product: Product;
@@ -120,7 +121,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </h3>
             {product.shortDesc && (
               <p className="text-[#3C2415]/60 dark:text-cream-200/60 text-xs font-light leading-relaxed line-clamp-2 mb-4">
-                {product.shortDesc}
+                {cleanSubtitle(product.name, product.shortDesc)}
               </p>
             )}
 
