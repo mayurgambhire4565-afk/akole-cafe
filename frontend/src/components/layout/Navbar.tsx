@@ -71,8 +71,8 @@ export default function Navbar() {
   const navBg = isTransparentHome
     ? 'bg-transparent'
     : isScrolled
-      ? 'bg-[#F4EFE6]/60 dark:bg-[#0B150F]/60 border-b border-white/25 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] backdrop-blur-2xl'
-      : 'bg-[#FDFBF7]/70 dark:bg-[#0B150F]/70 border-b border-white/15 dark:border-white/5 shadow-sm backdrop-blur-xl';
+      ? 'bg-[#F4EFE6]/45 dark:bg-[#0B150F]/45 border-b border-white/35 dark:border-white/15 shadow-[0_12px_40px_0_rgba(0,0,0,0.1)] backdrop-blur-3xl'
+      : 'bg-[#FDFBF7]/55 dark:bg-[#0B150F]/55 border-b border-white/25 dark:border-white/10 shadow-sm backdrop-blur-2xl';
 
   const logoColor = isTransparentHome
     ? 'text-cream-50'

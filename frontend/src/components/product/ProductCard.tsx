@@ -76,9 +76,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <motion.div
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.25 }}
-      className="group bg-white/45 dark:bg-white/5 rounded-[24px] shadow-sm hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/35 dark:border-white/15 backdrop-blur-xl transition-all overflow-hidden"
+      className="group glass-card-hover overflow-hidden"
     >
       <Link to={`/products/${product.slug}`} className="block relative">
         {/* Image Area */}

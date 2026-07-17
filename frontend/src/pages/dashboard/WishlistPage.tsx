@@ -135,7 +135,7 @@ export default function WishlistPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="bg-white dark:bg-coffee-900/40 dark:backdrop-blur-md rounded-3xl border border-coffee-100 dark:border-gold-500/10 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-coffee/5 hover:border-gold-500/20 transition-all duration-300 relative"
+                  className="glass-card-hover flex flex-col justify-between group relative"
                 >
                   {/* Remove Button */}
                   <button

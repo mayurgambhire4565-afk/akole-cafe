@@ -176,7 +176,7 @@ export default function AboutPage() {
               { title: 'Top 10 Cafés in India', org: 'Conde Nast Traveller' },
               { title: 'Sustainability Champion', org: 'Green Business Awards' }
             ].map((award, i) => (
-              <div key={i} className="rounded-[24px] border border-[#3C2415]/10 dark:border-white/10 p-6 flex flex-col items-center justify-center text-center hover:border-[#D4AF37]/50 transition-colors bg-white/50 dark:bg-white/5">
+              <div key={i} className="glass-card p-6 flex flex-col items-center justify-center text-center hover:border-[#D4AF37]/50 transition-all duration-300">
                 <Award className="w-8 h-8 text-[#D4AF37] mb-4" />
                 <h4 className="font-bold text-[#1A3324] dark:text-[#FDFBF7] text-sm mb-1">{award.title}</h4>
                 <p className="text-[#3C2415]/50 dark:text-cream-200/50 text-xs font-light">{award.org}</p>
