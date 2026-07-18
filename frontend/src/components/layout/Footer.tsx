@@ -126,7 +126,7 @@ export default function Footer() {
               <ul className="space-y-3.5 text-sm text-[#F5F3E9]/75 font-light">
                 <li className="flex items-start gap-2.5">
                   <MapPin className="w-4 h-4 text-[#D4AF37] flex-shrink-0 mt-0.5" />
-                  <span>123 Brew Street, Café District, Mumbai 400001</span>
+                  <span>Behind Akole Bus Stand, Bus Stand Road, Akole - 422601</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Phone className="w-4 h-4 text-[#D4AF37] flex-shrink-0" />
