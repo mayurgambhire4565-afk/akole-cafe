@@ -19,7 +19,12 @@ const registerSchema = z.object({
     .min(3, 'Name must be at least 3 characters')
     .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces'),
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
-  phone: z.string().regex(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits'),
+  phone: z.string()
+    .optional()
+    .or(z.literal(''))
+    .refine((val) => !val || /^[0-9]{10}$/.test(val), {
+      message: 'Phone number must be exactly 10 digits',
+    }),
   password: z.string()
     .min(8, 'Password must be at least 8 characters')
     .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
@@ -126,7 +131,7 @@ export default function RegisterPage() {
         <Input
           id="phone"
           type="tel"
-          label="Phone Number"
+          label="Phone Number (Optional)"
           placeholder="Enter your number"
           leftIcon={<Phone className="w-4 h-4" />}
           error={errors.phone?.message}
