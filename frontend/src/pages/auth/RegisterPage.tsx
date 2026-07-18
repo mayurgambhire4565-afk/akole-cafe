@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -38,6 +38,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [modalType, setModalType] = useState<'terms' | 'privacy' | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuthStore();
 
   const handleGoogleSignupSimulated = async () => {
@@ -59,6 +60,13 @@ export default function RegisterPage() {
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: (location.state as any)?.email || '',
+      name: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+    }
   });
 
   const mutation = useMutation({
@@ -72,8 +80,11 @@ export default function RegisterPage() {
     onError: (err: any) => {
       const errMsg = err.response?.data?.message || 'Registration failed';
       toast.error(errMsg);
-      if (errMsg.toLowerCase().includes('already') || errMsg.toLowerCase().includes('exists') || errMsg.toLowerCase().includes('account')) {
+      if (errMsg.toLowerCase().includes('already') || errMsg.toLowerCase().includes('exists') || errMsg.toLowerCase().includes('account') || errMsg.toLowerCase().includes('registered')) {
         setShowLoginOption(true);
+        setTimeout(() => {
+          navigate('/login', { state: { email: watch('email') } });
+        }, 1500);
       }
     },
   });
