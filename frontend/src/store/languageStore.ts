@@ -51,6 +51,7 @@ export const translations = {
     signUp: 'Sign Up',
     
     // Additional Page Translations
+    maharashtrianSpecialities: 'Maharashtrian Specialities',
     vegSpecialities: 'Veg Specialities',
     nonVegSpecialities: 'Non-Veg Specialities',
     discoverFlavors: 'Discover the Flavors of Maharashtra',
@@ -135,6 +136,7 @@ export const translations = {
     signUp: 'नोंदणी करा',
 
     // Additional Page Translations
+    maharashtrianSpecialities: 'महाराष्ट्रीयन वैशिष्ट्ये',
     vegSpecialities: 'शाकाहारी वैशिष्ट्ये',
     nonVegSpecialities: 'मांसाहारी वैशिष्ट्ये',
     discoverFlavors: 'महाराष्ट्राच्या अस्सल चवींचा आस्वाद घ्या',
@@ -192,6 +194,7 @@ export const useTranslation = () => {
     return translations[language][key] || translations.en[key];
   };
   const getCategoryTranslation = (slug: string, fallback: string) => {
+    if (slug === 'maharashtrian-specialities') return t('maharashtrianSpecialities');
     if (slug === 'veg-specialities') return t('vegSpecialities');
     if (slug === 'non-veg-specialities') return t('nonVegSpecialities');
     if (slug === 'breads') return t('traditionalBreads');

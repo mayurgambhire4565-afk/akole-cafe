@@ -5,13 +5,13 @@ import HeartLogo from '@/components/ui/HeartLogo';
 export default function AboutPage() {
   return (
     <div className="bg-[#F5F3E9] dark:bg-[#0B150F] min-h-screen pt-20 pb-24 transition-colors duration-300">
-      
+
       {/* Hero Section */}
       <div className="w-full h-80 md:h-[400px] lg:h-[500px] relative flex flex-col items-center justify-center">
         <div className="absolute inset-0 bg-black/50 z-10" />
-        <img 
-          src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=3840&q=100" 
-          alt="Cafe Interior" 
+        <img
+          src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=3840&q=100"
+          alt="Cafe Interior"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="relative z-20 text-center px-4">
@@ -21,6 +21,9 @@ export default function AboutPage() {
           <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-light text-white">
             Our <span className="italic font-serif text-[#D4AF37]">Story</span>
           </h1>
+          <p className="text-[#D4AF37] font-sans font-medium mt-4 text-lg md:text-2xl tracking-wide max-w-2xl mx-auto drop-shadow-sm">
+            हॉटेल क्षेत्रात मराठी माणसाचे पाऊल...
+          </p>
         </div>
       </div>
 
@@ -74,7 +77,7 @@ export default function AboutPage() {
           </h2>
 
           <div className="space-y-12 relative before:absolute before:inset-0 before:ml-4 md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-[#D4AF37]/20">
-            
+
             {/* 2018 */}
             <div className="relative flex justify-normal group pl-12 md:pl-0">
               <div className="flex items-center justify-center w-8 h-8 rounded-full border-4 border-[#FDFBF7] dark:border-[#112017] bg-[#D4AF37] shadow absolute left-4 md:left-1/2 -translate-x-1/2" />
@@ -144,14 +147,18 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {[
-              { init: 'RK', name: 'Rohan Kulkarni', role: 'Founder & Head Roaster' },
-              { init: 'MD', name: 'Meera Desai', role: 'Operations Director' },
-              { init: 'AN', name: 'Aditya Naik', role: 'Lead Barista' },
-              { init: 'SP', name: 'Sneha Patil', role: 'Experience Lead' }
+              { name: 'Mayur Gambhire', role: 'Director', image: '/images/team/mayur_gambhire.png' },
+              { name: 'Rutik Choudhary', role: 'Co-Founder', image: '/images/team/rutik_choudhary.png' },
+              { name: 'Yuvraj Jadhav', role: 'Operations Head', image: '/images/team/yuvraj_jadhav.png' },
+              { name: 'Kartik Dukale', role: 'Executive Chef', image: '/images/team/kartik_dukale.png' }
             ].map((member, i) => (
               <div key={i} className="bg-white dark:bg-[#112017] rounded-3xl p-8 flex flex-col items-center text-center shadow-sm border border-[#3C2415]/5 dark:border-white/5 hover:shadow-md transition-shadow">
-                <div className="w-16 h-16 rounded-full bg-[#3C2415] dark:bg-[#D4AF37] text-[#D4AF37] dark:text-[#3C2415] flex items-center justify-center text-xl font-bold font-display mb-4">
-                  {member.init}
+                <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-[#D4AF37] shadow-inner bg-[#3C2415] flex items-center justify-center">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <h4 className="font-bold text-[#1A3324] dark:text-[#FDFBF7] text-sm md:text-base mb-1">{member.name}</h4>
                 <p className="text-[#3C2415]/60 dark:text-cream-200/60 text-xs font-light">{member.role}</p>

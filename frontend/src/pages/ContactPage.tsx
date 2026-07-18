@@ -60,8 +60,9 @@ export default function ContactPage() {
                   <div>
                     <h4 className="font-sans font-bold text-xs uppercase tracking-wider text-[#D4AF37] mb-1.5">Our Location</h4>
                     <p className="text-[#FDFBF7]/80 text-sm font-light leading-relaxed">
-                      Akole, Maharashtra 422601<br />
-                      India
+                      Behind Akole Bus Stand,<br />
+                      Bus Stand Road, Akole - 422601<br />
+                      Maharashtra, India
                     </p>
                   </div>
                 </div>

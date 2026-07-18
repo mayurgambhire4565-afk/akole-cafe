@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -19,7 +19,12 @@ const registerSchema = z.object({
     .min(3, 'Name must be at least 3 characters')
     .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces'),
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
-  phone: z.string().regex(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits'),
+  phone: z.string()
+    .optional()
+    .or(z.literal(''))
+    .refine((val) => !val || /^[0-9]{10}$/.test(val), {
+      message: 'Phone number must be exactly 10 digits',
+    }),
   password: z.string()
     .min(8, 'Password must be at least 8 characters')
     .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
@@ -38,6 +43,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [modalType, setModalType] = useState<'terms' | 'privacy' | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuthStore();
 
   const handleGoogleSignupSimulated = async () => {
@@ -59,6 +65,13 @@ export default function RegisterPage() {
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: (location.state as any)?.email || '',
+      name: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+    }
   });
 
   const mutation = useMutation({
@@ -72,8 +85,11 @@ export default function RegisterPage() {
     onError: (err: any) => {
       const errMsg = err.response?.data?.message || 'Registration failed';
       toast.error(errMsg);
-      if (errMsg.toLowerCase().includes('already') || errMsg.toLowerCase().includes('exists') || errMsg.toLowerCase().includes('account')) {
+      if (errMsg.toLowerCase().includes('already') || errMsg.toLowerCase().includes('exists') || errMsg.toLowerCase().includes('account') || errMsg.toLowerCase().includes('registered')) {
         setShowLoginOption(true);
+        setTimeout(() => {
+          navigate('/login', { state: { email: watch('email') } });
+        }, 1500);
       }
     },
   });
@@ -115,7 +131,7 @@ export default function RegisterPage() {
         <Input
           id="phone"
           type="tel"
-          label="Phone Number"
+          label="Phone Number (Optional)"
           placeholder="Enter your number"
           leftIcon={<Phone className="w-4 h-4" />}
           error={errors.phone?.message}

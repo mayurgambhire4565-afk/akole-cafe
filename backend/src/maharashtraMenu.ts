@@ -8,6 +8,13 @@ const slugify = (text: string) =>
 
 export const MENU_CATEGORIES = [
   { 
+    id: 'maharashtrian-specialities', 
+    name: 'Maharashtrian Specialities', 
+    slug: 'maharashtrian-specialities', 
+    description: 'Famous traditional Maharashtrian culinary delights.', 
+    image: '/images/menu/misal_pav.png' 
+  },
+  { 
     id: 'veg-specialities', 
     name: 'Veg Specialities', 
     slug: 'veg-specialities', 
@@ -79,10 +86,12 @@ const buildMenuItem = (
   }
 ): Product => {
   const cleanedDesc = cleanSubtitle(item.name, item.shortDesc);
+  const baseSlug = slugify(item.name);
+  const slug = categoryId === 'maharashtrian-specialities' ? `ms-${baseSlug}` : baseSlug;
   return {
-    id: item.id || `${categoryId}-${slugify(item.name)}`,
+    id: item.id || `${categoryId}-${baseSlug}`,
     name: item.name,
-    slug: slugify(item.name),
+    slug,
     description: cleanedDesc,
     shortDesc: cleanedDesc,
     price: item.price,
@@ -104,6 +113,249 @@ const buildMenuItem = (
 };
 
 const inventoryByCategory = [
+  {
+    categoryId: 'maharashtrian-specialities',
+    categoryName: 'Maharashtrian Specialities',
+    items: [
+      { 
+        id: 'ms-misal-pav',
+        name: 'Misal Pav', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Misal Pav – अकोल्यातील सर्वात लोकप्रिय नाश्ता.', 
+        isBestseller: true, 
+        isChefSpecial: true,
+        spiceLevel: 'hot', 
+        prepTime: '10 mins', 
+        rating: 4.9, 
+        reviewCount: 245, 
+        image: '/images/menu/misal_pav.png' 
+      },
+      { 
+        id: 'ms-pithla-bhakri',
+        name: 'Pithla Bhakri / Zunka Bhakri', 
+        price: 150, 
+        isVeg: true, 
+        shortDesc: 'Pithla Bhakri / Zunka Bhakri – ग्रामीण भागातील पारंपरिक जेवण.', 
+        isChefSpecial: true,
+        spiceLevel: 'medium', 
+        prepTime: '15 mins', 
+        rating: 4.9, 
+        reviewCount: 176, 
+        image: '/images/menu/pithla_bhakri.png' 
+      },
+      { 
+        id: 'ms-thalipeeth',
+        name: 'Thalipeeth', 
+        price: 100, 
+        isVeg: true, 
+        shortDesc: 'Thalipeeth – लोणी किंवा दह्यासोबत.', 
+        spiceLevel: 'mild', 
+        prepTime: '12 mins', 
+        rating: 4.7, 
+        reviewCount: 96, 
+        image: '/images/menu/thalipeeth.png' 
+      },
+      { 
+        id: 'ms-vada-pav',
+        name: 'Vada Pav', 
+        price: 40, 
+        isVeg: true, 
+        shortDesc: 'Vada Pav – गरम वडा आणि चटणीसह.', 
+        isBestseller: true, 
+        spiceLevel: 'medium', 
+        prepTime: '5 mins', 
+        rating: 4.9, 
+        reviewCount: 312, 
+        image: '/images/menu/classic_vada_pav.png' 
+      },
+      { 
+        id: 'ms-sabudana-khichdi',
+        name: 'Sabudana Khichdi', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Sabudana Khichdi – हलका आणि चविष्ट पदार्थ.', 
+        spiceLevel: 'mild', 
+        prepTime: '8 mins', 
+        rating: 4.7, 
+        reviewCount: 128, 
+        image: '/images/menu/sabudana_khichdi.png' 
+      },
+      { 
+        id: 'ms-sabudana-vada',
+        name: 'Sabudana Vada', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Sabudana Vada – उपवासात आणि नाश्त्यासाठी प्रसिद्ध.', 
+        isBestseller: true,
+        spiceLevel: 'mild', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 142, 
+        image: '/images/menu/sabudana_vada.png' 
+      },
+      { 
+        id: 'ms-kanda-bhaji',
+        name: 'Kanda Bhaji', 
+        price: 60, 
+        isVeg: true, 
+        shortDesc: 'Kanda Bhaji – कुरकुरीत आणि गरमागरम कांदा भजी.', 
+        isBestseller: true,
+        spiceLevel: 'medium', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 195, 
+        image: '/images/menu/kanda_bhaji.png' 
+      },
+      { 
+        id: 'ms-pohe',
+        name: 'Pohe', 
+        price: 50, 
+        isVeg: true, 
+        shortDesc: 'Pohe – कांदा आणि पोहे, लिंबू आणि ओल्या खोबऱ्यासह.', 
+        spiceLevel: 'mild', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 167, 
+        image: '/images/menu/kanda_poha.png' 
+      },
+      { 
+        id: 'ms-maswadi',
+        name: 'Maswadi', 
+        price: 160, 
+        isVeg: true, 
+        shortDesc: 'Maswadi – पारंपरिक महाराष्ट्रीयन मासवडी आणि तिखट रस्सा.', 
+        isChefSpecial: true,
+        spiceLevel: 'hot', 
+        prepTime: '18 mins', 
+        rating: 4.9, 
+        reviewCount: 142, 
+        image: '/images/menu/maswadi.png' 
+      },
+      { 
+        id: 'ms-solkadhi',
+        name: 'Solkadhi', 
+        price: 50, 
+        isVeg: true, 
+        shortDesc: 'Solkadhi – नारळाचे दूध आणि कोकमचे पाचक पेय.', 
+        isBestseller: true,
+        prepTime: '5 mins', 
+        rating: 4.9, 
+        reviewCount: 190, 
+        image: '/images/menu/solkadhi.png' 
+      },
+      { 
+        id: 'ms-kokum-sarbat',
+        name: 'Kokum Sarbat', 
+        price: 45, 
+        isVeg: true, 
+        shortDesc: 'Kokum Sarbat – थंडगार आणि पाचक कोकम सरबत.', 
+        prepTime: '3 mins', 
+        rating: 4.7, 
+        reviewCount: 95, 
+        image: '/images/menu/kokum_sarbat.png' 
+      },
+      { 
+        id: 'ms-taak',
+        name: 'Masala Taak (Buttermilk)', 
+        price: 30, 
+        isVeg: true, 
+        shortDesc: 'Masala Taak – जिरे आणि कोथिंबीर घातलेले मसालेदार ताक.', 
+        prepTime: '3 mins', 
+        rating: 4.8, 
+        reviewCount: 154, 
+        image: '/images/menu/taak.png' 
+      },
+      {
+        id: 'ms-bajri-bhakar',
+        name: 'Bajri chi Bhakar',
+        price: 30,
+        isVeg: true,
+        shortDesc: 'Bajri chi Bhakar – गरम आणि पौष्टिक बाजरीची भाकरी.',
+        prepTime: '8 mins',
+        rating: 4.8,
+        reviewCount: 94,
+        image: '/images/menu/bajri_bhakar.png'
+      },
+      {
+        id: 'ms-tandlachi-bhakar',
+        name: 'Tandlachi Bhakar',
+        price: 35,
+        isVeg: true,
+        shortDesc: 'Tandlachi Bhakar – मऊ आणि पांढरीशुभ्र तांदळाची भाकरी.',
+        prepTime: '8 mins',
+        rating: 4.8,
+        reviewCount: 76,
+        image: '/images/menu/tandlachi_bhakar.png'
+      },
+      {
+        id: 'ms-chapati',
+        name: 'Chapati',
+        price: 15,
+        isVeg: true,
+        shortDesc: 'Chapati – गव्हाची मऊ आणि घडीची चपाती (पोळी).',
+        prepTime: '5 mins',
+        rating: 4.7,
+        reviewCount: 152,
+        image: '/images/menu/chapati.png'
+      },
+      {
+        id: 'ms-roti',
+        name: 'Roti',
+        price: 12,
+        isVeg: true,
+        shortDesc: 'Roti – साधी गव्हाची तवा रोटी.',
+        prepTime: '5 mins',
+        rating: 4.6,
+        reviewCount: 110,
+        image: '/images/menu/roti.png'
+      },
+      {
+        id: 'ms-naan',
+        name: 'Naan',
+        price: 30,
+        isVeg: true,
+        shortDesc: 'Naan – तंदूरमध्ये भाजलेला बटर नान.',
+        prepTime: '8 mins',
+        rating: 4.8,
+        reviewCount: 185,
+        image: '/images/menu/butter_naan.png'
+      },
+      {
+        id: 'ms-nagli-bhakar',
+        name: 'Nagli chi Bhakar',
+        price: 35,
+        isVeg: true,
+        shortDesc: 'Nagli chi Bhakar – कॅल्शियमयुक्त नागलीची (नाचणीची) भाकरी.',
+        prepTime: '8 mins',
+        rating: 4.7,
+        reviewCount: 68,
+        image: '/images/menu/nagli_bhakar.png'
+      },
+      {
+        id: 'ms-jwari-bhakar',
+        name: 'Jwari chi Bhakar',
+        price: 25,
+        isVeg: true,
+        shortDesc: 'Jwari chi Bhakar – पचनास हलकी आणि रुचकर ज्वारीची भाकरी.',
+        prepTime: '8 mins',
+        rating: 4.9,
+        reviewCount: 204,
+        image: '/images/menu/jwari_bhakar.png'
+      },
+      {
+        id: 'ms-butter-roti',
+        name: 'Butter Roti',
+        price: 15,
+        isVeg: true,
+        shortDesc: 'Butter Roti – बटर लावलेली गव्हाची तवा रोटी.',
+        prepTime: '5 mins',
+        rating: 4.8,
+        reviewCount: 110,
+        image: '/images/menu/butter_roti.png'
+      }
+    ]
+  },
   {
     categoryId: 'veg-specialities',
     categoryName: 'Veg Specialities',

@@ -113,7 +113,13 @@ export default function LoginPage() {
       setOtpSent(true);
       startCountdown();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to send OTP');
+      const errMsg = err.response?.data?.message || 'Failed to send OTP';
+      toast.error(errMsg);
+      if (errMsg.toLowerCase().includes('does not exist') || errMsg.toLowerCase().includes('sign up first') || errMsg.toLowerCase().includes('not found')) {
+        setTimeout(() => {
+          navigate('/register', { state: { email: emailValue } });
+        }, 1500);
+      }
     } finally {
       setSendOtpLoading(false);
     }
@@ -128,7 +134,13 @@ export default function LoginPage() {
       navigate('/');
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || 'Login failed');
+      const errMsg = err.response?.data?.message || 'Login failed';
+      toast.error(errMsg);
+      if (errMsg.toLowerCase().includes('does not exist') || errMsg.toLowerCase().includes('sign up first') || errMsg.toLowerCase().includes('not found')) {
+        setTimeout(() => {
+          navigate('/register', { state: { email: watch('email') } });
+        }, 1500);
+      }
     },
   });
 
