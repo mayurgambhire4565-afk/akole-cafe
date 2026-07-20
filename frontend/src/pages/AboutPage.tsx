@@ -10,8 +10,8 @@ export default function AboutPage() {
       <div className="w-full h-80 md:h-[400px] lg:h-[500px] relative flex flex-col items-center justify-center">
         <div className="absolute inset-0 bg-black/50 z-10" />
         <img
-          src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=3840&q=100"
-          alt="Cafe Interior"
+          src="/images/maharashtrian_cafe_bg.png"
+          alt="Maharashtrian Cafe Interior"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="relative z-20 text-center px-4">
