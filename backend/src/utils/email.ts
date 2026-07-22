@@ -97,6 +97,27 @@ export const sendWelcomeEmail = async (to: string, name: string): Promise<void> 
   await sendEmail(to, 'Welcome to Akole Cafe! ☕', html);
 };
 
+export const sendLoginNotificationEmail = async (to: string, name: string): Promise<void> => {
+  const refCode = Date.now().toString(36).toUpperCase();
+  const html = `
+    <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: #1a0f0a; color: #f5e6d3; padding: 40px; border-radius: 12px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #D4AF37; font-family: 'Playfair Display', 'Georgia', serif; font-size: 26px; font-weight: bold; margin: 0; letter-spacing: 1px;">Akole Cafe</h1>
+        <p style="color: #8b7355; margin: 8px 0 0;">Brewing Connections, Serving Memories</p>
+      </div>
+      <h2 style="color: #f5e6d3;">Welcome Back, ${name}! ☕</h2>
+      <p>We noticed a successful login to your Akole Cafe account on <strong>${new Date().toLocaleDateString('en-IN', { dateStyle: 'full' })}</strong>.</p>
+      <p>If this was you, you are all set to order your favorite coffee and authentic Maharashtrian delicacies!</p>
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="${env.FRONTEND_URL}" style="display: inline-block; background: #c8a46e; color: #1a0f0a; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold;">Explore Menu</a>
+      </div>
+      <p style="color: #8b7355; font-size: 12px; margin-top: 30px;">© 2024 Akole Cafe. All rights reserved.</p>
+      <p style="color: #3d251c; font-size: 8px; margin-top: 10px; text-align: center; user-select: none;">Security Hash: ${refCode}</p>
+    </div>
+  `;
+  await sendEmail(to, 'Welcome Back to Akole Cafe! ☕', html);
+};
+
 export const sendOTPEmail = async (to: string, name: string, otp: string): Promise<void> => {
   const refCode = Date.now().toString(36).toUpperCase();
   const html = `

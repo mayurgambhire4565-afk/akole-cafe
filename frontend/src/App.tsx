@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useThemeStore } from '@/store/themeStore';
 import { useAuthStore } from '@/store/authStore';
 import PageLoader from '@/components/ui/PageLoader';
+import CustomCursor from '@/components/ui/CustomCursor';
 
 // Layouts
 import MainLayout from '@/layouts/MainLayout';
@@ -111,6 +112,7 @@ function App() {
 
   return (
     <>
+      <CustomCursor />
       <AnimatePresence>
         {isInitializing && (
           <motion.div

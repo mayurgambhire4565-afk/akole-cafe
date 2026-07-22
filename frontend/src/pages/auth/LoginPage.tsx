@@ -130,7 +130,7 @@ export default function LoginPage() {
     onSuccess: (res) => {
       const { user, accessToken } = res.data.data;
       login(user, accessToken);
-      toast.success(`Welcome back, ${user.name}! ☕`);
+      toast.success(`Welcome back, ${user.name}! ☕ Check your inbox for a welcome email.`);
       navigate('/');
     },
     onError: (err: any) => {

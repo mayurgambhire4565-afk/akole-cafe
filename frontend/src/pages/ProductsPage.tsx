@@ -43,7 +43,7 @@ export default function ProductsPage() {
   };
 
   const filteredProducts = useMemo(() => {
-    return MENU_ITEMS.filter((product) => {
+    const items = MENU_ITEMS.filter((product) => {
       const matchesSearch = search
         ? product.name.toLowerCase().includes(search.toLowerCase()) ||
           product.description.toLowerCase().includes(search.toLowerCase())
@@ -60,6 +60,18 @@ export default function ProductsPage() {
 
       return matchesSearch && matchesCategory && matchesDiet;
     });
+
+    if (!category) {
+      const seen = new Set<string>();
+      return items.filter((item) => {
+        const key = item.name.toLowerCase().trim();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    return items;
   }, [search, category, diet]);
 
   const sortedProducts = useMemo(() => {
