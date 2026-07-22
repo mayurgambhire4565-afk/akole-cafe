@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Award, Star, X, Sparkles } from 'lucide-react';
+import { Award, X, Sparkles } from 'lucide-react';
 import { FaGithub, FaLinkedin, FaInstagram, FaTwitter, FaEnvelope } from 'react-icons/fa';
 import HeartLogo from '@/components/ui/HeartLogo';
 
@@ -95,6 +95,7 @@ export default function AboutPage() {
       document.body.style.overflow = 'unset';
     };
   }, [selectedMember]);
+
   return (
     <div className="bg-[#F5F3E9] dark:bg-[#0B150F] min-h-screen pt-20 pb-24 transition-colors duration-300">
 
@@ -102,8 +103,8 @@ export default function AboutPage() {
       <div className="w-full h-80 md:h-[400px] lg:h-[500px] relative flex flex-col items-center justify-center">
         <div className="absolute inset-0 bg-black/50 z-10" />
         <img
-          src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=3840&q=100"
-          alt="Cafe Interior"
+          src="/images/maharashtrian_cafe_bg.png"
+          alt="Maharashtrian Cafe Interior"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="relative z-20 text-center px-4">
@@ -281,7 +282,7 @@ export default function AboutPage() {
               {/* Close Button */}
               <button
                 onClick={() => setSelectedMember(null)}
-                className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/10 hover:bg-black/20 text-white md:bg-[#3C2415]/5 md:hover:bg-[#3C2415]/10 md:dark:bg-white/5 md:dark:hover:bg-white/10 md:text-[#3C2415] md:dark:text-[#FDFBF7] transition-colors outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
+                className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/10 dark:bg-white/10 text-[#3C2415] dark:text-[#FDFBF7] hover:bg-[#D4AF37] hover:text-white dark:hover:bg-[#D4AF37] transition-colors flex items-center justify-center outline-none"
                 aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
@@ -365,7 +366,7 @@ export default function AboutPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[#3C2415]/5 hover:bg-[#3C2415]/10 dark:bg-white/5 dark:hover:bg-white/10 text-[#3C2415] dark:text-[#FDFBF7] hover:text-[#D4AF37] dark:hover:text-[#D4AF37] hover:-translate-y-0.5 transition-all duration-300 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
-                        title="Twitter"
+                        title="Twitter / X"
                       >
                         <FaTwitter className="w-4 h-4" />
                       </a>
@@ -391,7 +392,7 @@ export default function AboutPage() {
       <div className="py-24 bg-[#FDFBF7] dark:bg-[#112017] transition-colors duration-300">
         <div className="container-custom max-w-6xl text-center">
           <p className="text-[#D4AF37] font-bold tracking-[0.2em] uppercase text-[10px] mb-3">RECOGNITION</p>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-[#1A3324] dark:text-[#FDFBF7] mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold font-display text-[#1A3324] dark:text-[#FDFBF7] mb-16">
             Awards & Achievements
           </h2>
 

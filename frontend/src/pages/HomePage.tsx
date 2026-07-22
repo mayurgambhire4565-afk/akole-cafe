@@ -152,27 +152,36 @@ function FeaturedDishesSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {FEATURED_DISHES.map((dish, index) => (
-            <motion.div
+            <Link
               key={dish.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="relative overflow-hidden rounded-[32px] shadow-xl bg-white border border-[#3C2415]/10"
+              to={`/products?search=${encodeURIComponent(dish.title)}`}
+              className="block group"
             >
-              <div className="relative h-72 overflow-hidden">
-                <img
-                  src={dish.image}
-                  alt={dish.title}
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1A3324]/90 via-[#1A3324]/10 to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <p className="text-xs uppercase tracking-[0.24em] text-[#D4AF37] mb-3">{dish.category}</p>
-                  <h3 className="text-2xl font-display font-bold text-white mb-2">{dish.title}</h3>
-                  <p className="text-sm text-[#F5F3E9]/85 leading-relaxed">{dish.subtitle}</p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="relative overflow-hidden rounded-[32px] shadow-xl bg-white border border-[#3C2415]/10 hover:shadow-2xl hover:border-[#D4AF37]/40 transition-all duration-500 cursor-pointer"
+              >
+                <div className="relative h-72 overflow-hidden">
+                  <img
+                    src={dish.image}
+                    alt={dish.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A3324]/95 via-[#1A3324]/30 to-transparent group-hover:from-[#1A3324]/90 transition-all duration-300" />
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <p className="text-xs uppercase tracking-[0.24em] text-[#D4AF37] mb-3">{dish.category}</p>
+                    <h3 className="text-2xl font-display font-bold text-white mb-2 group-hover:text-[#D4AF37] transition-colors">{dish.title}</h3>
+                    <p className="text-sm text-[#F5F3E9]/85 leading-relaxed mb-3">{dish.subtitle}</p>
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#D4AF37] uppercase tracking-widest opacity-90 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+                      <span>Explore Menu</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </div>

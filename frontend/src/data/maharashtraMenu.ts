@@ -311,15 +311,64 @@ const inventoryByCategory = [
         image: '/images/menu/roti.png'
       },
       {
-        id: 'ms-naan',
-        name: 'Naan',
-        price: 30,
+        id: 'ms-plain-naan',
+        name: 'Plain Naan',
+        price: 35,
         isVeg: true,
-        shortDesc: 'Naan – तंदूरमध्ये भाजलेला बटर नान.',
+        shortDesc: 'Plain Naan – तंदूरमध्ये भाजलेला मऊ आणि खमंग प्लेन नान.',
         prepTime: '8 mins',
         rating: 4.8,
         reviewCount: 185,
-        image: '/images/menu/butter_naan.png'
+        image: '/images/menu/plain_naan.png'
+      },
+      {
+        id: 'ms-garlic-naan',
+        name: 'Garlic Naan',
+        price: 45,
+        isVeg: true,
+        shortDesc: 'Garlic Naan – भाजलेला लसूण, तूप आणि कोथिंबीर घातलेला गरमागरम गार्लिक नान.',
+        isBestseller: true,
+        prepTime: '8 mins',
+        rating: 4.9,
+        reviewCount: 215,
+        image: '/images/menu/garlic_naan.png'
+      },
+      {
+        id: 'ms-cheese-naan',
+        name: 'Cheese Naan',
+        price: 60,
+        isVeg: true,
+        shortDesc: 'Cheese Naan – मऊ मेल्टेड चीजने स्टफ केलेला गरमागरम चीज नान.',
+        isBestseller: true,
+        isChefSpecial: true,
+        prepTime: '10 mins',
+        rating: 5.0,
+        reviewCount: 260,
+        image: '/images/menu/cheese_naan.png'
+      },
+      {
+        id: 'ms-kulcha',
+        name: 'Amritsari Kulcha',
+        price: 50,
+        isVeg: true,
+        shortDesc: 'Amritsari Kulcha – बटाटे आणि मसाल्यांचे सारण भरलेला खमंग कुलचा.',
+        isBestseller: true,
+        prepTime: '10 mins',
+        rating: 4.9,
+        reviewCount: 190,
+        image: '/images/menu/kulcha.png'
+      },
+      {
+        id: 'ms-paratha',
+        name: 'Aloo Paratha',
+        price: 60,
+        isVeg: true,
+        shortDesc: 'Aloo Paratha – लोणी, दही आणि लोणच्यासोबत गरमागरम खमंग बटाटा पराठा.',
+        isBestseller: true,
+        prepTime: '12 mins',
+        rating: 4.9,
+        reviewCount: 220,
+        image: '/images/menu/paratha.png'
       },
       {
         id: 'ms-nagli-bhakar',
@@ -395,9 +444,148 @@ const inventoryByCategory = [
         shortDesc: 'Thalipeeth – लोणी किंवा दह्यासोबत.', 
         spiceLevel: 'mild', 
         prepTime: '12 mins', 
-        rating: 4.7, 
-        reviewCount: 96, 
         image: '/images/menu/thalipeeth.png' 
+      },
+      { 
+        id: 'v-veg-cutlet',
+        name: 'Veg Cutlet', 
+        price: 70, 
+        isVeg: true, 
+        shortDesc: 'Veg Cutlet – कुरकुरीत आणि खमंग व्हेज कटलेट, पुदिना चटणी आणि सॉससोबत.', 
+        isBestseller: true, 
+        spiceLevel: 'medium', 
+        prepTime: '10 mins', 
+        rating: 4.8, 
+        reviewCount: 165, 
+        image: '/images/menu/veg_cutlet.png' 
+      },
+      { 
+        id: 'v-grilled-veg-sandwich',
+        name: 'Grilled Veg Sandwich', 
+        price: 90, 
+        isVeg: true, 
+        shortDesc: 'Grilled Veg Sandwich – ताजी भाज्या, चीज आणि ग्रिल केलेल्या ब्रेडचे टेस्टी सँडविच.', 
+        isBestseller: true, 
+        spiceLevel: 'mild', 
+        prepTime: '10 mins', 
+        rating: 4.9, 
+        reviewCount: 184, 
+        image: '/images/menu/grilled_veg_sandwich.png' 
+      },
+      { 
+        id: 'v-veg-handi',
+        name: 'Veg Handi', 
+        price: 180, 
+        isVeg: true, 
+        shortDesc: 'Veg Handi – सुगंधी मसाल्यात आणि मलईदार रश्श्यात शिजवलेली मिश्र भाज्यांची हंडी.', 
+        isBestseller: true, 
+        isChefSpecial: true,
+        spiceLevel: 'medium', 
+        prepTime: '20 mins', 
+        rating: 4.9, 
+        reviewCount: 210, 
+        image: '/images/menu/veg_handi.png' 
+      },
+      { 
+        id: 'v-aloo-matar',
+        name: 'Aloo Matar', 
+        price: 140, 
+        isVeg: true, 
+        shortDesc: 'Aloo Matar – गरमागरम मसालेदार टोमॅटो ग्रेव्हीमध्ये उकडलेले बटाटे आणि ताजे हिरवे मटार.', 
+        isBestseller: true, 
+        spiceLevel: 'medium', 
+        prepTime: '15 mins', 
+        rating: 4.8, 
+        reviewCount: 190, 
+        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&auto=format&fit=crop&q=80' 
+      },
+      { 
+        id: 'v-dum-aloo',
+        name: 'Dum Aloo', 
+        price: 160, 
+        isVeg: true, 
+        shortDesc: 'Dum Aloo – दम देऊन शिजवलेले मसालेदार आणि मलईदार ग्रेव्हीतील दम आलू.', 
+        isBestseller: true, 
+        isChefSpecial: true,
+        spiceLevel: 'medium', 
+        prepTime: '18 mins', 
+        rating: 4.9, 
+        reviewCount: 205, 
+        image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop&q=80' 
+      },
+      { 
+        id: 'v-cheese-burst-sandwich',
+        name: 'Cheese Burst Sandwich', 
+        price: 130, 
+        isVeg: true, 
+        shortDesc: 'Cheese Burst Sandwich – मेल्टेड लिक्विड चीजने गच्च भरलेले कुरकुरीत ग्रिल्ड सँडविच.', 
+        isBestseller: true, 
+        isChefSpecial: true,
+        spiceLevel: 'mild', 
+        prepTime: '12 mins', 
+        rating: 5.0, 
+        reviewCount: 245, 
+        image: '/images/menu/cheese_burst_sandwich.png' 
+      },
+      { 
+        id: 'v-corn-masala',
+        name: 'Corn Masala', 
+        price: 80, 
+        isVeg: true, 
+        shortDesc: 'Corn Masala – चाट मसाला, बटर आणि लिंबाच्या रसाने बनवलेला चमचमीत कॉर्न मसाला.', 
+        isBestseller: true, 
+        spiceLevel: 'medium', 
+        prepTime: '8 mins', 
+        rating: 4.8, 
+        reviewCount: 175, 
+        image: '/images/menu/corn_masala.png' 
+      },
+      { 
+        id: 'v-berry-smoothie',
+        name: 'Mixed Berry Smoothie', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Mixed Berry Smoothie – ताज्या बेरीज, दही आणि मधाचे थंडगार आणि पौष्टिक स्मूदी.', 
+        isBestseller: true, 
+        prepTime: '5 mins', 
+        rating: 4.9, 
+        reviewCount: 198, 
+        image: '/images/menu/smoothie.png' 
+      },
+      { 
+        id: 'v-chocolate-milkshake',
+        name: 'Chocolate Milkshake', 
+        price: 120, 
+        isVeg: true, 
+        shortDesc: 'Chocolate Milkshake – व्हिप्ड क्रीम आणि चॉकलेट सिरपने सजवलेले दाट चॉकलेट मिल्कशेक.', 
+        isBestseller: true, 
+        prepTime: '5 mins', 
+        rating: 4.9, 
+        reviewCount: 230, 
+        image: '/images/menu/milkshake.png' 
+      },
+      { 
+        id: 'v-soft-drinks',
+        name: 'Soft Drinks / Cold Drinks', 
+        price: 40, 
+        isVeg: true, 
+        shortDesc: 'Soft Drinks – बर्फ आणि लिंबासह थंडगार कार्बोनेटेड सॉफ्ट ड्रिंक्स.', 
+        prepTime: '2 mins', 
+        rating: 4.8, 
+        reviewCount: 160, 
+        image: '/images/menu/soft_drinks.png' 
+      },
+      { 
+        id: 'v-cutting-chai',
+        name: 'Cutting Chai', 
+        price: 25, 
+        isVeg: true, 
+        shortDesc: 'Cutting Chai – आले आणि वेलची घातलेली गरमागरम अस्सल कटिंग चहा.', 
+        isBestseller: true, 
+        prepTime: '3 mins', 
+        rating: 4.9, 
+        reviewCount: 320, 
+        image: '/images/menu/cutting_chai.png' 
       },
       { 
         id: 'v-vada-pav',
@@ -2304,7 +2492,7 @@ const inventoryByCategory = [
         prepTime: '15 mins', 
         rating: 4.7, 
         reviewCount: 130, 
-        image: 'https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=600&auto=format&fit=crop&q=60' 
+        image: '/images/menu/chicken_rassa.png' 
       },
       { 
         id: 'nv-chicken-sukka',
@@ -2323,24 +2511,27 @@ const inventoryByCategory = [
         name: 'Chicken Kolhapuri', 
         price: 210, 
         isVeg: false, 
-        shortDesc: 'Chicken Kolhapuri – झणझणीत कोल्हापुरी मसाल्यांचे चिकन.', 
+        shortDesc: 'Chicken Kolhapuri – झणझणीत कोल्हापुरी तांबड्या मसाल्यांचे चिकन.', 
+        isBestseller: true,
+        isChefSpecial: true,
         spiceLevel: 'hot', 
         prepTime: '16 mins', 
         rating: 4.9, 
         reviewCount: 175, 
-        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-kolhapuri' 
+        image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=800&auto=format&fit=crop&q=80' 
       },
       { 
         id: 'nv-chicken-masala',
         name: 'Chicken Masala', 
         price: 190, 
         isVeg: false, 
-        shortDesc: 'Chicken Masala – जाडसर मसाल्यातील लज्जतदार चिकन.', 
+        shortDesc: 'Chicken Masala – घट्ट जाडसर मसाल्यातील लज्जतदार आणि सुगंधी चिकन मसाला.', 
+        isBestseller: true,
         spiceLevel: 'medium', 
         prepTime: '15 mins', 
-        rating: 4.8, 
-        reviewCount: 160, 
-        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60' 
+        rating: 4.9, 
+        reviewCount: 210, 
+        image: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=800&auto=format&fit=crop&q=80' 
       },
       { 
         id: 'nv-chicken-kheema',
@@ -2359,12 +2550,13 @@ const inventoryByCategory = [
         name: 'Chicken Tikka', 
         price: 240, 
         isVeg: false, 
-        shortDesc: 'Chicken Tikka – दही आणि मसाल्यात मॅरीनेट केलेले तंदूर चिकन.', 
+        shortDesc: 'Chicken Tikka – दही आणि मसाल्यात मॅरीनेट केलेले तंदूरमध्ये शेकलेले खमंग चिकन टिक्का.', 
+        isBestseller: true,
         spiceLevel: 'medium', 
         prepTime: '18 mins', 
-        rating: 4.8, 
-        reviewCount: 110, 
-        image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600&auto=format&fit=crop&q=60&sig=nv-chicken-tikka' 
+        rating: 4.9, 
+        reviewCount: 220, 
+        image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=800&auto=format&fit=crop&q=80' 
       },
       { 
         id: 'nv-chicken-lollipop',
@@ -3333,37 +3525,51 @@ const inventoryByCategory = [
         image: '/images/menu/cutting_chai.png' 
       },
       { 
-        id: 'b-tea',
-        name: 'Tea', 
+        id: 'b-black-tea',
+        name: 'Black Tea', 
         price: 20, 
         isVeg: true, 
-        shortDesc: 'Tea – दुधाचा चहा आल्याच्या फ्लेवरसह.', 
+        shortDesc: 'Black Tea – लिंबू आणि पुदिन्याच्या फ्लेवरसह गरमागरम कोरा चहा (ब्लॅक टी).', 
         prepTime: '5 mins', 
         rating: 4.8, 
         reviewCount: 120, 
-        image: '/images/menu/cutting_chai.png' 
+        image: 'https://images.unsplash.com/photo-1594631252845-29fc4cc8cde9?w=800&auto=format&fit=crop&q=80' 
       },
       { 
-        id: 'b-coffee',
-        name: 'Coffee', 
-        price: 30, 
+        id: 'b-hot-coffee',
+        name: 'Hot Filter Coffee', 
+        price: 40, 
         isVeg: true, 
-        shortDesc: 'Coffee – गरम आणि क्रीमी कॉफी.', 
+        shortDesc: 'Hot Filter Coffee – अस्सल दाट आणि सुगंधी गरम फिल्टर कॉफी.', 
+        isBestseller: true,
         prepTime: '5 mins', 
-        rating: 4.8, 
-        reviewCount: 120, 
-        image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&auto=format&fit=crop&q=60&sig=b-coffee' 
+        rating: 4.9, 
+        reviewCount: 280, 
+        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&auto=format&fit=crop&q=80' 
       },
       { 
         id: 'b-cold-coffee',
-        name: 'Cold Coffee', 
-        price: 70, 
+        name: 'Cold Coffee with Ice Cream', 
+        price: 80, 
         isVeg: true, 
-        shortDesc: 'Cold Coffee – चॉकलेट सिरप आणि आईस्क्रीमसह थंडगार कॉफी.', 
+        shortDesc: 'Cold Coffee – चॉकलेट सिरप आणि व्हॅनिला आईस्क्रीमसह थंडगार थिक कॉफी.', 
+        isBestseller: true,
         prepTime: '8 mins', 
-        rating: 4.8, 
-        reviewCount: 120, 
-        image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=600&auto=format&fit=crop&q=60&sig=b-cold-coffee' 
+        rating: 4.9, 
+        reviewCount: 310, 
+        image: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800&auto=format&fit=crop&q=80' 
+      },
+      { 
+        id: 'b-cappuccino',
+        name: 'Signature Cappuccino', 
+        price: 110, 
+        isVeg: true, 
+        shortDesc: 'Signature Cappuccino – एस्प्रेसो आणि मऊ क्रीमी फोमसह प्रीमियम कॅपुचिनो.', 
+        isChefSpecial: true,
+        prepTime: '6 mins', 
+        rating: 4.9, 
+        reviewCount: 195, 
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=800&auto=format&fit=crop&q=80' 
       },
       { 
         id: 'b-hot-chocolate',
@@ -3490,9 +3696,17 @@ const inventoryByCategory = [
   },
 ];
 
-export const MENU_ITEMS: Product[] = inventoryByCategory.flatMap((entry) =>
+const rawMenuItems: Product[] = inventoryByCategory.flatMap((entry) =>
   entry.items.map((item) => buildMenuItem(entry.categoryId, entry.categoryName, item))
 );
+
+const seenNames = new Set<string>();
+export const MENU_ITEMS: Product[] = rawMenuItems.filter((item) => {
+  const key = item.name.toLowerCase().trim();
+  if (seenNames.has(key)) return false;
+  seenNames.add(key);
+  return true;
+});
 
 export const FEATURED_DISHES = [
   { title: 'Misal Pav', category: 'Veg Specialities', subtitle: 'अकोल्यातील सर्वात लोकप्रिय नाश्ता.', image: '/images/menu/misal_pav.png' },
