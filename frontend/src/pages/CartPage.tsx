@@ -89,8 +89,9 @@ export default function CartPage() {
         </div>
         <h2 className="text-3xl font-display font-bold text-[#1A3324] mb-4">Your cart is empty</h2>
         <p className="text-[#3C2415]/60 mb-8">Looks like you haven't added any premium coffee yet.</p>
-        <Link to="/products" className="bg-[#1A3324] hover:bg-[#112419] text-white px-8 py-3 rounded-full font-medium inline-block transition-colors">
-          Browse Menu
+        <Link to="/products" className="bg-[#1A3324] hover:bg-[#112419] text-white px-8 py-3 rounded-full font-medium inline-flex items-center gap-2.5 transition-colors shadow-sm">
+          <img src="/gold-logo.png" alt="Akole Cafe Logo Icon" className="w-5 h-5 rounded-full object-cover border border-[#D4AF37] shadow-sm flex-shrink-0" />
+          <span>Browse Menu</span>
         </Link>
       </div>
     </div>

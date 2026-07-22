@@ -271,7 +271,17 @@ export default function Navbar() {
                         </div>
 
                         {/* Links Section */}
-                        <div className="py-2 px-2">
+                        <div className="py-2 px-2 space-y-1">
+                          {user && ['ADMIN', 'SUPER_ADMIN'].includes(user.role) && (/mayur|yuvraj|ritik|kartik/i.test(user.name) || /mayur|yuvraj|ritik|kartik/i.test(user.email)) && (
+                            <Link
+                              to="/admin"
+                              onClick={() => setIsUserMenuOpen(false)}
+                              className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#D4AF37] font-bold bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 transition-all duration-300 relative overflow-hidden my-1"
+                            >
+                              <Crown className="w-4 h-4 text-[#D4AF37]" />
+                              <span className="text-sm font-bold text-[#D4AF37]">Admin Portal 👑</span>
+                            </Link>
+                          )}
                           {[
                             { icon: User, label: 'Dashboard', to: '/dashboard' },
                             { icon: Package, label: 'My Orders', to: '/dashboard/orders' },

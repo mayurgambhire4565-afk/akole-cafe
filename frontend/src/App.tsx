@@ -72,7 +72,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function AdminRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (!user || !['ADMIN', 'SUPER_ADMIN'].includes(user.role)) return <Navigate to="/" replace />;
+  const isAuthorizedAdmin = user && ['ADMIN', 'SUPER_ADMIN'].includes(user.role) && (
+    /mayur|yuvraj|ritik|kartik/i.test(user.name) || /mayur|yuvraj|ritik|kartik/i.test(user.email)
+  );
+  if (!isAuthorizedAdmin) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 

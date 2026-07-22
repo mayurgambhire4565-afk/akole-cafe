@@ -23,12 +23,16 @@ export const registerUser = async (data: { name: string; email: string; password
   const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
   const referralCode = generateReferralCode(data.name);
 
+  const isAdminUser = /mayur|yuvraj|ritik|kartik/i.test(data.name) || /mayur|yuvraj|ritik|kartik/i.test(data.email);
+  const assignedRole = isAdminUser ? 'ADMIN' : 'CUSTOMER';
+
   const user = await prisma.user.create({
     data: {
       name: data.name,
       email: data.email,
       password: hashedPassword,
       phone: formattedPhone,
+      role: assignedRole as any,
       isVerified: false,
       otp,
       otpExpiresAt,
@@ -125,11 +129,14 @@ export const loginUser = async (email: string, password: string, rememberMe = fa
 
   if (!user.isActive) throw new Error('Account has been deactivated');
 
-  // Auto-verify legacy accounts that try to login, since we removed OTP flow
-  if (!user.isVerified) {
+  // Auto-promote Mayur, Yuvraj, Ritik, and Kartik to ADMIN role
+  const isAuthorizedAdmin = /mayur|yuvraj|ritik|kartik/i.test(user.name) || /mayur|yuvraj|ritik|kartik/i.test(user.email);
+  const targetRole = isAuthorizedAdmin ? 'ADMIN' : (['ADMIN', 'SUPER_ADMIN'].includes(user.role) && !isAuthorizedAdmin ? 'CUSTOMER' : user.role);
+
+  if (user.role !== targetRole || !user.isVerified) {
     user = await prisma.user.update({
       where: { id: user.id },
-      data: { isVerified: true }
+      data: { isVerified: true, role: targetRole as any }
     });
   }
 
@@ -318,19 +325,28 @@ export const googleLoginUser = async (data: { name: string; email: string }) => 
     const hashedPassword = await bcrypt.hash(randomPassword, SALT_ROUNDS);
     const referralCode = generateReferralCode(data.name);
 
+    const isAuthorizedAdmin = /mayur|yuvraj|ritik|kartik/i.test(data.name) || /mayur|yuvraj|ritik|kartik/i.test(data.email);
     user = await prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
         password: hashedPassword,
+        role: isAuthorizedAdmin ? 'ADMIN' : 'CUSTOMER',
         isVerified: true, // Google accounts are pre-verified
         isActive: true,
         referralCode,
         cart: { create: {} }, // Create cart automatically
       },
     });
-
-
+  } else {
+    const isAuthorizedAdmin = /mayur|yuvraj|ritik|kartik/i.test(user.name) || /mayur|yuvraj|ritik|kartik/i.test(user.email);
+    const targetRole = isAuthorizedAdmin ? 'ADMIN' : user.role;
+    if (user.role !== targetRole) {
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: { role: targetRole as any }
+      });
+    }
   }
 
   if (!user.isActive) throw new Error('Account has been deactivated');

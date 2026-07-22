@@ -218,9 +218,9 @@ export default function WishlistPage() {
             
             <Link 
               to="/products" 
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold px-8 py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2.5 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold px-8 py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
             >
-              <Coffee className="w-5 h-5" />
+              <img src="/gold-logo.png" alt="Akole Cafe Logo Icon" className="w-6 h-6 rounded-full object-cover border border-[#D4AF37] shadow-sm flex-shrink-0" />
               <span>Explore Our Menu</span>
               <ArrowRight className="w-4 h-4" />
             </Link>

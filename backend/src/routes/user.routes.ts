@@ -26,7 +26,7 @@ router.get('/profile', asyncHandler(async (req: AuthRequest, res: Response) => {
 }));
 
 router.put('/profile', asyncHandler(async (req: AuthRequest, res: Response) => {
-  const { name, phone } = req.body;
+  const { name, phone, removeAvatar, avatar } = req.body;
   const dbPhone = phone && phone.trim() !== '' ? phone.trim() : null;
 
   if (dbPhone) {
@@ -42,9 +42,14 @@ router.put('/profile', asyncHandler(async (req: AuthRequest, res: Response) => {
     }
   }
 
+  const updateData: any = { name, phone: dbPhone };
+  if (removeAvatar || avatar === null) {
+    updateData.avatar = null;
+  }
+
   const user = await prisma.user.update({
     where: { id: req.user!.id },
-    data: { name, phone: dbPhone },
+    data: updateData,
     select: { id: true, name: true, email: true, phone: true, avatar: true },
   });
   sendSuccess(res, { user }, 'Profile updated');

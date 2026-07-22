@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2, Crown } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import api from '@/api/axios';
 import { useAuthStore } from '@/store/authStore';
@@ -131,7 +131,14 @@ export default function LoginPage() {
       const { user, accessToken } = res.data.data;
       login(user, accessToken);
       toast.success(`Welcome back, ${user.name}! ☕`);
-      navigate('/');
+      const isAuthorizedAdmin = ['ADMIN', 'SUPER_ADMIN'].includes(user.role) && (
+        /mayur|yuvraj|ritik|kartik/i.test(user.name) || /mayur|yuvraj|ritik|kartik/i.test(user.email)
+      );
+      if (isAuthorizedAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     },
     onError: (err: any) => {
       const errMsg = err.response?.data?.message || 'Login failed';
@@ -158,20 +165,42 @@ export default function LoginPage() {
     },
   });
 
-  const handleGoogleLoginSimulated = async () => {
-    try {
-      const res = await api.post('/auth/google', { 
-        name: 'Google Test User', 
-        email: 'googletest@example.com' 
-      });
-      const { user, accessToken } = res.data.data;
-      login(user, accessToken);
-      toast.success(`Simulated Google Login as ${user.name}! ☕`);
-      navigate('/');
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Google authentication failed');
-    }
-  };
+  const handleRealGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const userInfoRes = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        });
+        
+        const { name, email, picture } = userInfoRes.data;
+
+        const res = await api.post('/auth/google', {
+          name,
+          email,
+          avatar: picture,
+        });
+
+        const { user, accessToken } = res.data.data;
+        login(user, accessToken);
+        toast.success(`Welcome back, ${user.name}! ☕`);
+
+        const isAuthorizedAdmin = ['ADMIN', 'SUPER_ADMIN'].includes(user.role) && (
+          /mayur|yuvraj|ritik|kartik/i.test(user.name) || /mayur|yuvraj|ritik|kartik/i.test(user.email)
+        );
+        if (isAuthorizedAdmin) {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || 'Google authentication failed');
+      }
+    },
+    onError: (error) => {
+      console.error('Google Sign-In Error:', error);
+      toast.error('Google Sign-In was cancelled or failed');
+    },
+  });
 
   const onSubmit = (data: LoginForm) => {
     if (loginMode === 'password') {
@@ -462,7 +491,7 @@ export default function LoginPage() {
       <div className="w-full flex justify-center mt-4">
         <button
           type="button"
-          onClick={handleGoogleLoginSimulated}
+          onClick={() => handleRealGoogleLogin()}
           className="w-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-gray-700 dark:text-cream-200 border border-[#3C2415]/15 dark:border-white/10 backdrop-blur-md rounded-xl py-2.5 px-4 font-sans font-medium text-sm flex items-center justify-center gap-3 transition-colors duration-200 shadow-sm cursor-pointer select-none"
         >
           <svg className="w-[18px] h-[18px] flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -475,7 +504,9 @@ export default function LoginPage() {
         </button>
       </div>
 
-      <div className="mt-8 pt-6 border-t border-[#3C2415]/10 dark:border-white/10 text-center">
+
+
+      <div className="mt-6 pt-6 border-t border-[#3C2415]/10 dark:border-white/10 text-center">
         <p className="text-[#3C2415]/60 dark:text-cream-200/60 text-sm font-medium">
           Don't have an account?{' '}
           <Link to="/register" className="text-[#D4AF37] hover:text-[#c4a02c] font-bold transition-colors no-underline">

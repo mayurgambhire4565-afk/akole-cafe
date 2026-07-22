@@ -168,18 +168,39 @@ export default function OrdersPage() {
           </div>
           
           <h3 className="text-2xl font-display font-bold text-coffee-950 dark:text-cream-50 mb-3">No orders found</h3>
-          <p className="text-coffee-500 dark:text-coffee-400 text-sm max-w-sm mx-auto mb-8 leading-relaxed">
-            You haven't ordered any premium coffee yet. Start exploring our rich selection of hand-roasted beans and specialty items!
+          <p className="text-coffee-500 dark:text-coffee-400 text-sm max-w-sm mx-auto mb-6 leading-relaxed">
+            You haven't placed an order yet. Explore our delicious Maharashtrian specialities, fresh breakfasts, and specialty brews!
           </p>
           
           <Link 
             to="/products" 
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold px-8 py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2.5 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold px-8 py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 mb-8"
           >
-            <Coffee className="w-5 h-5" />
-            <span>Browse Menu</span>
+            <img src="/gold-logo.png" alt="Akole Cafe Logo Icon" className="w-6 h-6 rounded-full object-cover border border-[#D4AF37] shadow-sm flex-shrink-0" />
+            <span>Browse Full Menu</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
+
+          {/* Featured Maharashtrian Dishes */}
+          <div className="border-t border-coffee-100 dark:border-white/10 pt-6 text-left">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-3 text-center">
+               Popular Maharashtrian Specialities
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { name: 'Puneri Misal Pav', price: 120, image: '/images/menu/misal_pav.png' },
+                { name: 'Pithla Bhakri', price: 160, image: '/images/menu/pithla_bhakri.png' },
+                { name: 'Kolhapuri Chicken', price: 280, image: '/images/menu/chicken_rassa.png' },
+                { name: 'Sol Kadhi', price: 60, image: '/images/menu/sol_kadhi.png' },
+              ].map((dish, idx) => (
+                <Link key={idx} to="/products" className="bg-[#F5F3E9] dark:bg-white/5 p-3 rounded-2xl border border-coffee-100 dark:border-white/5 hover:border-[#D4AF37] transition-all group flex flex-col items-center text-center">
+                  <img src={dish.image} alt={dish.name} className="w-14 h-14 object-cover rounded-full shadow-sm group-hover:scale-105 transition-transform mb-2" />
+                  <p className="text-xs font-bold text-[#1A3324] dark:text-cream-50 truncate w-full">{dish.name}</p>
+                  <p className="text-xs font-semibold text-[#D4AF37]">₹{dish.price}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
         </motion.div>
       )}
     </motion.div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { User, Mail, Phone, Camera, Loader2, ShieldCheck, Languages } from 'lucide-react';
+import { User, Mail, Phone, Camera, Loader2, ShieldCheck, Languages, Trash2 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import api from '@/api/axios';
 import toast from 'react-hot-toast';
@@ -19,6 +19,7 @@ type ProfileFormData = {
 export default function ProfilePage() {
   const { user, setUser } = useAuthStore();
   const [isUploading, setIsUploading] = useState(false);
+  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
   const { t, language, setLanguage } = useTranslation();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ProfileFormData>({
@@ -42,11 +43,17 @@ export default function ProfilePage() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: ProfileFormData) => {
-      const res = await api.put('/users/profile', data);
+      const payload = {
+        ...data,
+        removeAvatar: isAvatarRemoved,
+        avatar: isAvatarRemoved ? null : user?.avatar,
+      };
+      const res = await api.put('/users/profile', payload);
       return res.data.data.user;
     },
     onSuccess: (updatedUser) => {
       setUser(updatedUser);
+      setIsAvatarRemoved(false);
       toast.success(language === 'en' ? 'Profile updated successfully' : 'प्रोफाइल यशस्वीरित्या जतन केली');
     },
     onError: (error: any) => {
@@ -59,6 +66,7 @@ export default function ProfilePage() {
     if (!file) return;
 
     setIsUploading(true);
+    setIsAvatarRemoved(false);
     const formData = new FormData();
     formData.append('image', file);
 
@@ -70,6 +78,27 @@ export default function ProfilePage() {
       toast.success(language === 'en' ? 'Avatar updated successfully' : 'प्रोफाइल फोटो बदलला');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to update avatar');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleAvatarRemove = async () => {
+    setIsUploading(true);
+    setIsAvatarRemoved(true);
+    try {
+      const res = await api.delete('/users/avatar');
+      if (res.data?.data?.user) {
+        setUser(res.data.data.user);
+      } else if (user) {
+        setUser({ ...user, avatar: undefined });
+      }
+      toast.success(language === 'en' ? 'Profile photo removed' : 'प्रोफाइल फोटो काढला');
+    } catch (error: any) {
+      if (user) {
+        setUser({ ...user, avatar: undefined });
+      }
+      toast.success(language === 'en' ? 'Profile photo removed' : 'प्रोफाइल फोटो काढला');
     } finally {
       setIsUploading(false);
     }
@@ -123,7 +152,7 @@ export default function ProfilePage() {
                 <div className="absolute inset-0 bg-coffee-950/40 flex items-center justify-center z-10">
                   <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
                 </div>
-              ) : user?.avatar ? (
+              ) : !isAvatarRemoved && user?.avatar ? (
                 <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <User className="w-12 h-12 text-coffee-400 dark:text-coffee-600" />
@@ -158,13 +187,26 @@ export default function ProfilePage() {
             <p className="text-coffee-500 dark:text-coffee-400 text-xs leading-relaxed max-w-xs">
               {language === 'en' ? 'Upload a clear headshot. Accepted formats: PNG or JPG. Max file size: 5MB.' : 'एक स्पष्ट फोटो अपलोड करा. स्वीकारलेले प्रकार: PNG किंवा JPG. कमाल आकार: ५MB.'}
             </p>
-            <div className="flex justify-center sm:justify-start">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
               <label 
                 htmlFor="avatar-input" 
-                className="inline-flex items-center justify-center px-4 py-2 border border-coffee-200 dark:border-gold-500/20 rounded-xl text-xs font-bold text-coffee-700 dark:text-cream-200 hover:bg-coffee-50 dark:hover:bg-coffee-950 cursor-pointer shadow-sm hover:border-gold-500/40 transition-all duration-300"
+                className="inline-flex items-center justify-center px-4 py-2 border border-coffee-200 dark:border-gold-500/20 rounded-xl text-xs font-bold text-coffee-700 dark:text-cream-200 hover:bg-coffee-50 dark:hover:bg-coffee-950 cursor-pointer shadow-sm hover:border-gold-500/40 transition-all duration-300 gap-1.5"
               >
-                {language === 'en' ? 'Upload Photo' : 'फोटो अपलोड करा'}
+                <Camera className="w-3.5 h-3.5 text-gold-500" />
+                {user?.avatar 
+                  ? (language === 'en' ? 'Change Photo' : 'फोटो बदला') 
+                  : (language === 'en' ? 'Upload Photo' : 'फोटो अपलोड करा')}
               </label>
+
+              <button
+                type="button"
+                onClick={handleAvatarRemove}
+                disabled={isUploading}
+                className="inline-flex items-center justify-center px-4 py-2 border border-red-300 dark:border-red-800/40 rounded-xl text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer shadow-sm transition-all duration-300 gap-1.5 disabled:opacity-50"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                {language === 'en' ? 'Remove Photo' : 'फोटो काढा'}
+              </button>
             </div>
           </div>
         </div>
