@@ -1,8 +1,102 @@
-import { motion } from 'framer-motion';
-import { Award, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Award, X, Sparkles } from 'lucide-react';
+import { FaGitlab, FaLinkedin, FaInstagram, FaEnvelope } from 'react-icons/fa';
 import HeartLogo from '@/components/ui/HeartLogo';
 
+interface TeamMember {
+  name: string;
+  role: string;
+  image: string;
+  bio: string;
+  specialties: string[];
+  socials: {
+    linkedin?: string;
+    instagram?: string;
+    gitlab?: string;
+    email?: string;
+  };
+}
+
+const teamMembers: TeamMember[] = [
+  {
+    name: 'Mayur Gambhire',
+    role: 'Director',
+    image: '/images/team/mayur_gambhire.png',
+    bio: 'A visionary entrepreneur dedicated to creating spaces that foster warmth, conversation, and premium hospitality. Mayur spearheads the brand strategy, expansion, and high-level operations of Akole Café, establishing a benchmark of quality and innovation.',
+    specialties: ['Strategic Leadership', 'Brand Expansion', 'Hospitality Management'],
+    socials: {
+      linkedin: 'https://www.linkedin.com/in/mayur-gambhire-854551379',
+      instagram: 'https://instagram.com',
+      gitlab: 'https://gitlab.com/mayurgambhire4565',
+      email: 'mayur@akolecafe.com'
+    }
+  },
+  {
+    name: 'Rutik Choudhary',
+    role: 'Co-Founder',
+    image: '/images/team/rutik_choudhary.png',
+    bio: 'Bringing a keen eye for aesthetics and design, Rutik focuses on the visual identity, digital presence, and operational excellence of Akole Café. He believes that the atmosphere is just as important as the brew in making a visit unforgettable.',
+    specialties: ['Brand Identity & Design', 'Operational Synergy', 'Public Relations'],
+    socials: {
+      linkedin: 'https://linkedin.com',
+      instagram: 'https://instagram.com',
+      gitlab: 'https://gitlab.com',
+      email: 'rutik@akolecafe.com'
+    }
+  },
+  {
+    name: 'Yuvraj Jadhav',
+    role: 'Operations Head',
+    image: '/images/team/yuvraj_jadhav.png',
+    bio: 'A master of efficiency and quality control, Yuvraj leads the daily operations, supplier partnerships, and barista training. He ensures that every single cup served matches the high quality standard that Akole Café is known for.',
+    specialties: ['Daily Operations', 'Supply Chain Control', 'Quality Assurance & Barista Training'],
+    socials: {
+      linkedin: 'https://linkedin.com',
+      instagram: 'https://instagram.com',
+      gitlab: 'https://gitlab.com',
+      email: 'yuvraj@akolecafe.com'
+    }
+  },
+  {
+    name: 'Kartik Dukale',
+    role: 'Executive Chef',
+    image: '/images/team/kartik_dukale.png',
+    bio: 'An artist in the kitchen, Kartik crafts our signature menu items, fresh pastries, and culinary pairings. He constantly innovates with local flavors and international trends, ensuring our culinary offerings perfectly complement our premium coffee.',
+    specialties: ['Menu Design', 'Pastry & Baking Arts', 'Flavor Balancing'],
+    socials: {
+      linkedin: 'https://linkedin.com',
+      instagram: 'https://instagram.com',
+      gitlab: 'https://gitlab.com',
+      email: 'kartik@akolecafe.com'
+    }
+  }
+];
+
 export default function AboutPage() {
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedMember(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (selectedMember) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedMember]);
+
   return (
     <div className="bg-[#F5F3E9] dark:bg-[#0B150F] min-h-screen pt-20 pb-24 transition-colors duration-300">
 
@@ -146,33 +240,149 @@ export default function AboutPage() {
           </h2>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {[
-              { name: 'Mayur Gambhire', role: 'Director', image: '/images/team/mayur_gambhire.png' },
-              { name: 'Rutik Choudhary', role: 'Co-Founder', image: '/images/team/rutik_choudhary.png' },
-              { name: 'Yuvraj Jadhav', role: 'Operations Head', image: '/images/team/yuvraj_jadhav.png' },
-              { name: 'Kartik Dukale', role: 'Executive Chef', image: '/images/team/kartik_dukale.png' }
-            ].map((member, i) => (
-              <div key={i} className="bg-white dark:bg-[#112017] rounded-3xl p-8 flex flex-col items-center text-center shadow-sm border border-[#3C2415]/5 dark:border-white/5 hover:shadow-md transition-shadow">
-                <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-[#D4AF37] shadow-inner bg-[#3C2415] flex items-center justify-center">
+            {teamMembers.map((member, i) => (
+              <div
+                key={i}
+                onClick={() => setSelectedMember(member)}
+                className="bg-white dark:bg-[#112017] rounded-3xl p-8 flex flex-col items-center text-center shadow-sm border border-[#3C2415]/5 dark:border-white/5 hover:shadow-lg hover:border-[#D4AF37]/30 hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+              >
+                <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-[#D4AF37] shadow-inner bg-[#3C2415] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                   <img
                     src={member.image}
                     alt={member.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h4 className="font-bold text-[#1A3324] dark:text-[#FDFBF7] text-sm md:text-base mb-1">{member.name}</h4>
-                <p className="text-[#3C2415]/60 dark:text-cream-200/60 text-xs font-light">{member.role}</p>
+                <h4 className="font-bold text-[#1A3324] dark:text-[#FDFBF7] text-sm md:text-base mb-1 group-hover:text-[#D4AF37] transition-colors duration-300">{member.name}</h4>
+                <p className="text-[#3C2415]/60 dark:text-cream-200/60 text-xs font-light mb-2">{member.role}</p>
+                <span className="text-[10px] text-[#D4AF37] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 tracking-wider uppercase">View Profile &rarr;</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
+      {/* Team Member Profile Modal */}
+      <AnimatePresence>
+        {selectedMember && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+            onClick={() => setSelectedMember(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
+              className="relative w-full max-w-2xl bg-[#FDFBF7] dark:bg-[#112017] rounded-[2rem] overflow-hidden shadow-2xl border border-[#3C2415]/10 dark:border-white/10 flex flex-col md:flex-row text-left"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedMember(null)}
+                className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/10 dark:bg-white/10 text-[#3C2415] dark:text-[#FDFBF7] hover:bg-[#D4AF37] hover:text-white dark:hover:bg-[#D4AF37] transition-colors flex items-center justify-center outline-none"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Left Pane - Profile Picture & Title */}
+              <div className="w-full md:w-[40%] bg-[#3C2415] dark:bg-[#0B150F] relative flex flex-col items-center justify-center p-8 text-center min-h-[220px] md:min-h-full">
+                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-[#D4AF37] shadow-xl bg-[#3C2415] mb-4">
+                  <img
+                    src={selectedMember.image}
+                    alt={selectedMember.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="font-display font-bold text-[#FDFBF7] text-xl mb-1">{selectedMember.name}</h3>
+                <p className="text-[#D4AF37] text-xs uppercase tracking-widest font-semibold">{selectedMember.role}</p>
+              </div>
+
+              {/* Right Pane - Bio, Specialties & Socials */}
+              <div className="w-full md:w-[60%] p-8 md:p-10 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-[10px] font-bold text-[#D4AF37] tracking-[0.2em] uppercase mb-2">Biography</h4>
+                  <p className="text-[#3C2415]/80 dark:text-cream-200/80 text-sm font-light leading-relaxed mb-6 font-sans">
+                    {selectedMember.bio}
+                  </p>
+
+                  <h4 className="text-[10px] font-bold text-[#D4AF37] tracking-[0.2em] uppercase mb-3 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5" /> Core Focus & Expertise
+                  </h4>
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {selectedMember.specialties.map((spec, i) => (
+                      <span
+                        key={i}
+                        className="text-[10px] font-medium tracking-wide uppercase px-3 py-1 bg-[#3C2415]/5 text-[#3C2415]/80 dark:bg-white/5 dark:text-cream-200/80 rounded-full border border-[#3C2415]/10 dark:border-white/10"
+                      >
+                        {spec}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border-t border-[#3C2415]/10 dark:border-white/10 pt-6">
+                  <h4 className="text-[10px] font-bold text-[#D4AF37] tracking-[0.2em] uppercase mb-3 font-sans">Connect With {selectedMember.name.split(' ')[0]}</h4>
+                  <div className="flex items-center gap-3">
+                    {selectedMember.socials.linkedin && (
+                      <a
+                        href={selectedMember.socials.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[#3C2415]/5 hover:bg-[#3C2415]/10 dark:bg-white/5 dark:hover:bg-white/10 text-[#3C2415] dark:text-[#FDFBF7] hover:text-[#D4AF37] dark:hover:text-[#D4AF37] hover:-translate-y-0.5 transition-all duration-300 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
+                        title="LinkedIn"
+                      >
+                        <FaLinkedin className="w-4 h-4" />
+                      </a>
+                    )}
+                    {selectedMember.socials.instagram && (
+                      <a
+                        href={selectedMember.socials.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[#3C2415]/5 hover:bg-[#3C2415]/10 dark:bg-white/5 dark:hover:bg-white/10 text-[#3C2415] dark:text-[#FDFBF7] hover:text-[#D4AF37] dark:hover:text-[#D4AF37] hover:-translate-y-0.5 transition-all duration-300 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
+                        title="Instagram"
+                      >
+                        <FaInstagram className="w-4 h-4" />
+                      </a>
+                    )}
+                    {selectedMember.socials.gitlab && (
+                      <a
+                        href={selectedMember.socials.gitlab}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[#3C2415]/5 hover:bg-[#3C2415]/10 dark:bg-white/5 dark:hover:bg-white/10 text-[#3C2415] dark:text-[#FDFBF7] hover:text-[#D4AF37] dark:hover:text-[#D4AF37] hover:-translate-y-0.5 transition-all duration-300 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
+                        title="GitLab"
+                      >
+                        <FaGitlab className="w-4 h-4" />
+                      </a>
+                    )}
+                    {selectedMember.socials.email && (
+                      <a
+                        href={`mailto:${selectedMember.socials.email}`}
+                        className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[#3C2415]/5 hover:bg-[#3C2415]/10 dark:bg-white/5 dark:hover:bg-white/10 text-[#3C2415] dark:text-[#FDFBF7] hover:text-[#D4AF37] dark:hover:text-[#D4AF37] hover:-translate-y-0.5 transition-all duration-300 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
+                        title="Email"
+                      >
+                        <FaEnvelope className="w-4 h-4" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Awards */}
       <div className="py-24 bg-[#FDFBF7] dark:bg-[#112017] transition-colors duration-300">
         <div className="container-custom max-w-6xl text-center">
           <p className="text-[#D4AF37] font-bold tracking-[0.2em] uppercase text-[10px] mb-3">RECOGNITION</p>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-[#1A3324] dark:text-[#FDFBF7] mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold font-display text-[#1A3324] dark:text-[#FDFBF7] mb-16">
             Awards & Achievements
           </h2>
 

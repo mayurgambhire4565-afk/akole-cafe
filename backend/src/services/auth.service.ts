@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import prisma from '../database/prisma';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken, generateOTP, generateReferralCode } from '../utils/jwt';
-import { sendWelcomeEmail, sendOTPEmail, sendPasswordResetEmail } from '../utils/email';
+import { sendWelcomeEmail, sendOTPEmail, sendPasswordResetEmail, sendLoginNotificationEmail } from '../utils/email';
 import { env } from '../config/env';
 
 const SALT_ROUNDS = 12;
@@ -137,9 +137,14 @@ export const loginUser = async (email: string, password: string, rememberMe = fa
   const accessToken = generateAccessToken(tokenPayload);
   const refreshToken = generateRefreshToken(tokenPayload);
 
-  // Hash and store refresh t
   const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
   await prisma.user.update({ where: { id: user.id }, data: { refreshToken: hashedRefreshToken } });
+
+  // Send Welcome Back Login Email asynchronously
+  sendLoginNotificationEmail(user.email, user.name).catch((err) => {
+    console.error('[EMAIL WARNING] Failed to send login notification email:', err);
+  });
+
   const userData = {
     id: user.id, name: user.name, email: user.email, role: user.role,
     avatar: user.avatar, loyaltyPoints: user.loyaltyPoints, isVerified: user.isVerified,

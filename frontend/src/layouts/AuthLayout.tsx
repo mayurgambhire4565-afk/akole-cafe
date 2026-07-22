@@ -46,7 +46,7 @@ export default function AuthLayout() {
                 Est. 2026 • Akole
               </span>
               <h1 className="text-5xl font-display font-bold text-cream-50 leading-[1.15] mb-6">
-                Brewing Connections,<br/>
+                Brewing Connections,<br />
                 <span className="text-[#D4AF37] italic font-serif font-light">Serving Memories</span>
               </h1>
               <p className="text-cream-100/70 text-base font-light leading-relaxed max-w-md">
@@ -73,7 +73,7 @@ export default function AuthLayout() {
 
       {/* Right Panel - Auth Form */}
       <div className="flex-1 h-screen overflow-y-auto flex flex-col justify-start py-12 lg:py-16 relative bg-[#F8F4EA] dark:bg-[#0F1E15] transition-colors duration-300">
-        
+
 
         {/* Mobile Header Logo */}
         <div className="lg:hidden flex items-center justify-center mb-10">
@@ -102,3 +102,4 @@ export default function AuthLayout() {
     </div>
   );
 }
+
